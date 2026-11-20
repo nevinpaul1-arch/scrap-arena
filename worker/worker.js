@@ -107,9 +107,11 @@ export default {
     if (url.pathname.startsWith('/api/')) {
       try { return await api(req, env, url); } catch (e) { return json({ error: 'server', detail: String(e).slice(0, 200) }, 500); }
     }
-    if (url.pathname !== '/' && url.pathname !== '/index.html') return Response.redirect(url.origin + '/', 302);
-    const r = await fetch(SRC, { cf: { cacheTtl: 120, cacheEverything: true } });
+    // /dev serves the dev branch (uncached) for previews; / serves main
+    const isDev = url.pathname === '/dev' || url.pathname === '/dev/';
+    if (!isDev && url.pathname !== '/' && url.pathname !== '/index.html') return Response.redirect(url.origin + '/', 302);
+    const r = await fetch(isDev ? SRC.replace('/main/', '/dev/') + '?t=' + Date.now() : SRC, isDev ? { cf: { cacheTtl: 0 } } : { cf: { cacheTtl: 120, cacheEverything: true } });
     if (!r.ok) return new Response('Game temporarily unavailable', { status: 502 });
-    return new Response(r.body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60', 'x-content-type-options': 'nosniff' } });
+    return new Response(r.body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': isDev ? 'no-store' : 'public, max-age=60', 'x-content-type-options': 'nosniff' } });
   }
 };
