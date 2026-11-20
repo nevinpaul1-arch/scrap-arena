@@ -104,14 +104,84 @@ async function api(req, env, url) {
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
-    if (url.pathname.startsWith('/api/')) {
+    if (url.pathname.startsWith('/api/') && !url.pathname.startsWith('/api/room/')) {
       try { return await api(req, env, url); } catch (e) { return json({ error: 'server', detail: String(e).slice(0, 200) }, 500); }
     }
-    // /dev serves the dev branch (uncached) for previews; / serves main
-    const isDev = url.pathname === '/dev' || url.pathname === '/dev/';
+    // multiplayer rooms: /api/room/ABCD/ws -> one Durable Object per room code
+    const rm = url.pathname.match(/^\/api\/room\/([A-Z]{4})\/ws$/);
+    if (rm) return env.ROOMS.get(env.ROOMS.idFromName(rm[1])).fetch(req);
+    // previews: /dev -> dev branch, /mp -> multiplayer branch (uncached); / -> main
+    const BR = { '/dev': 'dev', '/dev/': 'dev', '/mp': 'multiplayer', '/mp/': 'multiplayer' }, branch = BR[url.pathname], isDev = !!branch;
     if (!isDev && url.pathname !== '/' && url.pathname !== '/index.html') return Response.redirect(url.origin + '/', 302);
-    const r = await fetch(isDev ? SRC.replace('/main/', '/dev/') + '?t=' + Date.now() : SRC, isDev ? { cf: { cacheTtl: 0 } } : { cf: { cacheTtl: 120, cacheEverything: true } });
+    const r = await fetch(isDev ? SRC.replace('/main/', '/' + branch + '/') + '?t=' + Date.now() : SRC, isDev ? { cf: { cacheTtl: 0 } } : { cf: { cacheTtl: 120, cacheEverything: true } });
     if (!r.ok) return new Response('Game temporarily unavailable', { status: 502 });
     return new Response(r.body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': isDev ? 'no-store' : 'public, max-age=60', 'x-content-type-options': 'nosniff' } });
   }
 };
+
+// ---------- multiplayer room: lobby + relay. The host's browser runs the game; this object only passes messages. ----------
+const MAX_PLAYERS = 4;
+export class Room {
+  constructor(ctx, env) { this.ctx = ctx; }
+  peers() { return this.ctx.getWebSockets().map(ws => ({ ws, me: ws.deserializeAttachment() || {} })).filter(p => !p.me.dead); }
+  lobby(extra) {
+    const ps = this.peers();
+    const host = ps.find(p => p.me.host);
+    const msg = JSON.stringify(Object.assign({ c: 'lobby', mode: host ? host.me.mode || 'coop' : 'coop', started: !!(host && host.me.started), players: ps.filter(p => !p.me.dead).map(p => ({ pid: p.me.pid, name: p.me.name, car: p.me.car, host: !!p.me.host })) }, extra || {}));
+    for (const p of ps) { try { p.ws.send(msg); } catch (e) {} }
+  }
+  async fetch(req) {
+    if (req.headers.get('Upgrade') !== 'websocket') return new Response('expected websocket', { status: 426 });
+    const url = new URL(req.url), pid = (url.searchParams.get('pid') || '').replace(/[^a-z0-9]/gi, '').slice(0, 24);
+    const name = (url.searchParams.get('name') || 'Driver').replace(/[^\p{L}\p{N} _.\-]/gu, '').slice(0, 12) || 'Driver';
+    const car = (url.searchParams.get('car') || 'cruiser').replace(/[^a-z]/g, '').slice(0, 12);
+    const create = url.searchParams.get('create') === '1';
+    if (pid.length < 8) return new Response('bad pid', { status: 400 });
+    const pair = new WebSocketPair(), client = pair[0], server = pair[1];
+    this.ctx.acceptWebSocket(server);
+    const ps = this.peers().filter(p => p.ws !== server), host = ps.find(p => p.me.host);
+    const deny = why => { server.serializeAttachment({ pid, dead: true }); server.send(JSON.stringify({ c: 'denied', why })); server.close(4000, why); return new Response(null, { status: 101, webSocket: client }); };
+    // same player reconnecting replaces the old socket
+    for (const p of ps) if (p.me.pid === pid) { try { p.ws.close(4001, 'replaced'); } catch (e) {} }
+    const others = ps.filter(p => p.me.pid !== pid);
+    if (!others.length && !create) return deny('no-room');
+    if (others.length && create) return deny('taken');
+    if (others.length >= MAX_PLAYERS) return deny('full');
+    if (host && host.me.started && host.me.pid !== pid) return deny('started');
+    const isHost = !others.length;
+    server.serializeAttachment({ pid, name, car, host: isHost, mode: url.searchParams.get('mode') === 'versus' ? 'versus' : 'coop', started: false });
+    this.lobby();
+    return new Response(null, { status: 101, webSocket: client });
+  }
+  async webSocketMessage(ws, msg) {
+    const me = ws.deserializeAttachment() || {};
+    if (me.dead) return;
+    if (typeof msg !== 'string') return;
+    if (msg.charCodeAt(0) === 123 && msg.indexOf('"c":') > 0 && msg.length < 400) { // small control messages
+      let m; try { m = JSON.parse(msg); } catch (e) { return; }
+      if (m.c === 'car') { me.car = String(m.car || '').replace(/[^a-z]/g, '').slice(0, 12); ws.serializeAttachment(me); this.lobby(); return; }
+      if (m.c === 'mode' && me.host) { me.mode = m.mode === 'versus' ? 'versus' : 'coop'; ws.serializeAttachment(me); this.lobby(); return; }
+      if (m.c === 'start' && me.host) { me.started = true; ws.serializeAttachment(me); this.lobby({ go: true }); return; }
+      if (m.c === 'reset' && me.host) { me.started = false; ws.serializeAttachment(me); this.lobby(); return; }
+      if (m.c === 'ping') { ws.send('{"c":"pong","t":' + (+m.t || 0) + '}'); return; }
+    }
+    const ps = this.peers();
+    if (me.host) { // host -> everyone else (snapshots + events), passed through untouched
+      for (const p of ps) if (p.ws !== ws) { try { p.ws.send(msg); } catch (e) {} }
+    } else { // guest -> host, tagged with who sent it
+      const h = ps.find(p => p.me.host);
+      if (h) { try { h.ws.send('{"f":"' + me.pid + '","d":' + msg + '}'); } catch (e) {} }
+    }
+  }
+  async webSocketClose(ws, code) { this.left(ws); }
+  async webSocketError(ws) { this.left(ws); }
+  left(ws) {
+    const me = ws.deserializeAttachment() || {};
+    if (me.dead) return;
+    me.dead = true; try { ws.serializeAttachment(me); } catch (e) {}
+    const ps = this.peers().filter(p => p.ws !== ws && !p.me.dead);
+    if (me.host) { for (const p of ps) { try { p.ws.send('{"c":"hostleft"}'); p.ws.close(4002, 'host left'); } catch (e) {} } return; }
+    const h = ps.find(p => p.me.host); if (h) { try { h.ws.send('{"c":"left","pid":"' + me.pid + '"}'); } catch (e) {} }
+    this.lobby();
+  }
+}

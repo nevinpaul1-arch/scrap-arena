@@ -104,6 +104,35 @@
   #rotate small{color:#8791a1;font-weight:600;max-width:280px;line-height:1.4}
   @keyframes rot{0%,20%{transform:rotate(0)}50%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
   @media (orientation:portrait) and (pointer:coarse){body.playing #rotate{display:flex}}
+  button#goOnline{background:#2a9d5c;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:800;letter-spacing:.06em;cursor:pointer}
+  button#goOnline:hover{background:#33b56b}
+  #mpBack{display:block;margin:6px auto 2px;background:#2a9d5c;color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:800;letter-spacing:.06em;cursor:pointer}
+  #mpPanel{position:fixed;inset:0;z-index:41;background:rgba(8,9,12,.88);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow:auto;touch-action:manipulation}
+  #mpPanel.hidden{display:none}
+  #mpPanel .hidden{display:none!important}
+  #mpPanel .mp{position:relative;background:#14171d;border:1px solid #2d3340;border-radius:14px;padding:18px 20px;max-width:560px;width:100%;color:#cfd6e2;margin:auto;text-align:left}
+  #mpPanel h2{margin:0 0 4px;font-size:20px;letter-spacing:.06em}
+  #mpPanel h4{margin:12px 0 6px;font-size:11px;letter-spacing:.14em;color:#8791a1}
+  #mpPanel .sub,#mpPanel .msg{font-size:12.5px;color:#8791a1;margin-top:6px;min-height:1em}
+  #mpPanel .opt{display:flex;flex-wrap:wrap;gap:6px}
+  #mpPanel .opt button{background:#1f242d;color:#dfe5ee;border:1px solid #2d3340;border-radius:7px;padding:6px 10px;font-weight:800;font-size:12px;cursor:pointer}
+  #mpPanel .opt button.on{background:#2a9d5c;border-color:#2a9d5c;color:#fff}
+  #mpPanel .row2{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  #mpPanel .row2 button{flex:1 1 180px;border:0;border-radius:10px;padding:12px;font-weight:800;font-size:14px;letter-spacing:.05em;cursor:pointer;background:#2a9d5c;color:#fff}
+  #mpPanel .row2 button#mpCreateVs{background:#e63946} #mpPanel .row2 button#mpLeave{background:#2a2f38;color:#dfe5ee;flex:0 1 120px}
+  #mpPanel .row2 button:disabled{opacity:.5;cursor:default}
+  #mpPanel .join{display:flex;gap:8px} #mpPanel .join input{flex:1;min-width:0;background:#0d0f13;border:1px solid #2d3340;border-radius:8px;color:#fff;font-size:20px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;padding:9px 12px}
+  #mpPanel .join button{background:#1d6fd8;color:#fff;border:0;border-radius:8px;padding:0 18px;font-weight:800;cursor:pointer}
+  #mpClose{position:absolute;right:10px;top:10px;background:none;border:0;color:#8791a1;font-size:18px;cursor:pointer}
+  #mpPanel .code{font-size:13px;color:#8791a1;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  #mpPanel .code b{font-size:30px;letter-spacing:.25em;color:#fff}
+  #mpPanel .code button,#mpPanel .mode button{background:#1f242d;color:#dfe5ee;border:1px solid #2d3340;border-radius:7px;padding:6px 10px;font-weight:700;font-size:12px;cursor:pointer}
+  #mpPanel .mode{font-size:13px;margin:8px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  #mpPlayers{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:6px}
+  #mpPlayers .pl{background:#1a1e26;border:1px solid #2d3340;border-radius:10px;padding:6px;text-align:center;font-size:12px}
+  #mpPlayers .pl img{width:100%;aspect-ratio:960/500;object-fit:cover;border-radius:6px;display:block;margin-bottom:4px}
+  #mpPlayers .pl span{display:block;font-weight:800;color:#fff} #mpPlayers .pl small{color:#8791a1}
+  #mpPlayers .pl.empty{display:flex;align-items:center;justify-content:center;min-height:70px;border-style:dashed;color:#5d6675} #mpPlayers .pl.empty span{color:#5d6675;font-weight:600}
   #devBtn{position:fixed;top:12px;right:12px;z-index:22;background:#1a1e26;color:#9aa3b2;border:1px dashed #4a5262;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:800;letter-spacing:.08em;cursor:pointer}
   #overlay.hidden ~ #devBtn{display:none}
   #devPanel{position:fixed;inset:0;z-index:40;background:rgba(8,9,12,.86);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow:auto}
@@ -253,11 +282,33 @@
     <div id="modes">
       <button id="go">WAVES<small>The classic run: endless waves, unlock cars</small></button>
       <button id="goDaily">DAILY<small id="dailySub">Same challenge for everyone today</small></button>
+      <button id="goOnline">ONLINE<small>Play with friends: co-op or versus</small></button>
     </div>
     <div id="dailyBox"></div>
+    <button id="mpBack" style="display:none">BACK TO LOBBY</button>
     <div id="board"></div>
   </div>
 </div>
+<div id="mpPanel" class="hidden"><div class="mp">
+  <button id="mpClose" aria-label="Close">✕</button>
+  <h2>🌐 PLAY ONLINE</h2>
+  <div id="mpHome">
+    <div class="sub">Up to 4 players. Create a room and send the code or link to your friends.</div>
+    <h4>YOUR CAR</h4><div class="opt" id="mpCars"></div>
+    <div class="row2"><button id="mpCreateCoop">CREATE CO-OP ROOM</button><button id="mpCreateVs">CREATE VERSUS ROOM</button></div>
+    <h4>JOIN A FRIEND</h4><div class="join"><input id="mpCode" maxlength="4" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button id="mpJoin">JOIN</button></div>
+    <div class="msg" id="mpMsg"></div>
+  </div>
+  <div id="mpLobby" class="hidden">
+    <div class="code">ROOM CODE <b id="mpRoom"></b> <button id="mpShare">Invite link</button></div>
+    <div class="mode"><span id="mpModeTxt"></span> <button id="mpModeSw"></button></div>
+    <div id="mpPlayers"></div>
+    <h4>YOUR CAR</h4><div class="opt" id="mpCars2"></div>
+    <div class="row2"><button id="mpLeave">LEAVE</button><button id="mpStart">START MATCH</button></div>
+    <div class="msg" id="mpWait">Waiting for the host to start...</div>
+    <div class="msg" id="mpMsg2"></div>
+  </div>
+</div></div>
 <button id="devBtn">🛠 DEV</button>
 <button class="fsBtn" id="fsMenu" title="Fullscreen">⛶</button>
 <button class="fsBtn" id="fsGame" title="Fullscreen">⛶</button>
@@ -288,7 +339,8 @@ const w2s = (x, y) => [innerWidth / 2 + (x - camX) * ppu + shX, innerHeight / 2 
 function worldTf() { ctx.setTransform(dpr * ppu, 0, 0, dpr * ppu * TK, dpr * (innerWidth / 2 - camX * ppu + shX), dpr * (innerHeight / 2 - camY * ppu * TK + shY)); }
 function updateCamera(dt) {
   let tx, ty;
-  if (player && (state === 'play' || state === 'over')) { tx = player.x + player.vx * .28; ty = player.y + player.vy * .28; }
+  const fc = player && player.dead && mpOn() ? (cars.find(c => c.isPlayer && !c.dead) || player) : player;
+  if (fc && (state === 'play' || state === 'over')) { tx = fc.x + fc.vx * .28; ty = fc.y + fc.vy * .28; }
   else { const t = performance.now() / 1000; tx = W / 2 + Math.sin(t * .12) * 300; ty = H / 2 + Math.sin(t * .09) * 140; }
   const hw = innerWidth / (2 * ppu), hh = innerHeight / (2 * ppu * TK);
   const x0 = AR.BX0 + hw, x1 = AR.BX1 - hw, y0 = AR.BY0 + hh, y1 = AR.BY1 - hh;
@@ -332,6 +384,7 @@ function setArena(i) {
   arenaIdx = i; arena = ARENAS[i]; OBST_C = [];
   const R2 = gameMode === 'daily' && daily && !devRun ? rng(daily.seed + i * 101 + 7) : Math.random;
   LAY = genLayout(arena.id, R2); wetMarks = [];
+  if (NET.role === 'host' && NET.started) setTimeout(() => nev(...netLayoutMsg()), 0);
   for (const o of LAY.fixed.concat(LAY.groups)) for (const [dx, dy, r] of o.c) OBST_C.push({ x: o.x + dx, y: o.y + dy, r });
   mctx.clearRect(0, 0, W, H);
   if (typeof resetHazards === 'function') resetHazards();
@@ -449,6 +502,14 @@ const TYPES = {
   boss:    { name: 'The Dozer', desc: 'armored blade up front - hit its sides and rear. Plates crack, then fall off', mass: 4.5, str: 70, spd: .64, turn: .55, prefer: .05, tag: '!', tagCol: '#ff5a4e', styles: ['dozer'], col: ['#f0b428', '#b88a00', '#ffd75e'], boss: 1 }
 };
 const TYPE_INTRO = { 2: 'flanker', 3: 'rammer', 4: 'bomber', 6: 'tank' };
+/* online multiplayer state (see ONLINE MULTIPLAYER below) */
+const NET = { role: null, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [] };
+const mpOn = () => !!NET.role && NET.started;
+const isHost = () => NET.role === 'host' && NET.started;
+const isGuest = () => NET.role === 'guest' && NET.started;
+const versusOn = () => mpOn() && NET.mode === 'versus';
+window.__localPlayer = () => player;
+function nev(...a) { if (NET.role === 'host' && NET.started) NET.ev.push(a); }
 const TWIN_COLS = [['#c1121f', '#7a0b14', '#ff5a5f'], ['#1b1d22', '#0b0c0f', '#4a4f5a']];
 const bossKind = w => gameMode === 'daily' ? 'dozer' : ['twin', 'dozer', 'crane'][Math.round(w / 5) % 3];
 const BOSS_INFO = { dozer: { name: 'THE DOZER', hint: 'armored blade up front - hit its sides and rear. Watch for the ground slam', bar: 'hit the sides and rear' }, crane: { name: 'THE CRANE', hint: 'dodge the swinging wrecking ball - slip in between swings', bar: 'dodge the ball, hit the truck' }, twin: { name: 'THE TWINS', hint: 'two at once - wreck one and the other goes into a RAGE', bar: 'wreck one, then survive the rage' } };
@@ -470,7 +531,7 @@ const MODS = [
 ];
 const mod = id => gameMode === 'daily' && !!daily && daily.mod.id === id;
 const nitroK = () => mod('nitro') ? 2 : 1;
-const API = location.origin === 'https://scrap-arena.3dp.workers.dev' ? '' : 'https://scrap-arena.3dp.workers.dev';
+const API = new URLSearchParams(location.search).get('api') || (location.origin === 'https://scrap-arena.3dp.workers.dev' ? '' : 'https://scrap-arena.3dp.workers.dev');
 function torontoDay(t = Date.now()) { try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(t)); } catch (e) { return new Date(t).toISOString().slice(0, 10); } }
 function msToReset() { const now = Date.now(), d = torontoDay(now); let lo = now, hi = now + 26 * 3600e3; while (hi - lo > 1000) { const m = (lo + hi) / 2; if (torontoDay(m) === d) lo = m; else hi = m; } return hi - now; }
 function hashStr(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -505,10 +566,11 @@ async function api(path, body) {
 function todayDaily() { const day = (dailyMeta && dailyMeta.day) || torontoDay(); if (!daily || daily.day !== day) daily = makeDaily(day); return daily; }
 const dailyDone = () => { const r = lsGet('scrapArenaDaily', null); return r && r.day === todayDaily().day ? r : null; };
 
+let carIdSeq = 0;
 function makeCar(x, y, a, col, isPlayer, wave) {
   const w = wave || 1;
   return {
-    x, y, a, vx: 0, vy: 0, spin: 0, col, isPlayer, parts: { hood: true, bumper: true, trunk: true, doorL: true, doorR: true },
+    id: ++carIdSeq, x, y, a, vx: 0, vy: 0, spin: 0, col, isPlayer, parts: { hood: true, bumper: true, trunk: true, doorL: true, doorR: true },
     mass: 1, str: 0, carName: '', styleId: 'cruiser', type: isPlayer ? 'player' : 'grunt', lost: 0, inv: 0, throttle: 0, steer: 0, handbrake: false,
     dead: false, deadT: 0, slip: 0, lw: null, rw: null, smokeT: 0, nitro: .5, boost: false, armor: 0, braking: false, seed: (Math.random() * 1e9) | 0,
     accel: isPlayer ? 560 : 380 + w * 12, maxSpeed: isPlayer ? 360 : Math.min(335, 250 + w * 9), turnRate: isPlayer ? 2.7 : Math.min(2.7, 2.2 + w * .05),
@@ -834,10 +896,11 @@ const keys = {}, touch = { left: false, right: false, gas: false, brake: false, 
 const joy = { active: false, id: null, cx: 0, cy: 0, dx: 0, dy: 0, mag: 0, rev: false };
 
 function banner(text, sub, ms) {
+  nev('b', text, sub, ms);
   const b = $('banner'); b.innerHTML = text + (sub ? '<small>' + sub + '</small>' : ''); b.classList.add('show');
   clearTimeout(banner.t); banner.t = setTimeout(() => b.classList.remove('show'), ms || 1400);
 }
-function addText(x, y, text, color, big) { texts.push({ x, y, text, color: color || '#fff', t: 0, big: !!big }); }
+function addText(x, y, text, color, big) { nev('t', x | 0, y | 0, text, color || '#fff', big ? 1 : 0); texts.push({ x, y, text, color: color || '#fff', t: 0, big: !!big }); }
 function spark(x, y, n, sp, color) {
   for (let i = 0; i < n; i++) {
     const a = Math.random() * 6.283, s = rand(.3, 1) * sp;
@@ -861,7 +924,7 @@ function scorch(x, y, r) {
 /* ---------- HUD ---------- */
 let hudNos = -1, hudCombo = '', hudFull = null;
 function updateHud() {
-  $('hw').textContent = wave; $('hs').textContent = score; $('hb').textContent = Math.max(best, score);
+  $('hw').textContent = wave; $('hs').textContent = versusOn() && player ? (player.score || 0) : score; $('hb').textContent = Math.max(best, score);
   if (!player || !ATLAS[player.styleId]) return;
   if (player.carName) $('hc').textContent = player.carName;
   $('armorTag').classList.toggle('on', !!player.armor);
@@ -877,6 +940,7 @@ function updateHud() {
 }
 function frameHud() {
   if (!player) return;
+  if (isGuest() && player.lost !== NET.myLost) { if (NET.myLost != null && player.lost > NET.myLost) hurtA = .55; NET.myLost = player.lost; updateHud(); }
   const n = Math.round(player.nitro * 100);
   if (n !== hudNos) { hudNos = n; $('nos').firstElementChild.style.width = n + '%'; }
   const full = player.nitro >= .999; if (full !== hudFull) { hudFull = full; $('nos').classList.toggle('full', full); }
@@ -886,7 +950,7 @@ function frameHud() {
   if (txt !== hudCombo) { hudCombo = txt; if (txt) el.innerHTML = txt + '<i></i>'; el.classList.toggle('on', !!txt); }
   if (show && el.firstElementChild) el.firstElementChild.style.transform = 'scaleX(' + clamp(combo.t / 2.2, 0, 1).toFixed(3) + ')';
 }
-const comboMult = () => Math.min(4, 1 + Math.floor(combo.n / 2));
+const comboMult = () => versusOn() ? 1 : Math.min(4, 1 + Math.floor(combo.n / 2));
 
 /* ---------- waves ---------- */
 function rosterFor(w, n) {
@@ -934,6 +998,7 @@ function spawnEnemy(i, type) {
   cars.push(c); return c;
 }
 function resetPlayerPos() {
+  if (mpOn()) { const hs = cars.filter(c => c.isPlayer); hs.forEach((h, i) => { const sp = netSpawn(i, hs.length); h.x = sp[0]; h.y = sp[1]; h.a = sp[2]; h.vx = h.vy = h.spin = 0; h.wp = null; h.grip = 14; }); snapCamera(); return; }
   player.x = W / 2; player.y = H / 2 + 150; player.a = -Math.PI / 2; player.vx = player.vy = player.spin = 0; player.wp = null; player.grip = 14; snapCamera();
 }
 function startWave() {
@@ -946,10 +1011,11 @@ function startWave() {
   cars = cars.filter(c => c.isPlayer);
   const ai = gameMode === 'daily' && !devRun ? daily.arena : Math.floor((wave - 1) / 2) % ARENAS.length;
   let sub = '';
-  if (ai !== arenaIdx) { setArena(ai); debris = []; resetPlayerPos(); }
+  if (versusOn()) { if (wave === 1) { setArena(NET.vsArena); debris = []; resetPlayerPos(); } }
+  else if (ai !== arenaIdx) { setArena(ai); debris = []; resetPlayerPos(); }
   if (ai !== arenaIdx || wave % 2 === 1) sub = ARENAS[ai].name + '  /  ';
   if (gameMode === 'daily') sub = 'DAILY ' + wave + '/' + DAILY_WAVES + '  /  ' + (wave === 1 ? daily.mod.icon + ' ' + daily.mod.name.toUpperCase() + '  /  ' : '');
-  const n0 = Math.min(2 + wave, 7), roster = rosterFor(wave, n0), n = roster.length;
+  const nh = mpOn() ? cars.filter(c => c.isPlayer).length : 1, n0 = Math.min(2 + wave + (nh - 1), 9), roster = versusOn() ? [] : rosterFor(wave, n0), n = roster.length;
   resetHazards();
   roster.forEach((t, i) => spawnEnemy(i + wave, t));
   let fresh = null;
@@ -957,6 +1023,7 @@ function startWave() {
   if (fresh) introT = 2.4;
   const hz = (ai !== arenaIdxPrev) ? HAZ_TXT[arena.id] : '';
   arenaIdxPrev = ai;
+  if (versusOn()) { introT = 2.6; banner('VERSUS DERBY', 'Last car standing wins  /  ' + ARENAS[arenaIdx].name, 2600); beep(440, .1); updateHud(); return; }
   if (isBossWave(wave)) { const bi = BOSS_INFO[bossKind(wave)]; introT = 2.8; banner('BOSS WAVE', bi.name + '<br>' + bi.hint + (hz ? '<br>' + hz : ''), 3200); }
   else banner(gameMode === 'daily' ? 'DAILY ' + wave : 'WAVE ' + wave, sub + n + ' cars' + (fresh ? '<br>NEW: ' + TYPES[fresh].name.toUpperCase() + ' - ' + TYPES[fresh].desc : '') + (hz ? '<br>' + hz : ''), fresh || hz ? 2800 : 1600);
   beep(440, .1); setTimeout(() => beep(660, .16), 150);
@@ -1172,7 +1239,7 @@ function updateHazards(dt) {
   else if (cr.phase === 'up') { cr.e = 1 - Math.max(0, cr.t / 1.3); if (cr.t <= 0) { cr.phase = 'idle'; cr.t = rand(4.5, 7); } }
 }
 function crushImpact() {
-  const cr = crusher; shake = 26; boomSnd(); flashA = Math.max(flashA, .15);
+  const cr = crusher; nev('cr'); shake = 26; boomSnd(); flashA = Math.max(flashA, .15);
   ring(cr.x, cr.y, 120, '#d8c8a8', .5, 9);
   for (let i = 0; i < 26; i++) parts.push({ x: cr.x + rand(-cr.w / 2, cr.w / 2), y: cr.y + (Math.random() < .5 ? -1 : 1) * cr.h / 2, vx: rand(-60, 60), vy: rand(-60, 60), life: rand(.7, 1.3), max: 1.3, size: rand(6, 11), sp: 'dust', type: 'smoke', k: 1.4 });
   for (const c of cars) {
@@ -1244,8 +1311,8 @@ function spawnPickup() {
   while (tries < 60 && (Math.hypot(x - player.x, y - player.y) < 140 || OBST_C.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 30) || pickups.some(p => Math.hypot(p.x - x, p.y - y) < 120)));
   pickups.push({ k, x, y, t: 0, life: 12 });
 }
-function collectPickup(p) {
-  const P = PK[p.k];
+function collectPickup(p, who) {
+  const P = PK[p.k], player = who || window.__localPlayer();
   if (p.k === 'wrench') {
     const lost = PARTS.filter(q => !player.parts[q]);
     if (lost.length) { const q = lost[(Math.random() * lost.length) | 0]; player.parts[q] = true; player.lost--; addText(p.x, p.y - 20, PNAME[q].toUpperCase() + ' FIXED', P.col); }
@@ -1291,18 +1358,22 @@ function losePart(v, region, nx, ny, closing, force) {
   let pick = force || REGION_PREFS[region].find(p => v.parts[p]);
   if (!pick) { const rem = PARTS.filter(p => v.parts[p]); pick = rem[(Math.random() * rem.length) | 0]; }
   v.parts[pick] = false; v.lost++;
+  if (!v.isPlayer && !mpOn()) dropScrap(v.x, v.y, v.boss ? 5 : 2);
+  partFx(v, pick, nx, ny, closing); nev('p', v.id, pick, +nx.toFixed(2), +ny.toFixed(2), closing | 0);
+  return pick;
+}
+function partFx(v, pick, nx, ny, closing) {
   const D = SD(v.styleId), bx = (SPR.cars[v.styleId] && SPR.cars[v.styleId].boxes[pick]) || [D.fw / 2 - 30, D.fh / 2 - 30, D.fw / 2 + 30, D.fh / 2 + 30];
   const [wx, wy] = toWorld(v, ((bx[0] + bx[2]) / 2 - D.fw / 2) / D.spu, ((bx[1] + bx[3]) / 2 - D.fh / 2) / D.spu), sp = Math.min(closing, 600) * .5 + 70;
-  if (!v.isPlayer) dropScrap(wx, wy, v.boss ? 5 : 2);
   const dir = Math.atan2(ny, nx) + rand(-.5, .5);
   debris.push({ x: wx, y: wy, z: 2, vz: rand(160, 300), a: v.a, vx: Math.cos(dir) * sp + v.vx * .5, vy: Math.sin(dir) * sp + v.vy * .5, spin: rand(-12, 12),
     kind: pick, sid: v.styleId, col: v.col[0], bx, t: 0 });
   if (debris.length > 70) debris.shift();
-  if (pick === 'doorL' || pick === 'doorR' || pick === 'hood') { shards(wx, wy, 8); SFX.glass(); } else SFX.clang(.8);
-  return pick;
+  if (pick === 'doorL' || pick === 'doorR' || pick === 'hood') { shards(wx, wy, 8); SFX.glass.raw ? SFX.glass.raw() : SFX.glass(); } else (SFX.clang.raw || SFX.clang)(.8);
 }
 function hitCar(v, cp, atk, closing, nx, ny, noKb) {
   if (v.inv > 0 || v.dead) return false;
+  if (v.isPlayer && atk && atk.isPlayer && atk !== v && mpOn() && !versusOn()) return false; // no friendly fire in co-op
   if (v.armor) {
     v.armor = 0; v.inv = .6;
     spark(cp[0], cp[1], 18, 240, '#8fe3ff'); ring(v.x, v.y, 44, '#4cc9f0', .35, 4); thud(.35, 220);
@@ -1340,11 +1411,9 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
     const rx = cp[0] - v.x, ry = cp[1] - v.y;
     v.spin = clamp(v.spin + clamp((rx * ny - ry * nx) * .09, -3, 3) * (region === 'left' || region === 'right' ? 1.4 : .6), -7, 7);
   }
-  spark(cp[0], cp[1], 18, 280, '#ffd166'); spark(cp[0], cp[1], 7, 170, '#fff');
-  shake = Math.min(16, shake + 4 + Math.min(closing, 500) * .03);
-  crunch(.25 + closing / 700); thud(.3 + closing / 900);
+  hitFx(cp[0], cp[1], closing); nev('h', cp[0] | 0, cp[1] | 0, closing | 0);
   let txt = PNAME[pick].toUpperCase() + ' GONE!', col = v.isPlayer ? '#ff6b75' : '#ffd166';
-  if (atk && atk.isPlayer && !v.isPlayer) {
+  if (atk && atk.isPlayer && atk !== v && (!v.isPlayer || versusOn())) {
     combo.n = combo.t > 0 ? combo.n + 1 : 1; combo.t = 2.2;
     const mult = comboMult();
     let pts = 10 * mult, bonus = [];
@@ -1353,25 +1422,30 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
     const px = v.x + nx * 34, py = v.y + ny * 34;
     const pinned = !noKb && (px < M || px > W - M || py < M || py > H - M || OBST_C.some(o => Math.hypot(o.x - px, o.y - py) < o.r + 6));
     if (pinned && !v.boss && v.lost < 5) { losePart(v, region, nx, ny, closing); pts += 30; bonus.push('PINNED! +30'); }
-    score += pts; atk.nitro = Math.min(1, atk.nitro + .2 * (atk.nitroEff || 1) * nitroK());
+    if (versusOn()) atk.score = (atk.score || 0) + pts; else score += pts; atk.nitro = Math.min(1, atk.nitro + .2 * (atk.nitroEff || 1) * nitroK());
     if (combo.n >= 3) SFX.combo(Math.min(combo.n, 8)); if (pinned || combo.n === 4) SFX.cheer(.6);
     txt += '  +' + pts;
     bonus.forEach((b, i) => addText(v.x, v.y - 54 - i * 16, b, '#7dffb0'));
     hitStop = Math.max(hitStop, .05 + Math.min(closing, 500) / 10000);
   }
-  if (v.isPlayer) { hitStop = Math.max(hitStop, .07); hurtA = .55; combo.n = 0; combo.t = 0; if (v.lost >= 3) SFX.ooh(); lastPlayerHitT = performance.now() / 1000; if (atk && !atk.isPlayer) { if (atk.ai) atk.ai.landed = true; enemyEmote(atk, 'taunt', .55); } }
+  if (v.isPlayer) { v.lastHitT = performance.now() / 1000; if (v === player) { hitStop = Math.max(hitStop, .07); hurtA = .55; lastPlayerHitT = v.lastHitT; } if (!versusOn()) { combo.n = 0; combo.t = 0; } if (v.lost >= 3) SFX.ooh(); if (atk && !atk.isPlayer) { if (atk.ai) atk.ai.landed = true; enemyEmote(atk, 'taunt', .55); } }
   else if (atk && atk.isPlayer && v.ai && !v.boss) enemyEmote(v, 'dizzy', .18);
   addText(v.x, v.y - 36, txt, col);
   if (v.lost >= (v.maxLost || 5)) killCar(v, atk);
   updateHud();
   return true;
 }
+function hitFx(x, y, closing) { spark(x, y, 18, 280, '#ffd166'); spark(x, y, 7, 170, '#fff'); shake = Math.min(16, shake + 4 + Math.min(closing, 500) * .03); crunch(.25 + closing / 700); thud(.3 + closing / 900); }
+function killFx(c) { for (let i = 0; i < 40; i++) smoke(c.x + rand(-10, 10), c.y + rand(-10, 10), false, true); spark(c.x, c.y, 40, 380, '#ff9f1c'); shake = 22; thud(.7, 80); crunch(.7); ring(c.x, c.y, 70, '#ffb454', .45, 7); flashA = Math.max(flashA, .18); scorch(c.x, c.y, 48); }
+function bossDownFx(c) { ring(c.x, c.y, 160, '#ffd23f', .7, 12); ring(c.x, c.y, 100, '#fff', .4, 6); flashA = .55; shake = 32; boomSnd(); for (let i = 0; i < 70; i++) smoke(c.x + rand(-40, 40), c.y + rand(-25, 25), Math.random() < .5, Math.random() < .6); scorch(c.x, c.y, 110); }
 function killCar(c, atk) {
   c.dead = true; c.deadT = 0; c.throttle = 0; c.steer = 0; c.boost = false; c._key = '';
-  for (let i = 0; i < 40; i++) smoke(c.x + rand(-10, 10), c.y + rand(-10, 10), false, true);
-  spark(c.x, c.y, 40, 380, '#ff9f1c'); shake = 22; thud(.7, 80); crunch(.7);
-  ring(c.x, c.y, 70, '#ffb454', .45, 7); flashA = Math.max(flashA, .18); scorch(c.x, c.y, 48);
-  if (c.isPlayer) { gameOverT = 1.8; slowT = .9; addText(c.x, c.y - 40, 'WRECKED!', '#ff6b75', true); SFX.wreck(); }
+  killFx(c); nev('k', c.id);
+  if (c.isPlayer) {
+    if (!mpOn()) { gameOverT = 1.8; slowT = .9; }
+    addText(c.x, c.y - 40, mpOn() ? (c.pname || 'PLAYER').toUpperCase() + ' WRECKED!' : 'WRECKED!', '#ff6b75', true); SFX.wreck();
+    if (versusOn() && atk && atk.isPlayer && atk !== c) { atk.score = (atk.score || 0) + 300; atk.kos = (atk.kos || 0) + 1; addText(atk.x, atk.y - 50, 'KO  +300', '#7dffb0', true); }
+  }
   else {
     dropScrap(c.x, c.y, c.boss ? 30 : 5);
     if (c.boss && c.partner && !c.partner.dead) {
@@ -1379,7 +1453,7 @@ function killCar(c, atk) {
       const pts = 300 * Math.max(1, wave / 5); score += pts; SFX.cheer(1.2); SFX.gasp();
       ring(c.x, c.y, 120, '#ff5a4e', .5, 8); shake = 24; scorch(c.x, c.y, 60); addText(c.x, c.y - 60, 'TWIN DOWN!  +' + pts, '#ffd23f', true);
       banner('RAGE!', 'the other twin is out for revenge', 1800);
-    } else if (c.boss) { SFX.cheer(1.8); SFX.horn(); const pts = 500 * Math.max(1, wave / 5); score += pts; ring(c.x, c.y, 160, '#ffd23f', .7, 12); ring(c.x, c.y, 100, '#fff', .4, 6); flashA = .55; shake = 32; boomSnd(); for (let i = 0; i < 70; i++) smoke(c.x + rand(-40, 40), c.y + rand(-25, 25), Math.random() < .5, Math.random() < .6); scorch(c.x, c.y, 110); addText(c.x, c.y - 60, 'BOSS DOWN!  +' + pts, '#ffd23f', true); banner('BOSS DOWN!', '+' + pts + ' points  /  +30 scrap', 2000); }
+    } else if (c.boss) { SFX.cheer(1.8); SFX.horn(); const pts = 500 * Math.max(1, wave / 5); score += pts; bossDownFx(c); nev('bd', c.id); addText(c.x, c.y - 60, 'BOSS DOWN!  +' + pts, '#ffd23f', true); banner('BOSS DOWN!', '+' + pts + ' points  /  +30 scrap', 2000); }
     else if (atk && atk.isPlayer) {
       const mult = comboMult(), pts = 100 * mult;
       score += pts; kills++; lastKOT = performance.now() / 1000; atk.nitro = Math.min(1, atk.nitro + .35 * (atk.nitroEff || 1) * nitroK()); hitStop = Math.max(hitStop, .1);
@@ -1390,13 +1464,16 @@ function killCar(c, atk) {
   if (c.type === 'bomber') booms.push({ x: c.x, y: c.y, t: .22, by: atk && atk.isPlayer ? atk : null });
   updateHud();
 }
+function boomFx(x, y, R) {
+  ring(x, y, R * 1.1, '#ffd23f', .55, 10); ring(x, y, R * .7, '#fff', .3, 5);
+  flashA = Math.max(flashA, .45); shake = 28; boomSnd(); scorch(x, y, 85);
+  for (let i = 0; i < 60; i++) { const a = Math.random() * 6.283, s = rand(20, 160); parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(.5, 1.1), max: 1.1, size: rand(6, 12), sp: Math.random() < .5 ? 'fire' : 'fire2', type: 'fire', k: 2 }); }
+  for (let i = 0; i < 18; i++) smoke(x + rand(-30, 30), y + rand(-30, 30), true, false);
+  spark(x, y, 50, 520, '#ffd166');
+}
 function explode(b) {
   const R = b.barrel ? 108 : 125;
-  ring(b.x, b.y, R * 1.1, '#ffd23f', .55, 10); ring(b.x, b.y, R * .7, '#fff', .3, 5);
-  flashA = Math.max(flashA, .45); shake = 28; boomSnd(); scorch(b.x, b.y, 85);
-  for (let i = 0; i < 60; i++) { const a = Math.random() * 6.283, s = rand(20, 160); parts.push({ x: b.x, y: b.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(.5, 1.1), max: 1.1, size: rand(6, 12), sp: Math.random() < .5 ? 'fire' : 'fire2', type: 'fire', k: 2 }); }
-  for (let i = 0; i < 18; i++) smoke(b.x + rand(-30, 30), b.y + rand(-30, 30), true, false);
-  spark(b.x, b.y, 50, 520, '#ffd166');
+  boomFx(b.x, b.y, R); nev('x', b.x | 0, b.y | 0, R);
   for (const o of cars) {
     if (o.dead) continue;
     const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy); if (d > R) continue;
@@ -1587,6 +1664,7 @@ function drawBossFx() {
 /* ---------- step ---------- */
 let wasBoost = false;
 function step(dt) {
+  if (isGuest()) return guestStep(dt);
   if (introT > 0) introT -= dt;
   if (combo.t > 0) { combo.t -= dt; if (combo.t <= 0) combo.n = 0; }
   // player input
@@ -1596,7 +1674,7 @@ function step(dt) {
     player.steer = (r ? 1 : 0) - (l ? 1 : 0);
     player.throttle = g ? 1 : (b ? -1 : 0);
     player.handbrake = !!(keys.Space || touch.hand);
-    const want = !!(keys.ShiftLeft || keys.ShiftRight || touch.nos) && state === 'play' && introT <= 0;
+    const want = !!(keys.ShiftLeft || keys.ShiftRight || touch.nos) && state === 'play' && introT <= 0; player.wantNos = want;
     if (joy.active && joy.mag > .15) {
       // stick in front of the car = drive that way; stick behind the car = brake, then reverse with the rear steering toward the stick
       const tgt = Math.atan2(joy.dy / TK, joy.dx), diff = wrap(tgt - player.a), m = clamp((joy.mag - .15) / .65, .3, 1);
@@ -1612,6 +1690,7 @@ function step(dt) {
     const sp = Math.hypot(player.vx, player.vy);
     if (player.slip > 110 && sp > 140 && introT <= 0) player.nitro = Math.min(1, player.nitro + .2 * dt * (player.nitroEff || 1) * nitroK());
   } else if (player) player.boost = false;
+  if (isHost()) for (const c of cars) if (c.isPlayer && c !== player && !c.dead) netDriveRemote(c, dt);
   for (const c of cars) {
     if (!c.isPlayer && !c.dead) ai(c, dt);
     if (!c.dead && c.boss && introT <= 0 && state === 'play') bossUpdate(c, dt);
@@ -1677,10 +1756,10 @@ function step(dt) {
   // remove old wrecks (not player)
   cars = cars.filter(c => c.isPlayer || !c.dead || c.deadT < 3.2);
   // pickups
-  if (state === 'play' && waveMode === 'fight' && introT <= 0 && player && !player.dead) {
+  if (state === 'play' && waveMode === 'fight' && introT <= 0 && cars.some(h => h.isPlayer && !h.dead)) {
     pickT -= dt;
     if (pickT <= 0) { if (pickups.length < 2) spawnPickup(); pickT = rand(6, 10); }
-    for (const p of pickups) { p.t += dt; if (Math.hypot(p.x - player.x, p.y - player.y) < 28) { p.t = 99; collectPickup(p); } }
+    for (const p of pickups) { p.t += dt; const h = cars.find(h => h.isPlayer && !h.dead && Math.hypot(p.x - h.x, p.y - h.y) < 28); if (h && p.t < 90) { p.t = 99; collectPickup(p, h); } }
     pickups = pickups.filter(p => p.t < p.life);
   }
   // debris with a little height so parts tumble and bounce
@@ -1704,15 +1783,21 @@ function step(dt) {
 
   // wave logic
   if (state === 'play') {
-    if (player.dead) {
+    const over = mpOn() ? netRoundOver() : player.dead;
+    if (over) {
+      if (mpOn() && !NET.overArmed) { NET.overArmed = true; gameOverT = versusOn() ? 2.6 : 2.2; }
       gameOverT -= dt;
       if (gameOverT <= 0) endGame();
-    } else if (waveMode === 'fight' && introT <= 0 && !booms.length && cars.filter(c => !c.isPlayer && !c.dead).length === 0) {
+    } else if (!versusOn() && waveMode === 'fight' && introT <= 0 && !booms.length && cars.filter(c => !c.isPlayer && !c.dead).length === 0) {
       waveMode = 'clear'; clearT = 2.6; pickups = [];
-      const lost = PARTS.filter(p => !player.parts[p]);
       let fixed = 0;
-      while (lost.length && fixed < 2) { const k = (Math.random() * lost.length) | 0; player.parts[lost[k]] = true; lost.splice(k, 1); fixed++; player.lost--; }
-      player.inv = 1; player.nitro = Math.min(1, player.nitro + .3);
+      for (const h of cars.filter(c => c.isPlayer)) {
+        if (h.dead && mpOn()) { h.dead = false; h.deadT = 0; for (const p of PARTS) h.parts[p] = true; h.lost = 0; losePartQuiet(h, 2); h.inv = 2.5; h._key = ''; h.spin = 0; addText(h.x, h.y - 40, (h.pname || '').toUpperCase() + ' IS BACK!', '#7dffb0', true); continue; }
+        const lost = PARTS.filter(p => !h.parts[p]); let f = 0;
+        while (lost.length && f < 2) { const k = (Math.random() * lost.length) | 0; h.parts[lost[k]] = true; lost.splice(k, 1); f++; h.lost--; } h._key = '';
+        if (h === player) fixed = f;
+        h.inv = 1; h.nitro = Math.min(1, h.nitro + .3);
+      }
       score += 50 * wave;
       if (gameMode === 'daily' && !devRun && wave >= DAILY_WAVES) { score += 1000; SFX.win(); banner('DAILY COMPLETE!', '+' + (50 * wave + 1000) + ' finish bonus', 2400); }
       else banner('WAVE CLEARED', '+' + (50 * wave) + (fixed ? '  /  ' + fixed + ' parts repaired' : '') + (gameMode === 'daily' ? '' : wave % 2 === 0 ? '  /  new car + new arena next' : ''), 2200);
@@ -1720,7 +1805,7 @@ function step(dt) {
       updateHud();
     } else if (waveMode === 'clear') {
       clearT -= dt;
-      if (clearT <= 0) { if (gameMode === 'daily' && !devRun && wave >= DAILY_WAVES) endGame(true); else if (wave % 2 === 0 && !mod('nogarage')) { waveMode = 'select'; showSelect(wave + 1, false); } else startWave(); }
+      if (clearT <= 0) { if (gameMode === 'daily' && !devRun && wave >= DAILY_WAVES) endGame(true); else if (wave % 2 === 0 && !mod('nogarage') && !mpOn()) { waveMode = 'select'; showSelect(wave + 1, false); } else startWave(); }
     }
   }
 }
@@ -1776,6 +1861,7 @@ function renderDailyBox() {
 }
 setInterval(() => { const c = $('dailyCd'); if (c && state !== 'play') { if (todayDaily().day !== torontoDay() && !dailyMeta) daily = null; c.textContent = 'New daily in ' + fmtDur(msToReset()); } }, 30000);
 function endGame(won, quit) {
+  if (NET.role && (NET.started || state === 'play')) { netShowResults({ hostLeft: false }); return; }
   state = 'over'; paused = false; $('pauseMenu').classList.add('hidden');
   const isD = gameMode === 'daily';
   let idx = -1, kept = null, msg;
@@ -1950,6 +2036,7 @@ function render() {
   ctx.globalAlpha = 1;
   if (state === 'play') { drawArrows(); drawBossBar(); }
   if (state === 'play' || state === 'over') drawEmotes();
+  if (mpOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname + (versusOn() ? '  ' + (c.score || 0) : ''), sx, ny); }
   if (flashA > .01) { ctx.fillStyle = 'rgba(255,240,220,' + flashA.toFixed(3) + ')'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
   if (hurtA > .02) {
     const R = Math.max(innerWidth, innerHeight), g = ctx.createRadialGradient(innerWidth / 2, innerHeight / 2, R * .3, innerWidth / 2, innerHeight / 2, R * .75);
@@ -1963,10 +2050,12 @@ let last = 0;
 function frame(t) {
   requestAnimationFrame(frame);
   const rdt = Math.min(.033, (t - last) / 1000 || .016); last = t;
-  if ((state === 'play' || state === 'over') && !paused) {
+  if (mpOn()) { hitStop = 0; slowT = 0; }
+  if ((state === 'play' || state === 'over') && (!paused || mpOn())) {
     if (hitStop > 0) hitStop -= rdt;
     else { let dt = rdt; if (slowT > 0) { slowT -= rdt; dt *= .35; } step(dt / 2); step(dt / 2); }
   }
+  netTick(rdt);
   updateCamera(rdt); render(); frameHud();
   if (engGain && player && !muted) {
     const sp = Math.hypot(player.vx, player.vy);
@@ -2032,6 +2121,291 @@ $('devGo').addEventListener('click', () => {
   selId = DEV.car; $('overlay').classList.add('hidden'); pendingFresh = true; newGame();
 });
 
+
+/* ---------- ONLINE MULTIPLAYER ----------
+   One Durable Object per room relays messages. The host's browser runs the real game; guests send
+   their controls ~15x/s and draw what the host sends back (snapshots + effect events). */
+// make every crowd/arena sound effect replay on guests
+for (const k of Object.keys(SFX)) { const f = SFX[k]; SFX[k] = (...a) => { nev('s', k, ...a); return f(...a); }; SFX[k].raw = f; }
+function losePartQuiet(c, n) { for (let i = 0; i < n; i++) { const rem = PARTS.filter(p => c.parts[p] && p !== 'bumper'); if (!rem.length) break; c.parts[rem[(Math.random() * rem.length) | 0]] = false; c.lost++; } }
+function netSpawn(i, n) {
+  if (versusOn()) { const pts = [[170, 150, .6], [W - 170, H - 150, -2.5], [W - 170, 150, 2.5], [170, H - 150, -.6]]; return pts[i % 4]; }
+  const off = [[0, 0], [-90, 0], [90, 0], [0, 80]][i % 4]; return [W / 2 + off[0], H / 2 + 150 + off[1], -Math.PI / 2];
+}
+function netRoundOver() {
+  const hs = cars.filter(c => c.isPlayer), alive = hs.filter(c => !c.dead);
+  if (versusOn()) return hs.length >= 2 ? alive.length <= 1 : alive.length === 0;
+  return alive.length === 0;
+}
+function netDriveRemote(c, dt) {
+  const inp = NET.inputs[c.pid] || [0, 0, 0, 0, 0];
+  c.steer = clamp(+inp[0] || 0, -1, 1); c.throttle = clamp(+inp[1] || 0, -1, 1); c.handbrake = !!inp[2];
+  const want = !!inp[3] && introT <= 0;
+  c.boost = want && c.nitro > 0 && c.throttle >= 0;
+  if (c.boost) c.nitro = Math.max(0, c.nitro - .85 * dt / (c.nitroEff || 1));
+  const sp = Math.hypot(c.vx, c.vy);
+  if (c.slip > 110 && sp > 140 && introT <= 0) c.nitro = Math.min(1, c.nitro + .2 * dt * (c.nitroEff || 1) * nitroK());
+  if ((inp[4] | 0) !== (NET.emoSeen[c.pid] | 0)) { NET.emoSeen[c.pid] = inp[4] | 0; emote(c, playerEmotion(c)); }
+}
+function netSend(o) { try { if (NET.ws && NET.ws.readyState === 1) NET.ws.send(typeof o === 'string' ? o : JSON.stringify(o)); } catch (e) {} }
+const FLAG = { dead: 1, braking: 2, reversing: 4, boost: 8, rage: 16, slam: 32, windup: 64, armor: 128, hb: 256 };
+const P4 = ['hood', 'trunk', 'doorL', 'doorR'];
+function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '']; }
+function netSnapshot() {
+  NET.metaT -= 1; if (NET.metaT <= 0) { NET.metaT = 30; NET.metaSent.clear(); }
+  const metas = [], cs = [];
+  for (const c of cars) {
+    if (!NET.metaSent.has(c.id)) { metas.push(carMeta(c)); NET.metaSent.add(c.id); }
+    let f = 0; if (c.dead) f |= 1; if (c.braking) f |= 2; if (c.reversing) f |= 4; if (c.boost) f |= 8; if (c.rage) f |= 16; if (c.slam) f |= 32; if (c.ai && c.ai.mode === 'windup' && !c.isPlayer) f |= 64; if (c.armor) f |= 128; if (c.handbrake) f |= 256;
+    let pm = 0; PARTS.forEach((p, i) => { if (c.parts[p]) pm |= 1 << i; });
+    cs.push([c.id, Math.round(c.x), Math.round(c.y), +c.a.toFixed(3), Math.round(c.vx), Math.round(c.vy), f, pm, c.lost, Math.round(c.nitro * 100), Math.round(c.slip), c.php ? P4.map(p => c.php[p]) : 0, c.arm ? +c.arm.ang.toFixed(3) : 0, c.score || 0, c.kos || 0]);
+  }
+  netSend({ s: { w: wave, wm: waveMode, it: +Math.max(0, introT).toFixed(2), sc: score, cb: [combo.n, +Math.max(0, combo.t).toFixed(2)], ar: arenaIdx, st: state, cars: cs, m: metas,
+    pk: pickups.map(p => [p.x | 0, p.y | 0, p.k, +(p.life - p.t).toFixed(1)]), br: barrels.map(b => b.alive ? 1 : 0), cr: crusher ? [crusher.phase, +crusher.e.toFixed(2)] : 0 }, e: NET.ev });
+  NET.ev = [];
+}
+function netLayoutMsg() { return ['ar', arenaIdx, { g: LAY.groups.map(g => [g.k, g.x | 0, g.y | 0]), b: LAY.barrels.map(b => [b[0] | 0, b[1] | 0]), o: LAY.oil.map(o => [o[0] | 0, o[1] | 0, o[2]]), p: LAY.puddles.map(p => [p.x | 0, p.y | 0, p.rx | 0, p.ry | 0, +p.rot.toFixed(2), p.seed]) }]; }
+// guests: build the same arena layout the host rolled
+function netApplyLayout(ai, L2) {
+  arenaIdx = ai; arena = ARENAS[ai];
+  const M = ASSET.objm[arena.id] || {};
+  LAY = { fixed: arena.obst.filter(o => FIXED_OBST(o.k)), groups: L2.g.map(([k, x, y]) => ({ k, x, y, c: (M[k] || {}).c || [] })), barrels: L2.b, oil: L2.o,
+    puddles: L2.p.map(([x, y, rx, ry, rot, seed]) => ({ x, y, rx, ry, rot, seed, dx: 0, dy: 0, vx: 0, vy: 0, rip: [] })) };
+  wetMarks = []; mctx.clearRect(0, 0, W, H); debris = [];
+  OBST_C = []; for (const o of LAY.fixed.concat(LAY.groups)) for (const [dx, dy, r] of o.c) OBST_C.push({ x: o.x + dx, y: o.y + dy, r });
+  barrels = LAY.barrels.map(([x, y]) => ({ x, y, r: 13, alive: true }));
+  oilCv = LAY.oil.map(([x, y, r], i) => ({ x, y, r, cv: makeOil(r, i * 13 + ai * 7 + 3) }));
+  const hz = HAZ[arena.id] || {}; crusher = hz.crusher ? Object.assign({ phase: 'idle', t: 4.5, e: 1, bt: 0 }, hz.crusher) : null;
+}
+function netGuestCar(m) {
+  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName] = m;
+  let c = NET.byId.get(id);
+  if (!c) { c = makeCar(0, 0, 0, col, !!isP, 1); c.id = id; c.init = false; NET.byId.set(id, c); }
+  Object.assign(c, { type, styleId, col, isPlayer: !!isP, pid, pname, boss: !!boss, bossKind, cL: cL || undefined, cW: cW || undefined, phpMax, twinIdx, maxLost, carName });
+  if (boss && !c.php) c.php = { hood: 2, trunk: 2, doorL: 2, doorR: 2 };
+  if (bossKind === 'crane' && !c.arm) c.arm = { ang: 0, w: 1, len: 150, r: 19, cd: new Map() };
+  if (isP && pid === PID) player = c;
+  return c;
+}
+function netApplySnap(s) {
+  for (const m of s.m || []) netGuestCar(m);
+  const list = [];
+  for (const d of s.cars) {
+    const c = NET.byId.get(d[0]); if (!c) continue; list.push(c);
+    c.tx = d[1]; c.ty = d[2]; c.ta = d[3]; c.vx = d[4]; c.vy = d[5];
+    if (!c.init) { c.x = c.tx; c.y = c.ty; c.a = c.ta; c.init = true; }
+    const f = d[6], wasDead = c.dead;
+    c.dead = !!(f & 1); c.braking = !!(f & 2); c.reversing = !!(f & 4); c.boost = !!(f & 8); c.rage = !!(f & 16); c.slam = (f & 32) ? (c.slam || { t: .85, max: .85 }) : null; c.armor = (f & 128) ? 1 : 0; c.handbrake = !!(f & 256);
+    if (c.ai) c.ai.mode = (f & 64) ? 'windup' : 'chase';
+    if (c.dead && !wasDead) c.deadT = 0;
+    let changed = false; PARTS.forEach((p, i) => { const on = !!(d[7] & (1 << i)); if (c.parts[p] !== on) { c.parts[p] = on; changed = true; } });
+    if (changed || c.lost !== d[8] || wasDead !== c.dead) c._key = '';
+    c.lost = d[8]; c.nitro = d[9] / 100; c.slip = d[10];
+    if (d[11] && c.php) P4.forEach((p, i) => { c.php[p] = d[11][i]; });
+    if (c.arm) c.arm.tang = d[12];
+    c.score = d[13]; c.kos = d[14];
+  }
+  cars = list;
+  wave = s.w; waveMode = s.wm; introT = s.it; score = s.sc; combo.n = s.cb[0]; combo.t = s.cb[1];
+  pickups = s.pk.map(([x, y, k, rem]) => ({ x, y, k, t: 0, life: rem }));
+  s.br.forEach((a, i) => { if (barrels[i]) barrels[i].alive = !!a; });
+  if (crusher && s.cr) { crusher.phase = s.cr[0]; crusher.e = s.cr[1]; }
+  if ($('hw').textContent != wave || NET.hudT-- <= 0) { NET.hudT = 8; updateHud(); }
+}
+function netEvents(evs) {
+  for (const e of evs) {
+    const k = e[0], c = typeof e[1] === 'number' ? NET.byId.get(e[1]) : null;
+    if (k === 'p' && c) { c.parts[e[2]] = false; c._key = ''; partFx(c, e[2], e[3], e[4], e[5]); }
+    else if (k === 'h') hitFx(e[1], e[2], e[3]);
+    else if (k === 'k' && c) { c.dead = true; c.deadT = 0; c._key = ''; killFx(c); }
+    else if (k === 'bd' && c) bossDownFx(c);
+    else if (k === 'x') boomFx(e[1], e[2], e[3]);
+    else if (k === 't') texts.push({ x: e[1], y: e[2], text: e[3], color: e[4], t: 0, big: !!e[5] });
+    else if (k === 'b') banner(e[1], e[2], e[3]);
+    else if (k === 's' && SFX[e[1]] && SFX[e[1]].raw) SFX[e[1]].raw(...e.slice(2));
+    else if (k === 'e' && c) emote(c, null, [e[2], e[3] || undefined]);
+    else if (k === 'cr' && crusher) { shake = 26; boomSnd(); ring(crusher.x, crusher.y, 120, '#d8c8a8', .5, 9); }
+    else if (k === 'ar') netApplyLayout(e[1], e[2]);
+    else if (k === 'over') netShowResults(e[1]);
+  }
+}
+// guests: smooth toward the host's positions, run only visual effects locally
+function guestStep(dt) {
+  if (player && !player.dead) {
+    const l = keys.ArrowLeft || touch.left, r = keys.ArrowRight || touch.right, g = keys.ArrowUp || touch.gas, b = keys.ArrowDown || touch.brake;
+    let st = (r ? 1 : 0) - (l ? 1 : 0), th = g ? 1 : (b ? -1 : 0);
+    if (joy.active && joy.mag > .15) {
+      const tgt = Math.atan2(joy.dy / TK, joy.dx), diff = wrap(tgt - player.a), m = clamp((joy.mag - .15) / .65, .3, 1);
+      if (!joy.rev && Math.abs(diff) > 2.2) joy.rev = true; else if (joy.rev && Math.abs(diff) < 1.4) joy.rev = false;
+      if (joy.rev) { const vf = player.vx * Math.cos(player.a) + player.vy * Math.sin(player.a), db = wrap(tgt - player.a - Math.PI); th = -m; st = vf > 25 ? 0 : clamp(-db * 2.6, -1, 1); }
+      else { st = clamp(diff * 2.6, -1, 1); th = m; }
+    } else joy.rev = false;
+    const nos = !!(keys.ShiftLeft || keys.ShiftRight || touch.nos) ? 1 : 0, hb = (keys.Space || touch.hand) ? 1 : 0;
+    NET.myIn = [+st.toFixed(2), +th.toFixed(2), hb, nos, NET.emo];
+  } else NET.myIn = [0, 0, 0, 0, NET.emo];
+  for (const c of cars) {
+    if (c.tx == null) continue;
+    c.tx += c.vx * dt; c.ty += c.vy * dt;
+    const k = Math.min(1, dt * 12); c.x += c.vx * dt; c.y += c.vy * dt; c.x += (c.tx - c.x) * k; c.y += (c.ty - c.y) * k;
+    c.a += wrap(c.ta - c.a) * Math.min(1, dt * 14);
+    if (c.arm && c.arm.tang != null) { c.arm.ang += wrap(c.arm.tang - c.arm.ang) * Math.min(1, dt * 14); const [px, py] = toWorld(c, -17.7, 0); c.arm.px = px; c.arm.py = py; c.arm.bx = px + Math.cos(c.arm.ang) * c.arm.len; c.arm.by = py + Math.sin(c.arm.ang) * c.arm.len; }
+    if (c.slam) c.slam.t = Math.max(.05, c.slam.t - dt);
+    if (c.dead) { c.deadT += dt; if (c.deadT < 4 && Math.random() < .5) smoke(c.x + rand(-8, 8), c.y + rand(-6, 6), c.deadT > 2, c.deadT < 2.2); continue; }
+    const dmg = c.boss ? c.lost + 1 : c.lost;
+    if (dmg >= 2) { c.smT = (c.smT || 0) - dt; if (c.smT <= 0) { c.smT = dmg >= 4 ? .05 : dmg >= 3 ? .09 : .16; const [sx, sy] = toWorld(c, (c.cL || L) * .28, rand(-4, 4)); smoke(sx, sy, dmg >= 3, dmg >= 4 && Math.random() < .45); } }
+    if (c.boost && Math.random() < .9) { const [ex, ey] = toWorld(c, -L / 2 - 2, rand(-4, 4)), fx = Math.cos(c.a), fy = Math.sin(c.a); parts.push({ x: ex, y: ey, vx: -fx * rand(120, 220) + c.vx * .6, vy: -fy * rand(120, 220) + c.vy * .6, life: rand(.1, .2), max: .2, size: rand(3, 5.5), sp: Math.random() < .4 ? 'blue' : 'fire2', type: 'fire', k: 4 }); }
+    if (c.slip > 60) {
+      const fx = Math.cos(c.a), fy = Math.sin(c.a), rx = -fy, ry = fx, junk = arena.id === 'junk', a = clamp((c.slip - 60) / 160, .14, .5);
+      const W4 = [[-17, -10], [-17, 10], [16, -10], [16, 10]].map(([lx, ly]) => [c.x + fx * lx + rx * ly, c.y + fy * lx + ry * ly]);
+      if (c.wp) for (let i = 0; i < 2; i++) { mctx.strokeStyle = junk ? 'rgba(70,44,22,' + a + ')' : 'rgba(10,10,12,' + a + ')'; mctx.lineWidth = 4.4; mctx.lineCap = 'round'; mctx.beginPath(); mctx.moveTo(c.wp[i][0], c.wp[i][1]); mctx.lineTo(W4[i][0], W4[i][1]); mctx.stroke(); }
+      c.wp = W4;
+    } else c.wp = null;
+  }
+  if (cars.length) { updatePuddles(dt); updateEmotes(dt); }
+  for (const d of debris) { d.t += dt; d.x += d.vx * dt; d.y += d.vy * dt; d.a += d.spin * dt; d.vz -= 900 * dt; d.z += d.vz * dt; if (d.z <= 0) { d.z = 0; if (d.vz < -90) { d.vz = -d.vz * .38; d.spin *= .6; } else d.vz = 0; } const f = Math.exp(-(d.z > 0 ? .4 : 2.8) * dt); d.vx *= f; d.vy *= f; }
+  debris = debris.filter(d => d.t < 17);
+  for (const p of parts) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; const f = Math.exp(-p.k * dt); p.vx *= f; p.vy *= f; }
+  parts = parts.filter(p => p.life > 0); if (parts.length > 800) parts.splice(0, parts.length - 800);
+  for (const t of texts) { t.t += dt; t.y -= 26 * dt; } texts = texts.filter(t => t.t < 1.4);
+  for (const r of rings) r.t += dt; rings = rings.filter(r => r.t < r.max);
+  for (const p of pickups) p.life -= dt;
+  shake *= Math.exp(-6 * dt); flashA *= Math.exp(-7 * dt); hurtA *= Math.exp(-3 * dt);
+}
+function netTick(rdt) {
+  if (!NET.role || !NET.started) return;
+  if (NET.role === 'host') {
+    NET.snapT -= rdt;
+    if (NET.snapT <= 0) { NET.snapT = 1 / 15; netSnapshot(); }
+  } else if (state === 'play') {
+    NET.sendT -= rdt;
+    const cur = JSON.stringify(NET.myIn || [0, 0, 0, 0, 0]);
+    if (NET.sendT <= 0 && (cur !== NET.lastIn || NET.sendT < -.5 || NET.forceSend)) { netSend({ i: NET.myIn || [0, 0, 0, 0, 0] }); NET.lastIn = cur; NET.sendT = 1 / 15; NET.forceSend = false; }
+  }
+}
+function netOnMessage(raw) {
+  let m; try { m = JSON.parse(raw); } catch (e) { return; }
+  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; renderMpLobby(); if (m.go && !NET.started) netStartGame(); return; }
+  if (m.c === 'denied') { mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full (4 players).', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
+  if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
+  if (m.c === 'left') { const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c && !c.dead && NET.started) { killCar(c, null); addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' LEFT', '#cfd6e2'); } delete NET.inputs[m.pid]; return; }
+  if (m.c === 'pong') { NET.ping = Math.round(performance.now() - m.t); return; }
+  if (NET.role === 'host' && m.f) { if (m.d && m.d.i) NET.inputs[m.f] = m.d.i; return; }
+  if (NET.role === 'guest') { if (m.s && NET.started) netApplySnap(m.s); if (m.e) netEvents(m.e); }
+}
+function netConnect(code, create, mode) {
+  netLeave(true);
+  pname = ($('pname').value || '').trim().slice(0, 12) || 'Player'; try { localStorage.setItem('scrapArenaName', pname); } catch (e) {}
+  const base = (API || location.origin).replace(/^http/, 'ws');
+  const q = new URLSearchParams({ pid: PID, name: pname, car: mpCar, create: create ? '1' : '0', mode: mode || 'coop' });
+  let ws; try { ws = new WebSocket(base + '/api/room/' + code + '/ws?' + q); } catch (e) { mpMsg('Could not connect.'); return; }
+  NET.ws = ws; NET.room = code; NET.role = create ? 'host' : 'guest'; NET.started = false;
+  mpMsg('Connecting...');
+  ws.onopen = () => { mpMsg(''); NET.pingI = setInterval(() => netSend({ c: 'ping', t: performance.now() }), 4000); };
+  ws.onmessage = e => netOnMessage(e.data);
+  ws.onclose = () => { if (NET.ws === ws) { const was = NET.started; netLeave(true); if (was && state === 'play') netShowResults({ hostLeft: true, lost: true }); else if (!$('mpPanel').classList.contains('hidden') && !$('mpMsg').textContent) mpMsg('Disconnected.'); } };
+}
+function netLeave(quiet) {
+  const ws = NET.ws; NET.ws = null; clearInterval(NET.pingI);
+  if (ws) { try { ws.onclose = null; ws.close(); } catch (e) {} }
+  NET.role = null; NET.started = false; NET.lobby = null; NET.byId.clear(); NET.inputs = {}; NET.ev = []; NET.overArmed = false;
+  document.body.classList.remove('mp');
+  if (!quiet) renderMpLobby();
+}
+function netStartGame() {
+  NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null;
+  $('mpPanel').classList.add('hidden'); $('overlay').classList.add('hidden'); $('card').classList.remove('over');
+  document.body.classList.add('mp');
+  gameMode = 'waves'; devRun = false; daily = null;
+  const a = audio(); if (a && a.resume) a.resume(); startEngine();
+  if (isTouch && fsOK && !fsEl()) setFullscreen(true);
+  if (NET.role === 'host') {
+    NET.mode = NET.lobby.mode; NET.vsArena = (Math.random() * 3) | 0;
+    cars = []; debris = []; parts = []; texts = []; rings = []; pickups = []; booms = []; emotes = [];
+    wave = 0; score = 0; shake = 0; gameOverT = 0; paused = false; hitStop = 0; slowT = 0; flashA = 0; hurtA = 0; combo.n = 0; combo.t = 0;
+    seenTypes = new Set(); scrap = 0; scrapItems = []; UP.armor = UP.nitro = UP.ram = 0; arenaIdxPrev = -1; arenaIdx = -1; kills = 0; runT0 = performance.now(); srand = Math.random;
+    mctx.clearRect(0, 0, W, H);
+    const ps = NET.lobby.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
+    ps.forEach((p, i) => {
+      const c = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); c.pid = p.pid; c.pname = p.name;
+      applyCar(c, CAR_BY_ID[p.car] || CAR_BY_ID.cruiser); c.score = 0; c.kos = 0; cars.push(c);
+      if (p.pid === PID) player = c;
+    });
+    state = 'play'; NET.metaSent.clear(); NET.metaT = 0;
+    const realSet = setArena; // broadcast the arena layout whenever it changes
+    startWave(); nev(...netLayoutMsg()); resetPlayerPos(); netSnapshot();
+  } else {
+    cars = []; player = null; debris = []; parts = []; texts = []; rings = []; pickups = []; emotes = []; NET.byId.clear();
+    wave = 0; score = 0; shake = 0; paused = false; hurtA = 0; flashA = 0;
+    mctx.clearRect(0, 0, W, H); state = 'play';
+  }
+  updateHud();
+}
+function netShowResults(r) {
+  if (NET.role === 'host' && NET.started && !r.hostLeft) {
+    const hs = cars.filter(c => c.isPlayer);
+    r = { mode: NET.mode, wave, score, players: hs.map(c => [c.pname, c.carName, c.score || 0, c.kos || 0, c.dead ? 1 : 0, c.pid]) };
+    const alive = hs.filter(c => !c.dead); if (NET.mode === 'versus') r.winner = alive.length === 1 ? alive[0].pid : '';
+    nev('over', r); netSnapshot(); NET.started = false; netSend({ c: 'reset' });
+  } else if (NET.role === 'guest') NET.started = false;
+  state = 'over'; paused = false; $('pauseMenu').classList.add('hidden'); document.body.classList.remove('mp');
+  const h1 = $('overlay').querySelector('#card h1');
+  if (r.hostLeft) { h1.innerHTML = 'MATCH <span>ENDED</span>'; $('final').textContent = r.lost ? 'Lost connection to the room.' : 'The host left the room.'; }
+  else {
+    const win = r.winner && r.players.find(p => p[5] === r.winner);
+    h1.innerHTML = r.mode === 'versus' ? (win ? esc(win[0]).toUpperCase() + ' <span>WINS!</span>' : 'NO <span>WINNER</span>') : 'TEAM <span>WRECKED</span>';
+    const rows = r.players.slice().sort((a2, b2) => r.mode === 'versus' ? (a2[4] - b2[4]) || (b2[2] - a2[2]) : 0)
+      .map(p => esc(p[0]) + ' (' + esc(p[1]) + ')' + (r.mode === 'versus' ? ' - ' + p[2] + ' pts, ' + p[3] + ' KO' : '') + (p[4] ? '' : ' ✓')).join('  •  ');
+    $('final').textContent = (r.mode === 'versus' ? 'Versus Derby  •  ' : 'Co-op  •  reached wave ' + r.wave + '  •  team score ' + r.score + '  •  ') + rows;
+  }
+  $('card').classList.add('over'); $('overlay').classList.remove('hidden');
+  if (NET.ws) { $('mpBack').style.display = ''; } else $('mpBack').style.display = 'none';
+}
+// ---- lobby UI ----
+let mpCar = lsGet('scrapArenaMpCar', 'cruiser');
+function mpMsg(t) { const a = $('mpMsg'), b = $('mpMsg2'); if (a) a.textContent = t; if (b) b.textContent = t; }
+function mpCarChips(el) {
+  el.innerHTML = '';
+  for (const d of CARS) { const b = document.createElement('button'); b.textContent = d.name; b.className = mpCar === d.id ? 'on' : ''; b.onclick = () => { mpCar = d.id; lsSet('scrapArenaMpCar', mpCar); netSend({ c: 'car', car: mpCar }); renderMpLobby(); }; el.appendChild(b); }
+}
+function renderMpLobby() {
+  const inRoom = !!NET.ws && !!NET.lobby;
+  $('mpHome').classList.toggle('hidden', inRoom); $('mpLobby').classList.toggle('hidden', !inRoom);
+  mpCarChips($('mpCars')); mpCarChips($('mpCars2'));
+  if (!inRoom) return;
+  const L2 = NET.lobby, amHost = NET.role === 'host';
+  $('mpRoom').textContent = NET.room;
+  $('mpModeTxt').innerHTML = L2.mode === 'versus' ? '<b>VERSUS DERBY</b> - smash each other, last car standing wins' : '<b>CO-OP WAVES</b> - team up against the waves and bosses';
+  $('mpModeSw').style.display = amHost ? '' : 'none'; $('mpModeSw').textContent = L2.mode === 'versus' ? 'Switch to Co-op' : 'Switch to Versus';
+  const ps = L2.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
+  $('mpPlayers').innerHTML = ps.map(p => '<div class="pl"><img src="' + (ASSET.show[p.car] || '') + '"><span>' + esc(p.name) + (p.pid === PID ? ' (you)' : '') + '</span><small>' + (p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div>').join('') +
+    Array.from({ length: Math.max(0, 4 - ps.length) }, () => '<div class="pl empty"><span>Waiting for a friend...</span></div>').join('');
+  const need = L2.mode === 'versus' ? 2 : 1;
+  $('mpStart').style.display = amHost ? '' : 'none'; $('mpStart').disabled = ps.length < need;
+  $('mpStart').textContent = ps.length < need ? 'NEED 2 PLAYERS' : 'START MATCH';
+  $('mpWait').style.display = amHost ? 'none' : ''; 
+}
+function mpOpen(code) {
+  $('mpPanel').classList.remove('hidden'); renderMpLobby();
+  if (code) $('mpCode').value = code;
+}
+const randCode = () => Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ'[(Math.random() * 23) | 0]).join('');
+$('goOnline').addEventListener('click', () => mpOpen());
+$('mpClose').addEventListener('click', () => { $('mpPanel').classList.add('hidden'); });
+$('mpCreateCoop').addEventListener('click', () => netConnect(randCode(), true, 'coop'));
+$('mpCreateVs').addEventListener('click', () => netConnect(randCode(), true, 'versus'));
+$('mpJoin').addEventListener('click', () => { const c = ($('mpCode').value || '').toUpperCase().replace(/[^A-Z]/g, ''); if (c.length !== 4) { mpMsg('Room codes are 4 letters.'); return; } netConnect(c, false); });
+$('mpCode').addEventListener('keydown', e => { if (e.code === 'Enter') $('mpJoin').click(); });
+$('mpLeave').addEventListener('click', () => { netLeave(); mpMsg(''); });
+$('mpStart').addEventListener('click', () => netSend({ c: 'start' }));
+$('mpModeSw').addEventListener('click', () => netSend({ c: 'mode', mode: NET.lobby && NET.lobby.mode === 'versus' ? 'coop' : 'versus' }));
+$('mpShare').addEventListener('click', async () => {
+  const url = location.origin + location.pathname + '?room=' + NET.room;
+  try { if (navigator.share && isTouch) { await navigator.share({ title: 'Scrap Arena', text: 'Join my Scrap Arena room ' + NET.room, url }); return; } } catch (e) {}
+  try { await navigator.clipboard.writeText(url); mpMsg('Invite link copied!'); } catch (e) { mpMsg(url); }
+});
+$('mpBack').addEventListener('click', () => { $('overlay').classList.add('hidden'); state = 'menu'; mpOpen(); });
+{ const rq = new URLSearchParams(location.search).get('room'); if (rq && /^[A-Za-z]{4}$/.test(rq)) setTimeout(() => mpOpen(rq.toUpperCase()), 300); }
+
 // ---- block browser zoom (double-tap, pinch, ctrl+wheel) and undo any zoom that already happened ----
 { let lastTap = 0;
   document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTap < 320 && !e.target.closest('input')) e.preventDefault(); lastTap = now; }, { passive: false });
@@ -2052,24 +2426,25 @@ const EMO = {
   taunt: [['😈'], ['😆'], ['🤭']], miss: [['🤬', '#%*!'], ['😤'], ['😠']], dizzy: [['😵'], ['😖']]
 };
 const pickEmo = k => EMO[k][(Math.random() * EMO[k].length) | 0];
-function emote(c, kind) {
+function emote(c, kind, forced) {
   if (!c || c.dead) return;
   emotes = emotes.filter(e => e.c !== c);
-  const [face, cuss] = pickEmo(kind); emotes.push({ c, face, cuss, t: 0, max: 4 });
+  const [face, cuss] = forced || pickEmo(kind); emotes.push({ c, face, cuss, t: 0, max: 4 }); nev('e', c.id, face, cuss || '');
   if (c.isPlayer && navigator.vibrate) try { navigator.vibrate(25); } catch (e) {}
 }
-function playerEmotion() {
-  const now = performance.now() / 1000, p = player, bossOn = cars.some(c => c.boss && !c.dead);
+function playerEmotion(p = player) {
+  const now = performance.now() / 1000, bossOn = cars.some(c => c.boss && !c.dead);
   if (p.lost >= 4) return 'panic';
-  if (now - lastPlayerHitT < 2.5) return 'rage';
+  if (now - (p === player ? lastPlayerHitT : p.lastHitT || -99) < 2.5) return 'rage';
   if (p.lost >= 3) return 'cry';
   if (combo.n >= 2 || now - lastKOT < 3) return 'cool';
   if (bossOn) return 'boss';
   if (p.boost) return 'crazy';
   return 'happy';
 }
-function playerEmote() { if (state !== 'play' || paused || !player || player.dead) return; emote(player, playerEmotion()); }
+function playerEmote() { if (state !== 'play' || (paused && !mpOn()) || !player || player.dead) return; if (isGuest()) { NET.emo = (NET.emo || 0) + 1; NET.forceSend = true; return; } emote(player, playerEmotion()); }
 function enemyEmote(c, kind, chance = 1) {
+  if (isGuest()) return;
   if (enemyEmoteCD > 0 || Math.random() > chance || emotes.some(e => !e.c.isPlayer)) return; // one enemy bubble at a time, with a cooldown
   enemyEmote.last = performance.now(); emote(c, kind); enemyEmoteCD = 5;
 }
@@ -2145,10 +2520,12 @@ const runActive = () => !!player && !player.dead && (state === 'play' || (state 
 function setPause(on) {
   if (state !== 'play') on = false;
   paused = on; $('pauseMenu').classList.toggle('hidden', !on);
+  if (on && mpOn()) { $('pmNote').textContent = 'Online match: the game keeps running while this menu is open. Main menu leaves the room.'; return; }
   if (on) $('pmNote').textContent = gameMode === 'daily' && !dailyPractice ? 'Leaving now ends today\'s counted daily run with your current score.' : 'Leaving now ends this run. Your score is still saved.';
 }
 function goMenu() {
   setPause(false);
+  if (NET.role) { netLeave(); if (state === 'play' || state === 'over') { state = 'menu'; } }
   if (!runActive() && devRun) { devRun = false; document.body.classList.remove('dev'); gameMode = 'waves'; daily = null; todayDaily(); } $('pauseMenu').classList.add('hidden');
   if (runActive()) { $('select').classList.add('hidden'); endGame(false, true); return; }
   state = 'menu'; $('select').classList.add('hidden'); document.body.classList.remove('playing');
@@ -2217,8 +2594,8 @@ updateHud();
 // test hook (harmless in normal play)
 window.__sa = { get state() { return state; }, get wave() { return wave; }, get score() { return score; }, get cars() { return cars; }, get player() { return player; },
   get pickups() { return pickups; }, get arena() { return arena.id; }, combo, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { if (c.boss) { killCar(c, player); continue; } c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x + 26 * Math.cos(c.a), c.y + 26 * Math.sin(c.a)], player, 300, Math.cos(c.a), Math.sin(c.a)); } },
-  spawnPickup() { spawnPickup(); }, get scrap() { return scrap; }, hitRegion(c, r) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; c.armor = 0; return hitCar(c, cp, player, 300, Math.cos(c.a), Math.sin(c.a)); }, get introT() { return introT; }, get joy() { return joy; }, setScrap(n) { scrap = n; }, get UP() { return UP; }, get barrels() { return barrels; }, get crusher() { return crusher; },
-  get mode() { return gameMode; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
+  spawnPickup() { spawnPickup(); }, get scrap() { return scrap; }, hitRegion(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; c.armor = 0; return hitCar(c, cp, a === undefined ? player : a, 300, Math.cos(c.a), Math.sin(c.a)); }, get introT() { return introT; }, get joy() { return joy; }, setScrap(n) { scrap = n; }, get UP() { return UP; }, get barrels() { return barrels; }, get crusher() { return crusher; },
+  get mode() { return gameMode; }, get net() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
 })();
 </script>
 </body>
