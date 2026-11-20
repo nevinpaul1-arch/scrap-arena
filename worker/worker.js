@@ -80,7 +80,7 @@ async function api(req, env, url) {
     if (!(score >= 0 && score < 5e6 && wave >= 1 && wave < 500)) return json({ error: 'range' }, 400);
     // plausibility: score ceiling grows with waves reached; runs can't be faster than ~12 s per wave
     if (score > 9000 * wave + 3000) return json({ error: 'implausible' }, 422);
-    if (ms && ms < 12000 * (wave - 1)) return json({ error: 'implausible' }, 422);
+    if (ms && ms < 8000 * (wave - 1)) return json({ error: 'implausible' }, 422);
     let day = null;
     if (mode === 'daily') {
       day = String(b.day || '');

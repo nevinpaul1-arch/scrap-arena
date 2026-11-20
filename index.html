@@ -1497,6 +1497,7 @@ async function submitScore(mode) {
   const r = await api('/api/score', body);
   const k = mode === 'daily' ? 'daily' : 'all';
   if (r && r.rows) { boardCache[k] = r; if (mode === 'waves') { delete boardCache.week; } }
+  else if (r && r.error) { $('final').textContent += '  •  Online score not accepted (' + (r.error === 'implausible' ? 'run looked too fast' : r.error) + ')'; loadBoard(); return r; }
   else boardCache[k] = boardCache[k] || { offline: true };
   if (boardTab === k) renderBoard(); else if (mode === 'waves' && boardTab === 'week') loadBoard();
   return r;
