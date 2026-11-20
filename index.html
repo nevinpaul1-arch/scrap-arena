@@ -26,7 +26,7 @@
   #banner{position:fixed;left:0;right:0;top:32%;text-align:center;font-size:clamp(28px,7vw,64px);font-weight:900;letter-spacing:.06em;text-shadow:0 4px 24px rgba(0,0,0,.8);opacity:0;transition:opacity .25s;pointer-events:none;padding:0 16px}
   #banner.show{opacity:1}
   #banner small{display:block;font-size:max(13px,.28em);font-weight:700;color:#ffbe0b;letter-spacing:.1em;margin-top:8px;line-height:1.5}
-  #overlay,#select,#devPanel,button{touch-action:manipulation}
+  #overlay,#select,#devPanel,#mpPanel,#pauseMenu,button,input{touch-action:manipulation}
   #overlay{position:fixed;inset:0;z-index:20;overflow:auto;display:flex;align-items:center;justify-content:center;background:rgba(8,9,12,.8);text-align:center;padding:20px;box-sizing:border-box}
   #overlay.hidden{display:none}
   #card{max-width:540px;margin:auto}
@@ -2408,7 +2408,7 @@ $('mpBack').addEventListener('click', () => { $('overlay').classList.add('hidden
 
 // ---- block browser zoom (double-tap, pinch, ctrl+wheel) and undo any zoom that already happened ----
 { let lastTap = 0;
-  document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTap < 320 && !e.target.closest('input')) e.preventDefault(); lastTap = now; }, { passive: false });
+  document.addEventListener('touchend', e => { const now = Date.now(), t = e.target; if (t.closest('button,input,a,select,#touch')) { lastTap = 0; return; } if (now - lastTap < 320) e.preventDefault(); lastTap = now; }, { passive: false }); // buttons use touch-action:manipulation, so they never zoom
   document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
   for (const ev of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(ev, e => e.preventDefault(), { passive: false });
   document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
