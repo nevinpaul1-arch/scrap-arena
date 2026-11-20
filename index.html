@@ -26,6 +26,7 @@
   #banner{position:fixed;left:0;right:0;top:32%;text-align:center;font-size:clamp(28px,7vw,64px);font-weight:900;letter-spacing:.06em;text-shadow:0 4px 24px rgba(0,0,0,.8);opacity:0;transition:opacity .25s;pointer-events:none;padding:0 16px}
   #banner.show{opacity:1}
   #banner small{display:block;font-size:max(13px,.28em);font-weight:700;color:#ffbe0b;letter-spacing:.1em;margin-top:8px;line-height:1.5}
+  #overlay,#select,#devPanel,button{touch-action:manipulation}
   #overlay{position:fixed;inset:0;z-index:20;overflow:auto;display:flex;align-items:center;justify-content:center;background:rgba(8,9,12,.8);text-align:center;padding:20px;box-sizing:border-box}
   #overlay.hidden{display:none}
   #card{max-width:540px;margin:auto}
@@ -939,6 +940,8 @@ function startWave() {
   wave++; waveMode = 'fight'; introT = 1.7; pickups = []; booms = []; pickT = rand(4, 6);
   if (gameMode === 'daily') srand = rng(daily.seed + wave * 7919);
   if (devRun && DEV.god && player) player.inv = 1e9;
+  emotes = [];
+  if (wave === 1 && isTouch && !shakeHintShown && player) { shakeHintShown = true; lsSet('scrapArenaShakeHint', true); setTimeout(() => player && addText(player.x, player.y - 50, 'Shake your phone to react!', '#ffd166'), 2200); }
   if (gameMode === 'waves' && !devRun && wave > maxWave) { maxWave = wave; try { localStorage.setItem('scrapArenaMaxWave', String(maxWave)); } catch (e) {} }
   cars = cars.filter(c => c.isPlayer);
   const ai = gameMode === 'daily' && !devRun ? daily.arena : Math.floor((wave - 1) / 2) % ARENAS.length;
@@ -1356,7 +1359,8 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
     bonus.forEach((b, i) => addText(v.x, v.y - 54 - i * 16, b, '#7dffb0'));
     hitStop = Math.max(hitStop, .05 + Math.min(closing, 500) / 10000);
   }
-  if (v.isPlayer) { hitStop = Math.max(hitStop, .07); hurtA = .55; combo.n = 0; combo.t = 0; if (v.lost >= 3) SFX.ooh(); }
+  if (v.isPlayer) { hitStop = Math.max(hitStop, .07); hurtA = .55; combo.n = 0; combo.t = 0; if (v.lost >= 3) SFX.ooh(); lastPlayerHitT = performance.now() / 1000; if (atk && !atk.isPlayer) { if (atk.ai) atk.ai.landed = true; enemyEmote(atk, 'taunt', .55); } }
+  else if (atk && atk.isPlayer && v.ai && !v.boss) enemyEmote(v, 'dizzy', .18);
   addText(v.x, v.y - 36, txt, col);
   if (v.lost >= (v.maxLost || 5)) killCar(v, atk);
   updateHud();
@@ -1378,7 +1382,7 @@ function killCar(c, atk) {
     } else if (c.boss) { SFX.cheer(1.8); SFX.horn(); const pts = 500 * Math.max(1, wave / 5); score += pts; ring(c.x, c.y, 160, '#ffd23f', .7, 12); ring(c.x, c.y, 100, '#fff', .4, 6); flashA = .55; shake = 32; boomSnd(); for (let i = 0; i < 70; i++) smoke(c.x + rand(-40, 40), c.y + rand(-25, 25), Math.random() < .5, Math.random() < .6); scorch(c.x, c.y, 110); addText(c.x, c.y - 60, 'BOSS DOWN!  +' + pts, '#ffd23f', true); banner('BOSS DOWN!', '+' + pts + ' points  /  +30 scrap', 2000); }
     else if (atk && atk.isPlayer) {
       const mult = comboMult(), pts = 100 * mult;
-      score += pts; kills++; atk.nitro = Math.min(1, atk.nitro + .35 * (atk.nitroEff || 1) * nitroK()); hitStop = Math.max(hitStop, .1);
+      score += pts; kills++; lastKOT = performance.now() / 1000; atk.nitro = Math.min(1, atk.nitro + .35 * (atk.nitroEff || 1) * nitroK()); hitStop = Math.max(hitStop, .1);
       addText(c.x, c.y - 44, 'KO  +' + pts, '#7dffb0', true); SFX.cheer(mult >= 3 ? 1.1 : .7);
     } else addText(c.x, c.y - 44, 'WRECKED', '#cfd6e2');
     if (state === 'play' && waveMode === 'fight' && cars.every(o => o.isPlayer || o.dead) && !(player && player.dead)) { slowT = 1.1; flashA = .3; }
@@ -1472,13 +1476,13 @@ function ai(c, dt) {
       a.modeT -= dt;
       const diff = wrap(Math.atan2(t.y - c.y, t.x - c.x) - c.a);
       c.throttle = speed > 110 ? -.7 : .55; c.steer = clamp(diff * 3, -1, 1);
-      if (a.modeT <= 0) { a.mode = 'charge'; a.modeT = 1.1; a.lockA = Math.atan2(t.y + t.vy * .3 - c.y, t.x + t.vx * .3 - c.x); }
+      if (a.modeT <= 0) { a.landed = false; a.mode = 'charge'; a.modeT = 1.1; a.lockA = Math.atan2(t.y + t.vy * .3 - c.y, t.x + t.vx * .3 - c.x); }
       return;
     }
     if (a.mode === 'charge') {
       a.modeT -= dt; c.boost = true; c.throttle = 1;
       c.steer = clamp(wrap(a.lockA - c.a) * 1.6, -.6, .6);
-      if (a.modeT <= 0) { a.mode = 'chase'; a.cool = c.boss ? rand(2.4, 3.6) : rand(2, 3.2); }
+      if (a.modeT <= 0) { a.mode = 'chase'; a.cool = c.boss ? rand(2.4, 3.6) : rand(2, 3.2); if (!a.landed && player && Math.hypot(player.x - c.x, player.y - c.y) < 260) enemyEmote(c, 'miss', .6); a.landed = false; }
       return;
     }
     if (a.cool <= 0 && d < (c.boss ? 480 : 380) && d > 130) { a.mode = 'windup'; a.modeT = c.boss ? .9 : .65; return; }
@@ -1611,7 +1615,7 @@ function step(dt) {
   for (const c of cars) {
     if (!c.isPlayer && !c.dead) ai(c, dt);
     if (!c.dead && c.boss && introT <= 0 && state === 'play') bossUpdate(c, dt);
-    if (c === cars[0]) updatePuddles(dt);
+    if (c === cars[0]) { updatePuddles(dt); updateEmotes(dt); }
     // damage effects: light smoke at 2 lost parts, dark smoke at 3, fire + sparks at 4
     const dmg = c.boss ? c.lost + 1 : c.lost;
     if (!c.dead && dmg >= 2) {
@@ -1945,6 +1949,7 @@ function render() {
   }
   ctx.globalAlpha = 1;
   if (state === 'play') { drawArrows(); drawBossBar(); }
+  if (state === 'play' || state === 'over') drawEmotes();
   if (flashA > .01) { ctx.fillStyle = 'rgba(255,240,220,' + flashA.toFixed(3) + ')'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
   if (hurtA > .02) {
     const R = Math.max(innerWidth, innerHeight), g = ctx.createRadialGradient(innerWidth / 2, innerHeight / 2, R * .3, innerWidth / 2, innerHeight / 2, R * .75);
@@ -1988,6 +1993,7 @@ addEventListener('keydown', e => {
   if (block.has(e.code)) e.preventDefault();
   keys[e.code] = true;
   if (e.code === 'KeyM') muted = !muted;
+  if (e.code === 'KeyE') playerEmote();
   if ((e.code === 'KeyP' || e.code === 'Escape') && state === 'play') { setPause(!paused); return; }
   if (e.code === 'Escape' && state === 'select') { goMenu(); return; }
   if (state === 'select') {
@@ -2025,6 +2031,90 @@ $('devGo').addEventListener('click', () => {
   const a = audio(); if (a && a.resume) a.resume(); startEngine();
   selId = DEV.car; $('overlay').classList.add('hidden'); pendingFresh = true; newGame();
 });
+
+// ---- block browser zoom (double-tap, pinch, ctrl+wheel) and undo any zoom that already happened ----
+{ let lastTap = 0;
+  document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTap < 320 && !e.target.closest('input')) e.preventDefault(); lastTap = now; }, { passive: false });
+  document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
+  for (const ev of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(ev, e => e.preventDefault(), { passive: false });
+  document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+  const vp = document.querySelector('meta[name=viewport]'), resetZoom = () => { if (!vp) return; vp.content = 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover'; };
+  addEventListener('orientationchange', () => setTimeout(resetZoom, 200)); resetZoom();
+  if (window.visualViewport) visualViewport.addEventListener('resize', () => { if (visualViewport.scale > 1.01) resetZoom(); });
+}
+
+// ---- emote bubbles: shake the phone (or press E) to react; enemies react sometimes in 1-on-1 moments ----
+let emotes = [], lastPlayerHitT = -99, lastKOT = -99, enemyEmoteCD = 0, shakeHintShown = lsGet('scrapArenaShakeHint', false);
+const EMO = {
+  panic: [['😱'], ['😭']], cry: [['😭'], ['😢']], rage: [['🤬', '#@%&*!'], ['😡'], ['🤬', '$%#!']], cool: [['😎'], ['😂'], ['🤩']],
+  boss: [['😤'], ['😬']], crazy: [['🤪'], ['😜']], happy: [['😄'], ['😜'], ['😏']],
+  taunt: [['😈'], ['😆'], ['🤭']], miss: [['🤬', '#%*!'], ['😤'], ['😠']], dizzy: [['😵'], ['😖']]
+};
+const pickEmo = k => EMO[k][(Math.random() * EMO[k].length) | 0];
+function emote(c, kind) {
+  if (!c || c.dead) return;
+  emotes = emotes.filter(e => e.c !== c);
+  const [face, cuss] = pickEmo(kind); emotes.push({ c, face, cuss, t: 0, max: 4 });
+  if (c.isPlayer && navigator.vibrate) try { navigator.vibrate(25); } catch (e) {}
+}
+function playerEmotion() {
+  const now = performance.now() / 1000, p = player, bossOn = cars.some(c => c.boss && !c.dead);
+  if (p.lost >= 4) return 'panic';
+  if (now - lastPlayerHitT < 2.5) return 'rage';
+  if (p.lost >= 3) return 'cry';
+  if (combo.n >= 2 || now - lastKOT < 3) return 'cool';
+  if (bossOn) return 'boss';
+  if (p.boost) return 'crazy';
+  return 'happy';
+}
+function playerEmote() { if (state !== 'play' || paused || !player || player.dead) return; emote(player, playerEmotion()); }
+function enemyEmote(c, kind, chance = 1) {
+  if (enemyEmoteCD > 0 || Math.random() > chance || emotes.some(e => !e.c.isPlayer)) return; // one enemy bubble at a time, with a cooldown
+  enemyEmote.last = performance.now(); emote(c, kind); enemyEmoteCD = 5;
+}
+function updateEmotes(dt) {
+  enemyEmoteCD = Math.max(0, enemyEmoteCD - dt);
+  for (const e of emotes) e.t += dt; emotes = emotes.filter(e => e.t < e.max && !e.c.dead);
+  // 1-on-1 chase: an enemy stuck on your tail that you shake off gets frustrated
+  if (!player || player.dead) return;
+  for (const c of cars) {
+    if (c.isPlayer || c.dead || !c.ai) continue;
+    const d = Math.hypot(c.x - player.x, c.y - player.y);
+    if (d < 170) c.ai.tailT = (c.ai.tailT || 0) + dt;
+    else if (d > 320 && (c.ai.tailT || 0) > 2.2) { c.ai.tailT = 0; enemyEmote(c, 'miss', .7); }
+    else if (d > 320) c.ai.tailT = 0;
+  }
+}
+function drawEmotes() {
+  for (const e of emotes) {
+    const [sx, sy] = w2s(e.c.x, e.c.y), k = e.t < .22 ? (e.t / .22) * 1.15 : e.t < .32 ? 1.15 - (e.t - .22) * 1.5 : 1, fade = Math.min(1, (e.max - e.t) / .4);
+    const bob = Math.sin(e.t * 5) * 2, y = sy - (30 + 22 * ppu) + bob, big = e.c.isPlayer ? 1 : .85;
+    ctx.save(); ctx.globalAlpha = fade; ctx.translate(sx, y); ctx.scale(k * big, k * big);
+    ctx.font = '26px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; const fw = 30;
+    let tw = 0; if (e.cuss) { ctx.font = '900 15px system-ui,sans-serif'; tw = ctx.measureText(e.cuss).width + 6; }
+    const w = fw + tw + 16, h = 38;
+    ctx.fillStyle = e.cuss ? '#fff4f2' : '#ffffff'; ctx.strokeStyle = e.c.isPlayer ? 'rgba(0,0,0,.35)' : 'rgba(180,30,30,.6)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(-w / 2, -h, w, h, 12); ctx.moveTo(-6, 0); ctx.lineTo(0, 9); ctx.lineTo(6, 0); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(-w / 2, -h, w, h, 12); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(-6, -1); ctx.lineTo(0, 9); ctx.lineTo(6, -1); ctx.fill();
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.font = '26px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; ctx.fillText(e.face, -w / 2 + 8, -h / 2 + 1);
+    if (e.cuss) { ctx.font = '900 15px system-ui,sans-serif'; ctx.fillStyle = '#d62828'; ctx.fillText(e.cuss, -w / 2 + 8 + fw + 2, -h / 2 + 1); }
+    ctx.restore();
+  }
+}
+// shake detection: three sharp jolts within ~0.7 s
+{ let prev = null, peaks = [], cool = 0;
+  addEventListener('devicemotion', ev => {
+    const a = ev.accelerationIncludingGravity || ev.acceleration; if (!a || a.x == null) return;
+    const now = performance.now();
+    if (prev) { const j = Math.hypot(a.x - prev.x, a.y - prev.y, (a.z || 0) - (prev.z || 0)); if (j > 17) { peaks.push(now); peaks = peaks.filter(t => now - t < 700); if (peaks.length >= 3 && now > cool) { cool = now + 1200; peaks = []; playerEmote(); } } }
+    prev = { x: a.x, y: a.y, z: a.z };
+  });
+  const askMotion = () => { try { if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') DeviceMotionEvent.requestPermission().catch(() => {}); } catch (e) {} };
+  ['go', 'goDaily', 'devGo', 'selGo'].forEach(id => $(id) && $(id).addEventListener('click', askMotion));
+}
 
 // ---- fullscreen + landscape lock (Android/desktop support the Fullscreen API; iPhone Safari doesn't) ----
 const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
@@ -2128,7 +2218,7 @@ updateHud();
 window.__sa = { get state() { return state; }, get wave() { return wave; }, get score() { return score; }, get cars() { return cars; }, get player() { return player; },
   get pickups() { return pickups; }, get arena() { return arena.id; }, combo, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { if (c.boss) { killCar(c, player); continue; } c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x + 26 * Math.cos(c.a), c.y + 26 * Math.sin(c.a)], player, 300, Math.cos(c.a), Math.sin(c.a)); } },
   spawnPickup() { spawnPickup(); }, get scrap() { return scrap; }, hitRegion(c, r) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; c.armor = 0; return hitCar(c, cp, player, 300, Math.cos(c.a), Math.sin(c.a)); }, get introT() { return introT; }, get joy() { return joy; }, setScrap(n) { scrap = n; }, get UP() { return UP; }, get barrels() { return barrels; }, get crusher() { return crusher; },
-  get mode() { return gameMode; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
+  get mode() { return gameMode; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
 })();
 </script>
 </body>
