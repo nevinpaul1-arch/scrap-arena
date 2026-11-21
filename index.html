@@ -133,6 +133,110 @@
   #mpPlayers .pl img{width:100%;aspect-ratio:960/500;object-fit:cover;border-radius:6px;display:block;margin-bottom:4px}
   #mpPlayers .pl span{display:block;font-weight:800;color:#fff} #mpPlayers .pl small{color:#8791a1}
   #mpPlayers .pl.empty{display:flex;align-items:center;justify-content:center;min-height:70px;border-style:dashed;color:#5d6675} #mpPlayers .pl.empty span{color:#5d6675;font-weight:600}
+  #howBtn,#selInfo,#selTools,#howSheet,#sheetBg{display:none}
+  #howSheet{position:fixed;inset:0;z-index:45;background:rgba(8,9,12,.86);align-items:center;justify-content:center;padding:14px;box-sizing:border-box}
+  #howSheet:not(.hidden){display:flex}
+  #howSheet .hs{position:relative;background:#14171d;border:1px solid #2d3340;border-radius:14px;padding:16px 18px;max-width:560px;max-height:100%;overflow:auto;color:#cfd6e2;font-size:13.5px;line-height:1.45;text-align:left}
+  #howSheet h2{margin:0 0 8px;font-size:18px;letter-spacing:.06em} #howSheet ul{padding-left:18px;margin:8px 0} #howSheet li{margin:4px 0}
+  .shClose{position:absolute;right:10px;top:8px;background:none;border:0;color:#8791a1;font-size:18px;cursor:pointer;z-index:2}
+  body:not(.playing) #touch{display:none!important}
+
+  /* ===== phones: every menu fits on one screen, no page scrolling ===== */
+  body.phone #overlay{overflow:hidden;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));align-items:stretch}
+  body.phone #card{max-width:none;width:100%;height:100%;margin:0;display:grid;gap:8px 16px;min-height:0}
+  body.phone #card .intro,body.phone #card #keysBox,body.phone #card .hint{display:none}
+  body.phone #card h1{margin:0;font-size:30px;line-height:1.05}
+  body.phone #howBtn{display:block;background:none;border:1px solid #3a4150;color:#cfd6e2;border-radius:8px;padding:7px 10px;font-weight:700;font-size:12.5px;cursor:pointer}
+  body.phone #pname{margin:0;width:100%;box-sizing:border-box;padding:8px 10px;font-size:15px}
+  body.phone #modes{margin:0;gap:7px;flex-direction:column}
+  body.phone #modes button{max-width:none;flex:none;padding:8px 12px;font-size:16px;flex-direction:row;justify-content:space-between;align-items:center;text-align:left}
+  body.phone #modes button small{font-size:11px;max-width:62%;text-align:right}
+  body.phone #dailyBox{margin:0;max-width:none;padding:7px 10px;font-size:12px;gap:2px 10px}
+  body.phone #dailyBox .ic{font-size:20px}
+  body.phone #dailyBox .mt{font-size:11px;padding-top:4px}
+  body.phone #board{margin:0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+  body.phone #board h3{margin:0 0 4px;font-size:11px}
+  body.phone #board .tabs{margin:0 0 5px;gap:3px} body.phone #board .tabs button{padding:3px 8px;font-size:11px}
+  body.phone #board .rows{flex:1;min-height:0;overflow:auto}
+  body.phone #board .row{padding:4px 8px;font-size:12.5px}
+  body.phone #final{margin:0;font-size:12.5px}
+  body.phone #mpBack{margin:0;padding:8px 12px}
+  @media (orientation:landscape){
+    body.phone #card{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-rows:auto auto auto auto 1fr;grid-template-areas:"t d" "f d" "n b" "m b" "h b"}
+    body.phone #card h1{grid-area:t} body.phone #final{grid-area:f} body.phone #pname{grid-area:n} body.phone #modes{grid-area:m}
+    body.phone #dailyBox{grid-area:d;align-self:start} body.phone #board{grid-area:b}
+    body.phone #howBtn,body.phone #mpBack{grid-area:h;align-self:start;justify-self:start}
+    body.phone #mpBack{justify-self:end}
+  }
+  @media (orientation:portrait){
+    body.phone #card{grid-template-columns:1fr;grid-template-rows:auto auto auto auto auto auto 1fr;align-content:start}
+    body.phone #card h1{font-size:30px;margin-top:4px;text-align:left;padding-right:110px}
+    body.phone #board{order:9}
+  }
+  /* car select */
+  body.phone #select{overflow:hidden;display:grid;padding:max(8px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));box-sizing:border-box;gap:6px 12px}
+  body.phone #select.hidden{display:none}
+  body.phone #selWrap{display:contents}
+  body.phone .backBtn{position:static;padding:6px 10px;font-size:12px}
+  body.phone #selTitle{margin:0;font-size:18px;align-self:center;text-align:center}
+  body.phone #selSub{font-size:11px;margin:0;color:#8791a1;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  body.phone #paints{margin:0;justify-content:flex-start;gap:5px;font-size:11px}
+  body.phone #paints button{padding:3px 8px 3px 4px;font-size:11px}
+  body.phone #garage,body.phone #road{display:none}
+  body.phone #selGrid{min-height:0;overflow:auto;gap:6px;align-content:start}
+  body.phone .car{padding:5px;gap:3px;border-radius:9px}
+  body.phone .car .top{display:block} body.phone .car .role,body.phone .car .stats,body.phone .car .note{display:none}
+  body.phone .car .nm{font-size:12px}
+  body.phone .car.locked .nm::after{content:' 🔒'}
+  body.phone:not(.playing) #hud{visibility:hidden}
+  @media (orientation:landscape){ body.phone #fsMenu{top:auto;right:auto;bottom:max(10px,env(safe-area-inset-bottom));left:max(150px,calc(env(safe-area-inset-left) + 138px))} body.phone #devBtn{top:auto;right:auto;bottom:max(10px,env(safe-area-inset-bottom));left:max(200px,calc(env(safe-area-inset-left) + 188px))} }
+  body.phone #selInfo img{display:block;width:100%;height:clamp(60px,26vh,120px);object-fit:cover;border-radius:7px;margin-bottom:6px;background:#33424e}
+  @media (orientation:portrait){ body.phone #selInfo img{height:clamp(70px,14vh,130px)} }
+  body.phone #selInfo{display:block;background:#14171d;border:1px solid #2d3340;border-radius:10px;padding:8px 10px;min-height:0;overflow:auto;text-align:left}
+  body.phone #selInfo .top{display:flex;justify-content:space-between;align-items:baseline;gap:6px} body.phone #selInfo .nm{font-weight:800;font-size:17px} body.phone #selInfo .role{font-size:11px;color:#8791a1}
+  body.phone #selInfo .st{display:grid;grid-template-columns:62px minmax(0,1fr) 36px;align-items:center;column-gap:6px;font-size:11px;color:#9aa3b2;margin-top:4px}
+  body.phone #selInfo .st .v{text-align:right;color:#cfd6e2}
+  body.phone #selInfo .bar{position:relative;height:6px;background:#2a2f38;border-radius:3px} body.phone #selInfo .bar b{position:absolute;top:0;height:100%;border-radius:3px}
+  body.phone #selInfo .note{font-size:11px;font-weight:700;margin-top:4px;color:#3ddc84} body.phone #selInfo .note.lock{color:#ffbe0b}
+  body.phone #selTools{display:flex;gap:6px} body.phone #selTools button{flex:1;background:#1f242d;color:#dfe5ee;border:1px solid #2d3340;border-radius:8px;padding:7px 4px;font-weight:800;font-size:11.5px;cursor:pointer}
+  body.phone #selBar{position:static;margin:0;padding:0;background:none}
+  body.phone #selBar small{display:none}
+  body.phone #selGo{width:100%;padding:11px;font-size:17px;margin:0}
+  @media (orientation:landscape){
+    body.phone #select{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto;grid-template-areas:"back title" "grid sub" "grid info" "grid tools" "grid go"}
+    body.phone .backBtn{grid-area:back;justify-self:start} body.phone #selTitle{grid-area:title;text-align:left}
+    body.phone #selSub{grid-area:sub} body.phone #selGrid{grid-area:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+    body.phone #selInfo{grid-area:info} body.phone #selTools{grid-area:tools} body.phone #selBar{grid-area:go}
+    body.phone #paints{display:none}
+  }
+  @media (orientation:portrait){
+    body.phone #select{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr) auto auto auto auto;grid-template-areas:"back" "title" "grid" "info" "paints" "tools" "go"}
+    body.phone .backBtn{grid-area:back;justify-self:start} body.phone #selTitle{grid-area:title} body.phone #selSub{display:none}
+    body.phone #selGrid{grid-area:grid;grid-template-columns:repeat(2,minmax(0,1fr))} body.phone #selInfo{grid-area:info} body.phone #paints{grid-area:paints}
+    body.phone #selTools{grid-area:tools} body.phone #selBar{grid-area:go}
+  }
+  /* garage + road ahead open as sheets on phones */
+  body.phone #sheetBg:not(.hidden){display:block;position:fixed;inset:0;z-index:30;background:rgba(8,9,12,.7)}
+  body.phone.sh-garage #garage.on,body.phone.sh-road #road{display:block;position:fixed;z-index:31;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,620px);max-height:86%;overflow:auto;margin:0;box-sizing:border-box}
+  body.phone.sh-garage #garage:not(.on){display:block;position:fixed;z-index:31;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,520px);margin:0;padding:16px}
+  body.phone.sh-garage #garage:not(.on)::after{content:'The garage opens after wave 2. Collect scrap from wrecks to spend here.';color:#8791a1;font-size:13px}
+  /* online panel + dev panel */
+  body.phone #mpPanel,body.phone #devPanel{padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));align-items:center}
+  body.phone #mpPanel .mp,body.phone #devPanel .dp{max-height:100%;overflow:auto;padding:12px 14px;box-sizing:border-box;max-width:760px}
+  body.phone #mpPanel h2,body.phone #devPanel h2{font-size:16px}
+  body.phone #mpPanel h4,body.phone #devPanel h4{margin:7px 0 4px}
+  body.phone #mpPanel .sub,body.phone #devPanel .sub{font-size:11.5px;margin:2px 0 4px}
+  body.phone #mpPanel .opt,body.phone #devPanel .opt{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  body.phone #mpPanel .opt button,body.phone #devPanel .opt button{flex:none;padding:5px 9px;font-size:11.5px}
+  body.phone #mpPanel .row2{margin-top:8px;gap:8px} body.phone #mpPanel .row2 button{padding:9px;font-size:13px}
+  body.phone #mpPanel .join input{font-size:17px;padding:6px 10px}
+  body.phone #mpPanel .code b{font-size:24px}
+  body.phone #mpPlayers{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  body.phone #mpPlayers .pl{padding:4px;font-size:11px} body.phone #mpPlayers .pl.empty{min-height:56px}
+  body.phone #devPanel .waves{grid-template-columns:repeat(15,minmax(0,1fr));gap:3px}
+  body.phone #devPanel .waves button{padding:5px 0;font-size:11.5px}
+  body.phone #devPanel .row2{margin-top:10px} body.phone #devPanel .row2 button{padding:9px;font-size:13px}
+  @media (orientation:portrait){ body.phone #devPanel .waves{grid-template-columns:repeat(10,minmax(0,1fr))} body.phone #mpPlayers{grid-template-columns:repeat(2,minmax(0,1fr))} }
   #devBtn{position:fixed;top:12px;right:12px;z-index:22;background:#1a1e26;color:#9aa3b2;border:1px dashed #4a5262;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:800;letter-spacing:.08em;cursor:pointer}
   #overlay.hidden ~ #devBtn{display:none}
   #devPanel{position:fixed;inset:0;z-index:40;background:rgba(8,9,12,.86);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow:auto}
@@ -247,7 +351,10 @@
     <div id="paints"></div>
     <div id="garage"></div>
     <div id="selGrid"></div>
+    <div id="selInfo"></div>
+    <div id="selTools"><button id="openGarage">🔧 GARAGE</button><button id="openRoad">🛣 ROAD AHEAD</button></div>
     <div id="road"></div>
+    <div id="sheetBg" class="hidden"></div>
   </div>
   <div id="selBar">
     <button id="selGo">DRIVE</button>
@@ -285,10 +392,23 @@
       <button id="goOnline">ONLINE<small>Play with friends: co-op or versus</small></button>
     </div>
     <div id="dailyBox"></div>
+    <button id="howBtn">❓ How to play</button>
     <button id="mpBack" style="display:none">BACK TO LOBBY</button>
     <div id="board"></div>
   </div>
 </div>
+<div id="howSheet" class="hidden"><div class="hs">
+  <button class="shClose" data-close="howSheet">✕</button>
+  <h2>HOW TO PLAY</h2>
+  <p><b>Where you hit decides what falls off</b>: hood, bumper, trunk, doors. Lose all 5 parts and you're wrecked. Hit hard; taps don't count.</p>
+  <ul>
+    <li><b>Joystick</b> (left thumb): point where you want to go. Pull back to brake and reverse.</li>
+    <li><b>DRIFT</b>: hold to slide around corners. Drifting fills nitro.</li>
+    <li><b>NOS</b>: hold for a burst of speed.</li>
+    <li><b>Shake your phone</b> to show how you feel.</li>
+  </ul>
+  <p>Chain hits for combos, pin cars against walls for double damage, grab 🔧 repair, 🛡 armor and ⚡ nitro pickups. Arrows at the screen edge point to cars you can't see. Clearing a wave repairs 2 parts. A boss shows up every 5th wave.</p>
+</div></div>
 <div id="mpPanel" class="hidden"><div class="mp">
   <button id="mpClose" aria-label="Close">✕</button>
   <h2>🌐 PLAY ONLINE</h2>
@@ -744,7 +864,8 @@ function renderPaints() {
     el.appendChild(b);
   }
 }
-function updateGo() { $('selGo').textContent = 'DRIVE ' + CAR_BY_ID[selId].name.toUpperCase(); }
+function updateGo() {
+  try { renderSelInfo(); } catch (e) {} $('selGo').textContent = 'DRIVE ' + CAR_BY_ID[selId].name.toUpperCase(); }
 function buildSelect() {
   const forWave = selWave, lim = devRun ? 999 : Math.max(selWave, maxWave), grid = $('selGrid'); grid.innerHTML = '';
   const isD = gameMode === 'daily' && !devRun;
@@ -789,6 +910,7 @@ function moveSel(dir) {
 }
 function confirmSel() {
   if (state !== 'select') return;
+  openSheet(null);
   $('select').classList.add('hidden');
   if (pendingFresh) newGame();
   else { applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player); state = 'play'; startWave(); updateHud(); }
@@ -2406,6 +2528,22 @@ $('mpShare').addEventListener('click', async () => {
 $('mpBack').addEventListener('click', () => { $('overlay').classList.add('hidden'); state = 'menu'; mpOpen(); });
 { const rq = new URLSearchParams(location.search).get('room'); if (rq && /^[A-Za-z]{4}$/.test(rq)) setTimeout(() => mpOpen(rq.toUpperCase()), 300); }
 
+// ---- phone layout: menus sized to one screen ----
+const setPhone = () => document.body.classList.toggle('phone', matchMedia('(pointer:coarse)').matches && Math.min(innerWidth, innerHeight) <= 560);
+setPhone(); addEventListener('resize', setPhone); addEventListener('orientationchange', () => setTimeout(setPhone, 200));
+function renderSelInfo() {
+  const card = [...$('selGrid').children].find(k => k.dataset.id === selId); if (!card) return;
+  const q = sel => card.querySelector(sel);
+  $('selInfo').innerHTML = '<img src="' + ASSET.show[selId] + '" alt="">' + q('.top').outerHTML + q('.stats').outerHTML + (q('.note').textContent ? q('.note').outerHTML : '');
+}
+function openSheet(k) { document.body.classList.remove('sh-garage', 'sh-road'); if (k) document.body.classList.add('sh-' + k); $('sheetBg').classList.toggle('hidden', !k); }
+$('openGarage').addEventListener('click', () => openSheet('garage'));
+$('openRoad').addEventListener('click', () => { openSheet('road'); const n = $('road').querySelector('.wv.next'); if (n) n.scrollIntoView({ inline: 'center', block: 'nearest' }); });
+$('sheetBg').addEventListener('click', () => openSheet(null));
+$('howBtn').addEventListener('click', () => $('howSheet').classList.remove('hidden'));
+document.addEventListener('click', e => { const c = e.target.closest('[data-close]'); if (c) $(c.dataset.close).classList.add('hidden'); });
+$('howSheet').addEventListener('click', e => { if (e.target.id === 'howSheet') $('howSheet').classList.add('hidden'); });
+
 // ---- block browser zoom (double-tap, pinch, ctrl+wheel) and undo any zoom that already happened ----
 { let lastTap = 0;
   document.addEventListener('touchend', e => { const now = Date.now(), t = e.target; if (t.closest('button,input,a,select,#touch')) { lastTap = 0; return; } if (now - lastTap < 320) e.preventDefault(); lastTap = now; }, { passive: false }); // buttons use touch-action:manipulation, so they never zoom
@@ -2524,7 +2662,7 @@ function setPause(on) {
   if (on) $('pmNote').textContent = gameMode === 'daily' && !dailyPractice ? 'Leaving now ends today\'s counted daily run with your current score.' : 'Leaving now ends this run. Your score is still saved.';
 }
 function goMenu() {
-  setPause(false);
+  setPause(false); openSheet(null);
   if (NET.role) { netLeave(); if (state === 'play' || state === 'over') { state = 'menu'; } }
   if (!runActive() && devRun) { devRun = false; document.body.classList.remove('dev'); gameMode = 'waves'; daily = null; todayDaily(); } $('pauseMenu').classList.add('hidden');
   if (runActive()) { $('select').classList.add('hidden'); endGame(false, true); return; }
