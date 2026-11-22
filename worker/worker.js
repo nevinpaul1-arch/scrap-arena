@@ -120,7 +120,7 @@ export default {
 };
 
 // ---------- multiplayer room: lobby + relay. The host's browser runs the game; this object only passes messages. ----------
-const MAX_PLAYERS = 4, MAX_CAP = 6; // older pages don't send max, so they keep 4
+const MAX_PLAYERS = 4, MAX_CAP = 6; // older pages don't send max/cmax, so they keep 4
 export class Room {
   constructor(ctx, env) { this.ctx = ctx; }
   peers() { return this.ctx.getWebSockets().map(ws => ({ ws, me: ws.deserializeAttachment() || {} })).filter(p => !p.me.dead); }
@@ -146,11 +146,11 @@ export class Room {
     const others = ps.filter(p => p.me.pid !== pid);
     if (!others.length && !create) return deny('no-room');
     if (others.length && create) return deny('taken');
-    const cap = host ? (host.me.max || MAX_PLAYERS) : MAX_PLAYERS;
+    const cap = !host ? MAX_PLAYERS : host.me.mode === 'versus' ? (host.me.max || MAX_PLAYERS) : (host.me.cmax || host.me.max || MAX_PLAYERS);
     if (others.length >= cap) return deny('full');
     if (host && host.me.started && host.me.pid !== pid) return deny('started');
     const isHost = !others.length;
-    server.serializeAttachment({ pid, name, car, host: isHost, max: isHost ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('max') || MAX_PLAYERS)) : 0, mode: url.searchParams.get('mode') === 'versus' ? 'versus' : 'coop', started: false });
+    server.serializeAttachment({ pid, name, car, host: isHost, max: isHost ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('max') || MAX_PLAYERS)) : 0, cmax: isHost ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('cmax') || 0)) || 0 : 0, mode: url.searchParams.get('mode') === 'versus' ? 'versus' : 'coop', started: false });
     this.lobby();
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -161,7 +161,8 @@ export class Room {
     if (msg.charCodeAt(0) === 123 && msg.indexOf('"c":') > 0 && msg.length < 400) { // small control messages
       let m; try { m = JSON.parse(msg); } catch (e) { return; }
       if (m.c === 'car') { me.car = String(m.car || '').replace(/[^a-z]/g, '').slice(0, 12); ws.serializeAttachment(me); this.lobby(); return; }
-      if (m.c === 'mode' && me.host) { me.mode = m.mode === 'versus' ? 'versus' : 'coop'; ws.serializeAttachment(me); this.lobby(); return; }
+      if (m.c === 'mode' && me.host) { if (m.mode !== 'versus' && me.cmax && this.peers().length > me.cmax) { this.lobby(); return; }
+        me.mode = m.mode === 'versus' ? 'versus' : 'coop'; ws.serializeAttachment(me); this.lobby(); return; }
       if (m.c === 'start' && me.host) { me.started = true; ws.serializeAttachment(me); this.lobby({ go: true }); return; }
       if (m.c === 'reset' && me.host) { me.started = false; ws.serializeAttachment(me); this.lobby(); return; }
       if (m.c === 'ping') { ws.send('{"c":"pong","t":' + (+m.t || 0) + '}'); return; }
