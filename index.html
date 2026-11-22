@@ -119,6 +119,10 @@
   #mpPanel .opt button.on{background:#2a9d5c;border-color:#2a9d5c;color:#fff}
   #mpPanel .row2{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
   #mpPanel .row2 button{flex:1 1 180px;border:0;border-radius:10px;padding:12px;font-weight:800;font-size:14px;letter-spacing:.05em;cursor:pointer;background:#2a9d5c;color:#fff}
+  #mpPanel .mpTabs{display:flex;gap:0;margin:2px 0 8px;border:1px solid #2d3340;border-radius:10px;overflow:hidden}
+  #mpPanel .mpTabs button{flex:1;background:#1a1d24;color:#8791a1;border:0;padding:9px 6px;font-weight:800;font-size:14px;letter-spacing:.04em;cursor:pointer}
+  #mpPanel .mpTabs button.on[data-m=coop]{background:#2a9d8f;color:#fff} #mpPanel .mpTabs button.on[data-m=versus]{background:#e63946;color:#fff}
+  body.phone #mpPanel .mpTabs button{padding:6px;font-size:12.5px}
   #mpPanel .row2 button#mpCreateVs{background:#e63946} #mpPanel .row2 button#mpLeave{background:#2a2f38;color:#dfe5ee;flex:0 1 120px}
   #mpPanel .row2 button:disabled{opacity:.5;cursor:default}
   #mpPanel .join{display:flex;gap:8px} #mpPanel .join input{flex:1;min-width:0;background:#0d0f13;border:1px solid #2d3340;border-radius:8px;color:#fff;font-size:20px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;padding:9px 12px}
@@ -415,9 +419,10 @@
   <button id="mpClose" aria-label="Close">✕</button>
   <h2>🌐 PLAY ONLINE</h2>
   <div id="mpHome">
-    <div class="sub">Up to 6 players. Create a room and send the code or link to your friends.</div>
+    <div class="mpTabs"><button data-m="coop" class="on">🤝 CO-OP</button><button data-m="versus">💥 VERSUS</button></div>
+    <div class="sub" id="mpTabSub"></div>
     <h4>YOUR CAR</h4><div class="opt" id="mpCars"></div>
-    <div class="row2"><button id="mpCreateCoop">CREATE CO-OP ROOM</button><button id="mpCreateVs">CREATE VERSUS ROOM</button></div>
+    <div class="row2"><button id="mpCreateCoop">CREATE CO-OP ROOM</button><button id="mpCreateVs" class="hidden">CREATE VERSUS ROOM</button></div>
     <h4>JOIN A FRIEND</h4><div class="join"><input id="mpCode" maxlength="4" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button id="mpJoin">JOIN</button></div>
     <div class="msg" id="mpMsg"></div>
   </div>
@@ -2649,6 +2654,9 @@ function mpOpen(code) {
 const randCode = () => Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ'[(Math.random() * 23) | 0]).join('');
 $('goOnline').addEventListener('click', () => mpOpen());
 $('mpClose').addEventListener('click', () => { $('mpPanel').classList.add('hidden'); });
+const MP_TAB = { coop: 'Team up with 1 friend (2 players) against the waves and bosses. No friendly fire; a wrecked partner comes back when the wave is cleared.', versus: 'Up to 6 players, no AI cars. Smash each other: last car standing wins the round.' };
+function mpTab(m) { document.querySelectorAll('#mpPanel .mpTabs button').forEach(b => b.classList.toggle('on', b.dataset.m === m)); $('mpTabSub').textContent = MP_TAB[m]; $('mpCreateCoop').classList.toggle('hidden', m !== 'coop'); $('mpCreateVs').classList.toggle('hidden', m !== 'versus'); }
+document.querySelectorAll('#mpPanel .mpTabs button').forEach(b => b.addEventListener('click', () => mpTab(b.dataset.m))); mpTab('coop');
 $('mpCreateCoop').addEventListener('click', () => netConnect(randCode(), true, 'coop'));
 $('mpCreateVs').addEventListener('click', () => netConnect(randCode(), true, 'versus'));
 $('mpJoin').addEventListener('click', () => { const c = ($('mpCode').value || '').toUpperCase().replace(/[^A-Z]/g, ''); if (c.length !== 4) { mpMsg('Room codes are 4 letters.'); return; } netConnect(c, false); });
