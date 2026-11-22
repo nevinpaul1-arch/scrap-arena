@@ -46,16 +46,20 @@ export function applyCarMods(car, P, len) {
     const black = M('#16171a', 0, .7), chrome = M('#cfd5dc', 0, .25, .9), head = M('#fff3c4', 1.6, .3), tail = M('#d40000', .55, .4);
     const box = (sx, sy, sz, x, y, z, m) => { const b = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), m); b.position.set(x, y, z); b.name = 'kit'; kit.add(b); return b; };
     const wIn = hw - .1;
-    const topN = (x, z, dx) => Math.max(topY(x, z), topY(x + dx, z), topY(x + 2 * dx, z));
-    // grille: dark band across the very nose, raised so it reads from above, with a chrome lip
-    { const y = topN(hl - .12, 0, -.12); box(.14, .07, wIn * 2 * .7, hl - .09, y + .01, 0, black); box(.04, .04, wIn * 2 * .72, hl - .015, y - .02, 0, chrome); }
-    // headlights: wide and bright on the front corners
-    for (const s of [-1, 1]) { const x = hl - .27, z = s * (hw - .4), y = topN(x, z, -.12); box(.3, .08, .5, x, y + .02, z, head); }
+    const hray = new THREE.Raycaster();
+    const faceX = (y, z, dir) => { hray.set(new THREE.Vector3(dir * 10, y, z), new THREE.Vector3(-dir, 0, 0)); const h = hray.intersectObjects(body, false)[0]; return h ? h.point.x : dir * hl; };
+    const hoodY = Math.max(.35, topY(hl - .4, 0)), trunkY = Math.max(.35, topY(-hl + .35, 0));
+    const glass = M('#fff6dc', .45, .25), frame = M('#1a1b1f', 0, .6), slat = M('#3a3d44', 0, .5, .3), tailM = M('#c81414', .35, .4);
+    // front face: dark grille with slats between two inset headlights (nothing on top, so the hood stays clean)
+    { const y = hoodY - .2, zg = Math.max(.2, hw - .62), x = faceX(y, 0, 1);
+      box(.06, .2, zg * 2, x - .02, y, 0, frame); for (const dy of [-.05, .02]) box(.065, .025, zg * 2 - .06, x - .015, y + dy, 0, slat); }
+    for (const s of [-1, 1]) { const y = hoodY - .17, z = s * (hw - .36), x = faceX(y, z, 1);
+      box(.06, .17, .42, x - .02, y, z, frame); box(.06, .12, .34, x - .012, y, z, glass); }
+    // rear face: tail lights only
+    for (const s of [-1, 1]) { const y = trunkY - .14, z = s * (hw - .34), x = faceX(y, z, -1);
+      box(.06, .15, .4, x + .02, y, z, frame); box(.06, .1, .32, x + .012, y, z, tailM); }
     // hood scoop: dark intake on the hood
     { const x = (hsx + hl) / 2, y = topY(x, 0); box(.55, .09, .46, x, y + .03, 0, black); box(.07, .1, .46, x + .27, y + .03, 0, M('#050506', 0, .9)); }
-    // tail lights: red bars on the rear corners + dark diffuser band
-    for (const s of [-1, 1]) { const x = -hl + .15, z = s * (hw - .4), y = topN(x, z, .12); box(.16, .05, .5, x, y + .015, z, tail); }
-    { const y = topN(-hl + .1, 0, .12); box(.1, .06, wIn * 2 * .5, -hl + .08, y + .01, 0, black); }
     // car materials get injected later; keep the kit in the same root so it splits into hood/bumper/trunk with the body
     for (const m of [...kit.children]) { const w = m.position.clone(); m.position.copy(root.worldToLocal(w)); m.scale.setScalar(1 / k); root.add(m); }
   }
