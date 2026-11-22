@@ -150,7 +150,7 @@ export class Room {
     if (others.length >= cap) return deny('full');
     if (host && host.me.started && host.me.pid !== pid) return deny('started');
     const isHost = !others.length;
-    server.serializeAttachment({ pid, name, car, host: isHost, max: isHost ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('max') || MAX_PLAYERS)) : 0, cmax: isHost ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('cmax') || 0)) || 0 : 0, mode: url.searchParams.get('mode') === 'versus' ? 'versus' : 'coop', started: false });
+    server.serializeAttachment({ pid, name, car, host: isHost, max: isHost ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('max') || MAX_PLAYERS)) : 0, cmax: isHost && url.searchParams.get('cmax') ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('cmax') || 2)) : 0, mode: url.searchParams.get('mode') === 'versus' ? 'versus' : 'coop', started: false });
     this.lobby();
     return new Response(null, { status: 101, webSocket: client });
   }
