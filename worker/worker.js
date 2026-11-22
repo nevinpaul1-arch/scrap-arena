@@ -120,7 +120,7 @@ export default {
 };
 
 // ---------- multiplayer room: lobby + relay. The host's browser runs the game; this object only passes messages. ----------
-const MAX_PLAYERS = 4;
+const MAX_PLAYERS = 4, MAX_CAP = 6; // older pages don't send max, so they keep 4
 export class Room {
   constructor(ctx, env) { this.ctx = ctx; }
   peers() { return this.ctx.getWebSockets().map(ws => ({ ws, me: ws.deserializeAttachment() || {} })).filter(p => !p.me.dead); }
@@ -146,10 +146,11 @@ export class Room {
     const others = ps.filter(p => p.me.pid !== pid);
     if (!others.length && !create) return deny('no-room');
     if (others.length && create) return deny('taken');
-    if (others.length >= MAX_PLAYERS) return deny('full');
+    const cap = host ? (host.me.max || MAX_PLAYERS) : MAX_PLAYERS;
+    if (others.length >= cap) return deny('full');
     if (host && host.me.started && host.me.pid !== pid) return deny('started');
     const isHost = !others.length;
-    server.serializeAttachment({ pid, name, car, host: isHost, mode: url.searchParams.get('mode') === 'versus' ? 'versus' : 'coop', started: false });
+    server.serializeAttachment({ pid, name, car, host: isHost, max: isHost ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('max') || MAX_PLAYERS)) : 0, mode: url.searchParams.get('mode') === 'versus' ? 'versus' : 'coop', started: false });
     this.lobby();
     return new Response(null, { status: 101, webSocket: client });
   }

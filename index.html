@@ -231,12 +231,12 @@
   body.phone #mpPanel .row2{margin-top:8px;gap:8px} body.phone #mpPanel .row2 button{padding:9px;font-size:13px}
   body.phone #mpPanel .join input{font-size:17px;padding:6px 10px}
   body.phone #mpPanel .code b{font-size:24px}
-  body.phone #mpPlayers{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  body.phone #mpPlayers{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
   body.phone #mpPlayers .pl{padding:4px;font-size:11px} body.phone #mpPlayers .pl.empty{min-height:56px}
   body.phone #devPanel .waves{grid-template-columns:repeat(15,minmax(0,1fr));gap:3px}
   body.phone #devPanel .waves button{padding:5px 0;font-size:11.5px}
   body.phone #devPanel .row2{margin-top:10px} body.phone #devPanel .row2 button{padding:9px;font-size:13px}
-  @media (orientation:portrait){ body.phone #devPanel .waves{grid-template-columns:repeat(10,minmax(0,1fr))} body.phone #mpPlayers{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  @media (orientation:portrait){ body.phone #devPanel .waves{grid-template-columns:repeat(10,minmax(0,1fr))} body.phone #mpPlayers{grid-template-columns:repeat(3,minmax(0,1fr))} }
   #devBtn{position:fixed;top:12px;right:12px;z-index:22;background:#1a1e26;color:#9aa3b2;border:1px dashed #4a5262;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:800;letter-spacing:.08em;cursor:pointer}
   #overlay.hidden ~ #devBtn{display:none}
   #devPanel{position:fixed;inset:0;z-index:40;background:rgba(8,9,12,.86);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow:auto}
@@ -413,7 +413,7 @@
   <button id="mpClose" aria-label="Close">✕</button>
   <h2>🌐 PLAY ONLINE</h2>
   <div id="mpHome">
-    <div class="sub">Up to 4 players. Create a room and send the code or link to your friends.</div>
+    <div class="sub">Up to 6 players. Create a room and send the code or link to your friends.</div>
     <h4>YOUR CAR</h4><div class="opt" id="mpCars"></div>
     <div class="row2"><button id="mpCreateCoop">CREATE CO-OP ROOM</button><button id="mpCreateVs">CREATE VERSUS ROOM</button></div>
     <h4>JOIN A FRIEND</h4><div class="join"><input id="mpCode" maxlength="4" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button id="mpJoin">JOIN</button></div>
@@ -623,7 +623,8 @@ const TYPES = {
 };
 const TYPE_INTRO = { 2: 'flanker', 3: 'rammer', 4: 'bomber', 6: 'tank' };
 /* online multiplayer state (see ONLINE MULTIPLAYER below) */
-const NET = { role: null, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [] };
+const MAXP = 6;
+const NET = { role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [] };
 const mpOn = () => !!NET.role && NET.started;
 const isHost = () => NET.role === 'host' && NET.started;
 const isGuest = () => NET.role === 'guest' && NET.started;
@@ -1137,7 +1138,7 @@ function startWave() {
   else if (ai !== arenaIdx) { setArena(ai); debris = []; resetPlayerPos(); }
   if (ai !== arenaIdx || wave % 2 === 1) sub = ARENAS[ai].name + '  /  ';
   if (gameMode === 'daily') sub = 'DAILY ' + wave + '/' + DAILY_WAVES + '  /  ' + (wave === 1 ? daily.mod.icon + ' ' + daily.mod.name.toUpperCase() + '  /  ' : '');
-  const nh = mpOn() ? cars.filter(c => c.isPlayer).length : 1, n0 = Math.min(2 + wave + (nh - 1), 9), roster = versusOn() ? [] : rosterFor(wave, n0), n = roster.length;
+  const nh = mpOn() ? cars.filter(c => c.isPlayer).length : 1, n0 = Math.min(2 + wave + (nh - 1), 9 + Math.max(0, nh - 4)), roster = versusOn() ? [] : rosterFor(wave, n0), n = roster.length;
   resetHazards();
   roster.forEach((t, i) => spawnEnemy(i + wave, t));
   let fresh = null;
@@ -2251,8 +2252,8 @@ $('devGo').addEventListener('click', () => {
 for (const k of Object.keys(SFX)) { const f = SFX[k]; SFX[k] = (...a) => { nev('s', k, ...a); return f(...a); }; SFX[k].raw = f; }
 function losePartQuiet(c, n) { for (let i = 0; i < n; i++) { const rem = PARTS.filter(p => c.parts[p] && p !== 'bumper'); if (!rem.length) break; c.parts[rem[(Math.random() * rem.length) | 0]] = false; c.lost++; } }
 function netSpawn(i, n) {
-  if (versusOn()) { const pts = [[170, 150, .6], [W - 170, H - 150, -2.5], [W - 170, 150, 2.5], [170, H - 150, -.6]]; return pts[i % 4]; }
-  const off = [[0, 0], [-90, 0], [90, 0], [0, 80]][i % 4]; return [W / 2 + off[0], H / 2 + 150 + off[1], -Math.PI / 2];
+  if (versusOn()) { const pts = [[170, 150, .6], [W - 170, H - 150, -2.5], [W - 170, 150, 2.5], [170, H - 150, -.6], [W / 2, 110, Math.PI / 2], [W / 2, H - 110, -Math.PI / 2]]; return pts[i % 6]; }
+  const off = [[0, 0], [-90, 0], [90, 0], [-45, 80], [45, 80], [0, -80]][i % 6]; return [W / 2 + off[0], H / 2 + 150 + off[1], -Math.PI / 2];
 }
 function netRoundOver() {
   const hs = cars.filter(c => c.isPlayer), alive = hs.filter(c => !c.dead);
@@ -2272,7 +2273,7 @@ function netDriveRemote(c, dt) {
 function netSend(o) { try { if (NET.ws && NET.ws.readyState === 1) NET.ws.send(typeof o === 'string' ? o : JSON.stringify(o)); } catch (e) {} }
 const FLAG = { dead: 1, braking: 2, reversing: 4, boost: 8, rage: 16, slam: 32, windup: 64, armor: 128, hb: 256 };
 const P4 = ['hood', 'trunk', 'doorL', 'doorR'];
-function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '']; }
+function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '', Math.round(c.accel || 0), Math.round(c.maxSpeed || 0), +(c.turnRate || 0).toFixed(3), +(c.nitroEff || 1).toFixed(2)]; }
 function netSnapshot() {
   NET.metaT -= 1; if (NET.metaT <= 0) { NET.metaT = 30; NET.metaSent.clear(); }
   const metas = [], cs = [];
@@ -2280,9 +2281,9 @@ function netSnapshot() {
     if (!NET.metaSent.has(c.id)) { metas.push(carMeta(c)); NET.metaSent.add(c.id); }
     let f = 0; if (c.dead) f |= 1; if (c.braking) f |= 2; if (c.reversing) f |= 4; if (c.boost) f |= 8; if (c.rage) f |= 16; if (c.slam) f |= 32; if (c.ai && c.ai.mode === 'windup' && !c.isPlayer) f |= 64; if (c.armor) f |= 128; if (c.handbrake) f |= 256;
     let pm = 0; PARTS.forEach((p, i) => { if (c.parts[p]) pm |= 1 << i; });
-    cs.push([c.id, Math.round(c.x), Math.round(c.y), +c.a.toFixed(3), Math.round(c.vx), Math.round(c.vy), f, pm, c.lost, Math.round(c.nitro * 100), Math.round(c.slip), c.php ? P4.map(p => c.php[p]) : 0, c.arm ? +c.arm.ang.toFixed(3) : 0, c.score || 0, c.kos || 0]);
+    cs.push([c.id, Math.round(c.x), Math.round(c.y), +c.a.toFixed(3), Math.round(c.vx), Math.round(c.vy), f, pm, c.lost, Math.round(c.nitro * 100), Math.round(c.slip), c.php ? P4.map(p => c.php[p]) : 0, c.arm ? +c.arm.ang.toFixed(3) : 0, c.score || 0, c.kos || 0, c.isPlayer && NET.inT[c.pid] ? [NET.inT[c.pid][0], Math.round(performance.now() - NET.inT[c.pid][1])] : 0]);
   }
-  netSend({ s: { w: wave, wm: waveMode, it: +Math.max(0, introT).toFixed(2), sc: score, cb: [combo.n, +Math.max(0, combo.t).toFixed(2)], ar: arenaIdx, st: state, cars: cs, m: metas,
+  netSend({ s: { t: Math.round(performance.now()), w: wave, wm: waveMode, it: +Math.max(0, introT).toFixed(2), sc: score, cb: [combo.n, +Math.max(0, combo.t).toFixed(2)], ar: arenaIdx, st: state, cars: cs, m: metas,
     pk: pickups.map(p => [p.x | 0, p.y | 0, p.k, +(p.life - p.t).toFixed(1)]), br: barrels.map(b => b.alive ? 1 : 0), cr: crusher ? [crusher.phase, +crusher.e.toFixed(2)] : 0 }, e: NET.ev });
   NET.ev = [];
 }
@@ -2300,39 +2301,111 @@ function netApplyLayout(ai, L2) {
   const hz = HAZ[arena.id] || {}; crusher = hz.crusher ? Object.assign({ phase: 'idle', t: 4.5, e: 1, bt: 0 }, hz.crusher) : null;
 }
 function netGuestCar(m) {
-  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName] = m;
+  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName, acc, ms, tr, ne] = m;
   let c = NET.byId.get(id);
   if (!c) { c = makeCar(0, 0, 0, col, !!isP, 1); c.id = id; c.init = false; NET.byId.set(id, c); }
   Object.assign(c, { type, styleId, col, isPlayer: !!isP, pid, pname, boss: !!boss, bossKind, cL: cL || undefined, cW: cW || undefined, phpMax, twinIdx, maxLost, carName });
   if (boss && !c.php) c.php = { hood: 2, trunk: 2, doorL: 2, doorR: 2 };
   if (bossKind === 'crane' && !c.arm) c.arm = { ang: 0, w: 1, len: 150, r: 19, cd: new Map() };
+  if (acc) { c.accel = acc; c.maxSpeed = ms; c.turnRate = tr; c.nitroEff = ne; }
   if (isP && pid === PID) player = c;
   return c;
 }
+// a car row from a snapshot -> car state (everything except position, which is interpolated)
+function netRowState(c, d) {
+  const f = d[6], wasDead = c.dead;
+  c.dead = !!(f & 1); c.braking = !!(f & 2); c.reversing = !!(f & 4); c.boost = !!(f & 8); c.rage = !!(f & 16); c.slam = (f & 32) ? (c.slam || { t: .85, max: .85 }) : null; c.armor = (f & 128) ? 1 : 0; c.handbrake = !!(f & 256);
+  if (c.ai) c.ai.mode = (f & 64) ? 'windup' : 'chase';
+  if (c.dead && !wasDead) c.deadT = 0;
+  let changed = false; PARTS.forEach((p, i) => { const on = !!(d[7] & (1 << i)); if (c.parts[p] !== on) { c.parts[p] = on; changed = true; } });
+  if (changed || c.lost !== d[8] || wasDead !== c.dead) c._key = '';
+  c.lost = d[8]; c.nitro = d[9] / 100; c.slip = d[10];
+  if (d[11] && c.php) P4.forEach((p, i) => { c.php[p] = d[11][i]; });
+  if (c.arm) c.arm.tang = d[12];
+  c.score = d[13]; c.kos = d[14];
+  return wasDead;
+}
 function netApplySnap(s) {
   for (const m of s.m || []) netGuestCar(m);
+  const now = performance.now(), ht = s.t || now;
+  // clock offset (local - host). Track the fastest delivery; let it drift up slowly so a route change can't freeze us.
+  const o = now - ht;
+  if (NET.off == null || o < NET.off) NET.off = o; else NET.off += Math.min(o - NET.off, 2);
+  const late = o - NET.off; NET.jit += (late - NET.jit) * .1;
+  NET.interp = clamp((60 + NET.jit * 2.2) / 1000, .075, .22); // buffer: about 1.5 snapshots plus measured jitter
   const list = [];
   for (const d of s.cars) {
     const c = NET.byId.get(d[0]); if (!c) continue; list.push(c);
-    c.tx = d[1]; c.ty = d[2]; c.ta = d[3]; c.vx = d[4]; c.vy = d[5];
-    if (!c.init) { c.x = c.tx; c.y = c.ty; c.a = c.ta; c.init = true; }
-    const f = d[6], wasDead = c.dead;
-    c.dead = !!(f & 1); c.braking = !!(f & 2); c.reversing = !!(f & 4); c.boost = !!(f & 8); c.rage = !!(f & 16); c.slam = (f & 32) ? (c.slam || { t: .85, max: .85 }) : null; c.armor = (f & 128) ? 1 : 0; c.handbrake = !!(f & 256);
-    if (c.ai) c.ai.mode = (f & 64) ? 'windup' : 'chase';
-    if (c.dead && !wasDead) c.deadT = 0;
-    let changed = false; PARTS.forEach((p, i) => { const on = !!(d[7] & (1 << i)); if (c.parts[p] !== on) { c.parts[p] = on; changed = true; } });
-    if (changed || c.lost !== d[8] || wasDead !== c.dead) c._key = '';
-    c.lost = d[8]; c.nitro = d[9] / 100; c.slip = d[10];
-    if (d[11] && c.php) P4.forEach((p, i) => { c.php[p] = d[11][i]; });
-    if (c.arm) c.arm.tang = d[12];
-    c.score = d[13]; c.kos = d[14];
+    (c.hist || (c.hist = [])).push([ht, d]);
+    while (c.hist.length > 2 && c.hist[1][0] < ht - 1000) c.hist.shift();
+    if (!c.init) { c.x = d[1]; c.y = d[2]; c.a = d[3]; c.vx = d[4]; c.vy = d[5]; c.init = true; netRowState(c, d); }
+    if (c === player) netOwnAuth(c, d);
   }
-  cars = list;
+  NET.list = list;
   wave = s.w; waveMode = s.wm; introT = s.it; score = s.sc; combo.n = s.cb[0]; combo.t = s.cb[1];
   pickups = s.pk.map(([x, y, k, rem]) => ({ x, y, k, t: 0, life: rem }));
   s.br.forEach((a, i) => { if (barrels[i]) barrels[i].alive = !!a; });
   if (crusher && s.cr) { crusher.phase = s.cr[0]; crusher.e = s.cr[1]; }
   if ($('hw').textContent != wave || NET.hudT-- <= 0) { NET.hudT = 8; updateHud(); }
+}
+// my own car: predicted locally, nudged toward what the host says
+function netOwnAuth(c, d) {
+  const wasDead = netRowState(c, d);
+  if (c.dead) { c.pred = false; return; }
+  // the host's copy of my car is about one round trip behind. Replay my own recent controls on top of it
+  // (same physics as the host) to work out where it is "now", then ease toward that.
+  // d[15] = [my send time of the last controls the host used, how long the host has been using them] -> exactly which of my
+  // controls the host has already played, without guessing from ping
+  const now = performance.now(), from = d[15] && d[15][0] ? clamp(d[15][0] + d[15][1], now - 450, now) : now - clamp(NET.rtt, .03, .4) * 1000;
+  const sim = Object.assign({}, c, { x: d[1], y: d[2], a: d[3], vx: d[4], vy: d[5] });
+  let tPrev = from;
+  for (const h of NET.inHist) { if (h[0] <= from) continue; const dt = Math.min(.05, (h[0] - tPrev) / 1000); tPrev = h[0]; if (dt <= 0) continue;
+    sim.steer = h[1]; sim.throttle = h[2]; sim.handbrake = !!h[3]; sim.boost = !!h[4]; driveCar(sim, dt); netQuietCollide(sim, false); }
+  const ex = sim.x - c.x, ey = sim.y - c.y, err = Math.hypot(ex, ey), dv = Math.hypot(sim.vx - c.vx, sim.vy - c.vy);
+  if (!c.pred || wasDead || err > 110) { // first frame, respawn, teleport or a big knock: snap
+    c.x = sim.x; c.y = sim.y; c.a = sim.a; c.vx = sim.vx; c.vy = sim.vy; c.cx = c.cy = c.ca = 0; c.pred = true; return;
+  }
+  c.cx = ex; c.cy = ey; c.ca = wrap(sim.a - c.a); // spread the fix over the next few frames
+  const vk = dv > 140 ? .85 : .3; // a sudden velocity change means the host saw a collision: take it
+  c.vx += (sim.vx - c.vx) * vk; c.vy += (sim.vy - c.vy) * vk;
+}
+// pure physics collisions for my predicted car (no sounds, sparks or barrel triggers; the host does those)
+function netQuietCollide(c, withCars = true) {
+  const cs = corners(c); let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+  for (const p of cs) { minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]); minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]); }
+  if (minX < M) { c.x += M - minX; if (c.vx < 0) c.vx = -c.vx * .4; }
+  if (maxX > W - M) { c.x -= maxX - (W - M); if (c.vx > 0) c.vx = -c.vx * .4; }
+  if (minY < M) { c.y += M - minY; if (c.vy < 0) c.vy = -c.vy * .4; }
+  if (maxY > H - M) { c.y -= maxY - (H - M); if (c.vy > 0) c.vy = -c.vy * .4; }
+  for (const o of OBST_C) {
+    const [lx, ly] = toLocal(c, o.x, o.y);
+    const qx = clamp(lx, -(c.cL || L) / 2, (c.cL || L) / 2), qy = clamp(ly, -(c.cW || WD) / 2, (c.cW || WD) / 2);
+    const dx = lx - qx, dy = ly - qy, dd = Math.hypot(dx, dy); if (dd >= o.r || dd < 1e-6) continue;
+    const nl = dx / dd, ml = dy / dd, fx = Math.cos(c.a), fy = Math.sin(c.a), nx = nl * fx - ml * fy, ny = nl * fy + ml * fx, pen = o.r - dd;
+    c.x -= nx * pen; c.y -= ny * pen; const vn = c.vx * nx + c.vy * ny; if (vn > 0) { c.vx -= 1.3 * vn * nx; c.vy -= 1.3 * vn * ny; }
+  }
+  // don't drive through other cars while waiting for the host to resolve the hit
+  if (withCars) for (const o of cars) { if (o === c || o.dead) continue; if (Math.abs(o.x - c.x) > 90 || Math.abs(o.y - c.y) > 90) continue; const h = sat(c, o); if (h) { c.x -= h.n[0] * h.depth * .5; c.y -= h.n[1] * h.depth * .5; } }
+  c.oilT = 0; if (withCars) for (const o of oilCv) if (Math.hypot(c.x - o.x, c.y - o.y) < o.r * .85) c.oilT = .45;
+}
+// other cars: drawn a little in the past, smoothly between two real snapshots
+function netInterpCar(c, rt) {
+  const h = c.hist; if (!h || !h.length) return;
+  let i = h.length - 1; while (i > 0 && h[i][0] > rt) i--;
+  const A = h[i], B = h[i + 1], da = A[1];
+  if (c._row !== da && c !== player) { c._row = da; netRowState(c, da); }
+  if (!B) { // ran past the newest snapshot: coast on velocity for a moment
+    const e = clamp((rt - A[0]) / 1000, 0, .15);
+    c.x = da[1] + da[4] * e; c.y = da[2] + da[5] * e; c.a = da[3]; c.vx = da[4]; c.vy = da[5]; return;
+  }
+  const db = B[1], T = (B[0] - A[0]) / 1000, u = clamp((rt - A[0]) / (B[0] - A[0] || 1), 0, 1);
+  if (T > 0 && T < .4 && Math.hypot(db[1] - da[1], db[2] - da[2]) < 200) { // cubic Hermite using both velocities: follows curves instead of cutting corners
+    const u2 = u * u, u3 = u2 * u, h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u, h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
+    c.x = h00 * da[1] + h10 * T * da[4] + h01 * db[1] + h11 * T * db[4];
+    c.y = h00 * da[2] + h10 * T * da[5] + h01 * db[2] + h11 * T * db[5];
+  } else { c.x = da[1] + (db[1] - da[1]) * u; c.y = da[2] + (db[2] - da[2]) * u; }
+  c.a = da[3] + wrap(db[3] - da[3]) * u;
+  c.vx = da[4] + (db[4] - da[4]) * u; c.vy = da[5] + (db[5] - da[5]) * u;
 }
 function netEvents(evs) {
   for (const e of evs) {
@@ -2364,12 +2437,22 @@ function guestStep(dt) {
     } else joy.rev = false;
     const nos = !!(keys.ShiftLeft || keys.ShiftRight || touch.nos) ? 1 : 0, hb = (keys.Space || touch.hand) ? 1 : 0;
     NET.myIn = [+st.toFixed(2), +th.toFixed(2), hb, nos, NET.emo];
+    if (player.pred) { // run my car's physics right away so steering feels instant
+      player.steer = st; player.throttle = th; player.handbrake = !!hb; player.boost = !!nos && player.nitro > 0 && th >= 0 && introT <= 0;
+      const tn = performance.now(); NET.inHist.push([tn, st, th, hb, player.boost ? 1 : 0]); while (NET.inHist.length && NET.inHist[0][0] < tn - 600) NET.inHist.shift();
+      driveCar(player, dt);
+      const k = Math.min(1, dt * 6); player.x += player.cx * k; player.y += player.cy * k; player.cx *= 1 - k; player.cy *= 1 - k;
+      if (player.ca) { player.a += player.ca * k; player.ca *= 1 - k; }
+      netQuietCollide(player);
+    }
   } else NET.myIn = [0, 0, 0, 0, NET.emo];
+  const rt = performance.now() - (NET.off || 0) - NET.interp * 1000;
+  while (NET.evq.length && NET.evq[0][0] <= rt) netEvents(NET.evq.shift()[1]);
+  if (NET.evq.length > 60) netEvents(NET.evq.shift()[1]);
+  if (NET.list) cars = NET.list;
   for (const c of cars) {
-    if (c.tx == null) continue;
-    c.tx += c.vx * dt; c.ty += c.vy * dt;
-    const k = Math.min(1, dt * 12); c.x += c.vx * dt; c.y += c.vy * dt; c.x += (c.tx - c.x) * k; c.y += (c.ty - c.y) * k;
-    c.a += wrap(c.ta - c.a) * Math.min(1, dt * 14);
+    if (!c.init) continue;
+    if (!(c === player && c.pred)) netInterpCar(c, rt);
     if (c.arm && c.arm.tang != null) { c.arm.ang += wrap(c.arm.tang - c.arm.ang) * Math.min(1, dt * 14); const [px, py] = toWorld(c, -17.7, 0); c.arm.px = px; c.arm.py = py; c.arm.bx = px + Math.cos(c.arm.ang) * c.arm.len; c.arm.by = py + Math.sin(c.arm.ang) * c.arm.len; }
     if (c.slam) c.slam.t = Math.max(.05, c.slam.t - dt);
     if (c.dead) { c.deadT += dt; if (c.deadT < 4 && Math.random() < .5) smoke(c.x + rand(-8, 8), c.y + rand(-6, 6), c.deadT > 2, c.deadT < 2.2); continue; }
@@ -2397,32 +2480,33 @@ function netTick(rdt) {
   if (!NET.role || !NET.started) return;
   if (NET.role === 'host') {
     NET.snapT -= rdt;
-    if (NET.snapT <= 0) { NET.snapT = 1 / 15; netSnapshot(); }
+    if (NET.snapT <= 0) { NET.snapT = Math.max(-.05, NET.snapT) + 1 / 20; netSnapshot(); }
   } else if (state === 'play') {
     NET.sendT -= rdt;
     const cur = JSON.stringify(NET.myIn || [0, 0, 0, 0, 0]);
-    if (NET.sendT <= 0 && (cur !== NET.lastIn || NET.sendT < -.5 || NET.forceSend)) { netSend({ i: NET.myIn || [0, 0, 0, 0, 0] }); NET.lastIn = cur; NET.sendT = 1 / 15; NET.forceSend = false; }
+    if (NET.sendT <= 0 && (cur !== NET.lastIn || NET.sendT < -.5 || NET.forceSend)) { netSend({ i: (NET.myIn || [0, 0, 0, 0, 0]).concat(Math.round(performance.now())) }); NET.lastIn = cur; NET.sendT = 1 / 30; NET.forceSend = false; }
   }
 }
 function netOnMessage(raw) {
   let m; try { m = JSON.parse(raw); } catch (e) { return; }
   if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; renderMpLobby(); if (m.go && !NET.started) netStartGame(); return; }
-  if (m.c === 'denied') { mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full (4 players).', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
+  if (m.c === 'denied') { mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full (6 players).', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
   if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
   if (m.c === 'left') { const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c && !c.dead && NET.started) { killCar(c, null); addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' LEFT', '#cfd6e2'); } delete NET.inputs[m.pid]; return; }
-  if (m.c === 'pong') { NET.ping = Math.round(performance.now() - m.t); return; }
-  if (NET.role === 'host' && m.f) { if (m.d && m.d.i) NET.inputs[m.f] = m.d.i; return; }
-  if (NET.role === 'guest') { if (m.s && NET.started) netApplySnap(m.s); if (m.e) netEvents(m.e); }
+  if (m.c === 'pong') { const r = performance.now() - m.t; NET.ping = Math.round(r); NET.rtt += (r / 1000 - NET.rtt) * (NET.rtt > .5 ? 1 : .3); return; }
+  if (NET.role === 'host' && m.f) { if (m.d && m.d.i) { NET.inputs[m.f] = m.d.i; NET.inT[m.f] = [+m.d.i[5] || 0, performance.now()]; } return; }
+  if (m.c === 'hostleft') return;
+  if (NET.role === 'guest') { if (m.s && NET.started) netApplySnap(m.s); if (m.e && m.e.length) { if (m.s && m.s.t && NET.started) NET.evq.push([m.s.t, m.e]); else netEvents(m.e); } }
 }
 function netConnect(code, create, mode) {
   netLeave(true);
   pname = ($('pname').value || '').trim().slice(0, 12) || 'Player'; try { localStorage.setItem('scrapArenaName', pname); } catch (e) {}
   const base = (API || location.origin).replace(/^http/, 'ws');
-  const q = new URLSearchParams({ pid: PID, name: pname, car: mpCar, create: create ? '1' : '0', mode: mode || 'coop' });
+  const q = new URLSearchParams({ pid: PID, name: pname, car: mpCar, create: create ? '1' : '0', mode: mode || 'coop', max: '6' });
   let ws; try { ws = new WebSocket(base + '/api/room/' + code + '/ws?' + q); } catch (e) { mpMsg('Could not connect.'); return; }
   NET.ws = ws; NET.room = code; NET.role = create ? 'host' : 'guest'; NET.started = false;
   mpMsg('Connecting...');
-  ws.onopen = () => { mpMsg(''); NET.pingI = setInterval(() => netSend({ c: 'ping', t: performance.now() }), 4000); };
+  ws.onopen = () => { mpMsg(''); netSend({ c: 'ping', t: performance.now() }); NET.pingI = setInterval(() => netSend({ c: 'ping', t: performance.now() }), 2000); };
   ws.onmessage = e => netOnMessage(e.data);
   ws.onclose = () => { if (NET.ws === ws) { const was = NET.started; netLeave(true); if (was && state === 'play') netShowResults({ hostLeft: true, lost: true }); else if (!$('mpPanel').classList.contains('hidden') && !$('mpMsg').textContent) mpMsg('Disconnected.'); } };
 }
@@ -2434,7 +2518,7 @@ function netLeave(quiet) {
   if (!quiet) renderMpLobby();
 }
 function netStartGame() {
-  NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null;
+  NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null; NET.evq = []; NET.inHist = []; NET.inT = {}; NET.off = null; NET.jit = 0; NET.list = null;
   $('mpPanel').classList.add('hidden'); $('overlay').classList.add('hidden'); $('card').classList.remove('over');
   document.body.classList.add('mp');
   gameMode = 'waves'; devRun = false; daily = null;
@@ -2500,7 +2584,7 @@ function renderMpLobby() {
   $('mpModeSw').style.display = amHost ? '' : 'none'; $('mpModeSw').textContent = L2.mode === 'versus' ? 'Switch to Co-op' : 'Switch to Versus';
   const ps = L2.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
   $('mpPlayers').innerHTML = ps.map(p => '<div class="pl"><img src="' + (ASSET.show[p.car] || '') + '"><span>' + esc(p.name) + (p.pid === PID ? ' (you)' : '') + '</span><small>' + (p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div>').join('') +
-    Array.from({ length: Math.max(0, 4 - ps.length) }, () => '<div class="pl empty"><span>Waiting for a friend...</span></div>').join('');
+    Array.from({ length: Math.max(0, MAXP - ps.length) }, () => '<div class="pl empty"><span>Waiting for a friend...</span></div>').join('');
   const need = L2.mode === 'versus' ? 2 : 1;
   $('mpStart').style.display = amHost ? '' : 'none'; $('mpStart').disabled = ps.length < need;
   $('mpStart').textContent = ps.length < need ? 'NEED 2 PLAYERS' : 'START MATCH';
