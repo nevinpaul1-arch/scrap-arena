@@ -632,6 +632,10 @@ const TYPE_INTRO = { 2: 'flanker', 3: 'rammer', 4: 'bomber', 6: 'tank' };
 /* online multiplayer state (see ONLINE MULTIPLAYER below) */
 const MAXP = 6, COOP_MAX = 2;
 const NET = { role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [] };
+const RTC_ICE = [{ urls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'] }];
+const RTC = { peers: new Map(), me: null, lastRx: 0, rpT: 0 };
+const rtcOk = p => !!(p && p.u && p.u.readyState === 'open' && p.r && p.r.readyState === 'open');
+const rtcDirect = () => NET.role === 'guest' && rtcOk(RTC.me) && performance.now() - RTC.lastRx < 400;
 const mpOn = () => !!NET.role && NET.started;
 const isHost = () => NET.role === 'host' && NET.started;
 const isGuest = () => NET.role === 'guest' && NET.started;
@@ -2306,6 +2310,69 @@ function netDriveRemote(c, dt) {
   if (c.slip > 110 && sp > 140 && introT <= 0) c.nitro = Math.min(1, c.nitro + .2 * dt * (c.nitroEff || 1) * nitroK());
   if ((inp[4] | 0) !== (NET.emoSeen[c.pid] | 0)) { NET.emoSeen[c.pid] = inp[4] | 0; emote(c, playerEmotion(c)); }
 }
+
+// ---- WebRTC: direct phone-to-phone game data. The room server only introduces the players; if a direct
+// link can't be made (strict networks), that player simply stays on the server relay as before.
+function rtcClose() {
+  for (const p of RTC.peers.values()) { try { p.pc.close(); } catch (e) {} }
+  RTC.peers.clear(); if (RTC.me) { try { RTC.me.pc.close(); } catch (e) {} } RTC.me = null;
+}
+function rtcAddIce(p, c) { if (p.ready) p.pc.addIceCandidate(c).catch(() => {}); else (p.pend || (p.pend = [])).push(c); }
+function rtcReady(p) { p.ready = true; for (const c of p.pend || []) p.pc.addIceCandidate(c).catch(() => {}); p.pend = null; }
+function rtcGuestStart() {
+  rtcClose(); if (!window.RTCPeerConnection) return;
+  let pc; try { pc = new RTCPeerConnection({ iceServers: RTC_ICE }); } catch (e) { return; }
+  const p = { pc };
+  p.u = pc.createDataChannel('u', { ordered: false, maxRetransmits: 0 }); // snapshots + controls: newest wins, never wait for a lost one
+  p.r = pc.createDataChannel('r', { ordered: true });                      // events (hits, parts, results): must arrive
+  for (const ch of [p.u, p.r]) ch.onmessage = e => rtcGuestRx(e.data);
+  pc.onicecandidate = e => { if (e.candidate) netSend({ rtc: { ic: e.candidate.toJSON() } }); };
+  RTC.me = p;
+  pc.createOffer().then(o => pc.setLocalDescription(o)).then(() => netSend({ rtc: { sdp: pc.localDescription.toJSON() } })).catch(() => {});
+}
+function rtcGuestSignal(sg) {
+  const p = RTC.me; if (!p) return;
+  if (sg.sdp) p.pc.setRemoteDescription(sg.sdp).then(() => rtcReady(p)).catch(() => {});
+  else if (sg.ic) rtcAddIce(p, sg.ic);
+}
+function rtcHostSignal(pid, sg) {
+  if (sg.sdp) {
+    const old = RTC.peers.get(pid); if (old) { try { old.pc.close(); } catch (e) {} }
+    let pc; try { pc = new RTCPeerConnection({ iceServers: RTC_ICE }); } catch (e) { return; }
+    const p = { pc, pid }; RTC.peers.set(pid, p);
+    pc.ondatachannel = e => { p[e.channel.label] = e.channel; e.channel.onmessage = ev => rtcHostRx(pid, p, ev.data); };
+    pc.onicecandidate = e => { if (e.candidate) netSend({ rtcTo: pid, rtc: { ic: e.candidate.toJSON() } }); };
+    pc.setRemoteDescription(sg.sdp).then(() => { rtcReady(p); return pc.createAnswer(); }).then(a => pc.setLocalDescription(a))
+      .then(() => netSend({ rtcTo: pid, rtc: { sdp: pc.localDescription.toJSON() } })).catch(() => {});
+  } else if (sg.ic) { const p = RTC.peers.get(pid); if (p) rtcAddIce(p, sg.ic); }
+}
+function rtcHostRx(pid, p, raw) {
+  let m; try { m = JSON.parse(raw); } catch (e) { return; }
+  p.lastRx = performance.now();
+  if (m.c === 'rp') { try { p.u.send('{"c":"rpo","t":' + (+m.t || 0) + '}'); } catch (e) {} return; }
+  netHostFrom(pid, m);
+}
+function rtcGuestRx(raw) {
+  let m; try { m = JSON.parse(raw); } catch (e) { return; }
+  RTC.lastRx = performance.now();
+  if (m.c === 'rpo') { const r = performance.now() - m.t; NET.ping = Math.round(r); NET.rtt += (r / 1000 - NET.rtt) * .3; return; }
+  netGuestData(m);
+}
+// host: send this tick's snapshot/events to every guest, directly where possible, through the server only if needed
+function netBroadcast(snap, ev) {
+  let needWs = false, sj = null, ej = null;
+  const guests = ((NET.lobby && NET.lobby.players) || []).filter(p => p.pid !== PID);
+  for (const g of guests) {
+    const p = RTC.peers.get(g.pid);
+    if (!rtcOk(p) || performance.now() - (p.lastRx || 0) > 1200) { needWs = true; if (!rtcOk(p)) continue; } // link gone quiet: also send through the server
+    try {
+      if (snap.m && snap.m.length) p.r.send(sj || (sj = JSON.stringify({ s: snap }))); // new cars must arrive
+      else if (p.u.bufferedAmount < 65536) p.u.send(sj || (sj = JSON.stringify({ s: snap })));
+      if (ev.length) p.r.send(ej || (ej = JSON.stringify({ e: ev, t: snap.t })));
+    } catch (e) { needWs = true; }
+  }
+  if (needWs || !guests.length) netSend({ s: snap, e: ev });
+}
 function netSend(o) { try { if (NET.ws && NET.ws.readyState === 1) NET.ws.send(typeof o === 'string' ? o : JSON.stringify(o)); } catch (e) {} }
 const FLAG = { dead: 1, braking: 2, reversing: 4, boost: 8, rage: 16, slam: 32, windup: 64, armor: 128, hb: 256 };
 const P4 = ['hood', 'trunk', 'doorL', 'doorR'];
@@ -2319,8 +2386,8 @@ function netSnapshot() {
     let pm = 0; PARTS.forEach((p, i) => { if (c.parts[p]) pm |= 1 << i; });
     cs.push([c.id, Math.round(c.x), Math.round(c.y), +c.a.toFixed(3), Math.round(c.vx), Math.round(c.vy), f, pm, c.lost, Math.round(c.nitro * 100), Math.round(c.slip), c.php ? P4.map(p => c.php[p]) : 0, c.arm ? +c.arm.ang.toFixed(3) : 0, c.score || 0, c.kos || 0, c.isPlayer && NET.inT[c.pid] ? [NET.inT[c.pid][0], Math.round(performance.now() - NET.inT[c.pid][1])] : 0]);
   }
-  netSend({ s: { t: Math.round(performance.now()), w: wave, wm: waveMode, it: +Math.max(0, introT).toFixed(2), sc: score, cb: [combo.n, +Math.max(0, combo.t).toFixed(2)], ar: arenaIdx, st: state, cars: cs, m: metas,
-    pk: pickups.map(p => [p.x | 0, p.y | 0, p.k, +(p.life - p.t).toFixed(1)]), br: barrels.map(b => b.alive ? 1 : 0), cr: crusher ? [crusher.phase, +crusher.e.toFixed(2)] : 0 }, e: NET.ev });
+  netBroadcast({ t: Math.round(performance.now()), w: wave, wm: waveMode, it: +Math.max(0, introT).toFixed(2), sc: score, cb: [combo.n, +Math.max(0, combo.t).toFixed(2)], ar: arenaIdx, st: state, cars: cs, m: metas,
+    pk: pickups.map(p => [p.x | 0, p.y | 0, p.k, +(p.life - p.t).toFixed(1)]), br: barrels.map(b => b.alive ? 1 : 0), cr: crusher ? [crusher.phase, +crusher.e.toFixed(2)] : 0 }, NET.ev);
   NET.ev = [];
 }
 function netLayoutMsg() { return ['ar', arenaIdx, { g: LAY.groups.map(g => [g.k, g.x | 0, g.y | 0]), b: LAY.barrels.map(b => [b[0] | 0, b[1] | 0]), o: LAY.oil.map(o => [o[0] | 0, o[1] | 0, o[2]]), p: LAY.puddles.map(p => [p.x | 0, p.y | 0, p.rx | 0, p.ry | 0, +p.rot.toFixed(2), p.seed]) }]; }
@@ -2363,6 +2430,8 @@ function netRowState(c, d) {
 }
 function netApplySnap(s) {
   for (const m of s.m || []) netGuestCar(m);
+  if (s.t && NET.lastT && s.t <= NET.lastT) return; // an older snapshot arriving late over the direct link: skip it
+  NET.lastT = s.t;
   const now = performance.now(), ht = s.t || now;
   // clock offset (local - host). Track the fastest delivery; let it drift up slowly so a route change can't freeze us.
   const o = now - ht;
@@ -2533,7 +2602,7 @@ function netTick(rdt) {
   const ni = $('netInfo'), showNi = !!(NET.role && NET.started && state === 'play');
   if (ni.style.display !== (showNi ? '' : 'none')) ni.style.display = showNi ? '' : 'none';
   if (showNi && (NET.niT = (NET.niT || 0) - rdt) <= 0) { NET.niT = .5; const p = NET.ping || 0, col = p < 90 ? '#3ddc84' : p < 170 ? '#ffd166' : '#ff5a5a';
-    ni.innerHTML = (NET.role === 'host' ? 'HOST · ' : '') + 'ping <b style="color:' + col + '">' + (p ? p + ' ms' : '...') + '</b>' + (NET.role === 'guest' ? ' · buffer ' + Math.round(NET.interp * 1000) + ' ms' : ''); }
+    ni.innerHTML = (NET.role === 'host' ? 'HOST · ' : '') + 'ping <b style="color:' + col + '">' + (p ? p + ' ms' : '...') + '</b>' + (NET.role === 'guest' ? ' · ' + (rtcDirect() ? 'direct' : 'relay') + ' · buffer ' + Math.round(NET.interp * 1000) + ' ms' : ' · direct ' + [...RTC.peers.values()].filter(rtcOk).length + '/' + Math.max(0, ((NET.lobby && NET.lobby.players) || []).length - 1)); }
   if (!NET.role || !NET.started) return;
   if (NET.role === 'host') {
     NET.snapT -= rdt;
@@ -2541,19 +2610,33 @@ function netTick(rdt) {
   } else if (state === 'play') {
     NET.sendT -= rdt;
     const cur = JSON.stringify(NET.myIn || [0, 0, 0, 0, 0]);
-    if (NET.sendT <= 0 && (cur !== NET.lastIn || NET.sendT < -.5 || NET.forceSend)) { netSend({ i: (NET.myIn || [0, 0, 0, 0, 0]).concat(Math.round(performance.now())) }); NET.lastIn = cur; NET.sendT = 1 / 30; NET.forceSend = false; }
+    const direct = rtcOk(RTC.me);
+    if (NET.sendT <= 0 && (direct || cur !== NET.lastIn || NET.sendT < -.5 || NET.forceSend)) {
+      const msg = JSON.stringify({ i: (NET.myIn || [0, 0, 0, 0, 0]).concat(Math.round(performance.now())) });
+      let sent = false; if (direct) { try { RTC.me.u.send(msg); sent = true; } catch (e) {} }
+      if (!sent) netSend(msg);
+      NET.lastIn = cur; NET.sendT = 1 / 30; NET.forceSend = false;
+    }
+    if (rtcOk(RTC.me) && (RTC.rpT -= rdt) <= 0) { RTC.rpT = 1; try { RTC.me.u.send('{"c":"rp","t":' + performance.now() + '}'); } catch (e) {} }
   }
 }
 function netOnMessage(raw) {
   let m; try { m = JSON.parse(raw); } catch (e) { return; }
-  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; renderMpLobby(); if (m.go && !NET.started) netStartGame(); return; }
+  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestStart(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
   if (m.c === 'denied') { mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full.', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
   if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
   if (m.c === 'left') { const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c && !c.dead && NET.started) { killCar(c, null); addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' LEFT', '#cfd6e2'); } delete NET.inputs[m.pid]; return; }
-  if (m.c === 'pong') { const r = performance.now() - m.t; NET.ping = Math.round(r); NET.rtt += (r / 1000 - NET.rtt) * (NET.rtt > .5 ? 1 : .3); return; }
-  if (NET.role === 'host' && m.f) { if (m.d && m.d.i) { NET.inputs[m.f] = m.d.i; NET.inT[m.f] = [+m.d.i[5] || 0, performance.now()]; } return; }
+  if (m.c === 'pong') { if (rtcDirect()) return; const r = performance.now() - m.t; NET.ping = Math.round(r); NET.rtt += (r / 1000 - NET.rtt) * (NET.rtt > .5 ? 1 : .3); return; }
+  if (NET.role === 'host' && m.f) { if (m.d) { if (m.d.rtc) rtcHostSignal(m.f, m.d.rtc); else netHostFrom(m.f, m.d); } return; }
+  if (m.rtcTo) { if (m.rtcTo === PID && NET.role === 'guest') rtcGuestSignal(m.rtc); return; }
   if (m.c === 'hostleft') return;
-  if (NET.role === 'guest') { if (m.s && NET.started) netApplySnap(m.s); if (m.e && m.e.length) { if (m.s && m.s.t && NET.started) { const mine = m.e.filter(netMine), rest = m.e.filter(e => !netMine(e)); if (mine.length) netEvents(mine); if (rest.length) NET.evq.push([m.s.t, rest]); } else netEvents(m.e); } }
+  if (NET.role === 'guest' && !rtcDirect()) netGuestData(m); // when the direct link is flowing, ignore the relay copy
+}
+function netHostFrom(pid, d) { if (d.i) { NET.inputs[pid] = d.i; NET.inT[pid] = [+d.i[5] || 0, performance.now()]; } }
+function netGuestData(m) {
+  if (m.s && NET.started) netApplySnap(m.s);
+  const t = (m.s && m.s.t) || m.t;
+  if (m.e && m.e.length) { if (t && NET.started) { const mine = m.e.filter(netMine), rest = m.e.filter(e => !netMine(e)); if (mine.length) netEvents(mine); if (rest.length) { NET.evq.push([t, rest]); NET.evq.sort((a, b) => a[0] - b[0]); } } else netEvents(m.e); }
 }
 function netConnect(code, create, mode) {
   netLeave(true);
@@ -2568,14 +2651,14 @@ function netConnect(code, create, mode) {
   ws.onclose = () => { if (NET.ws === ws) { const was = NET.started; netLeave(true); if (was && state === 'play') netShowResults({ hostLeft: true, lost: true }); else if (!$('mpPanel').classList.contains('hidden') && !$('mpMsg').textContent) mpMsg('Disconnected.'); } };
 }
 function netLeave(quiet) {
-  const ws = NET.ws; NET.ws = null; clearInterval(NET.pingI);
+  const ws = NET.ws; NET.ws = null; clearInterval(NET.pingI); rtcClose();
   if (ws) { try { ws.onclose = null; ws.close(); } catch (e) {} }
   NET.role = null; NET.started = false; NET.lobby = null; NET.byId.clear(); NET.inputs = {}; NET.ev = []; NET.overArmed = false;
   document.body.classList.remove('mp');
   if (!quiet) renderMpLobby();
 }
 function netStartGame() {
-  NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null; NET.evq = []; NET.inHist = []; NET.inT = {}; NET.off = null; NET.rt = null; NET.localHit = null; NET.jit = 0; NET.list = null;
+  NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null; NET.evq = []; NET.inHist = []; NET.inT = {}; NET.off = null; NET.rt = null; NET.localHit = null; NET.lastT = 0; NET.jit = 0; NET.list = null;
   $('mpPanel').classList.add('hidden'); $('overlay').classList.add('hidden'); $('card').classList.remove('over');
   document.body.classList.add('mp');
   gameMode = 'waves'; devRun = false; daily = null;
