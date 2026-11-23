@@ -354,6 +354,8 @@
   .wv.next .dot{background:#e63946;border-color:#ffd1d4;color:#fff;box-shadow:0 0 0 5px rgba(230,57,70,.25)}
   .wv.boss .dot{width:58px;height:58px;margin-top:0;border-radius:14px;background:linear-gradient(160deg,#3a1414,#1c0b0b);border:2px solid #ff5a4e;color:#ffd166;flex-direction:column;font-size:12px;gap:0;overflow:hidden}
   .wv.boss .dot canvas{width:50px;height:25px;display:block}
+  .wv.boss .dot img{width:100%;aspect-ratio:1.6;object-fit:cover;display:block;flex:none}
+  .wv.boss .dot{width:70px!important;height:auto!important;min-height:58px;justify-content:flex-start;padding-bottom:2px}
   .wv.boss.done .dot{border-color:#3ddc84;filter:saturate(.5)}
   .wv.boss.next .dot{box-shadow:0 0 0 5px rgba(255,90,78,.3)}
   .wv .tg{margin-top:6px;font-size:10px;font-weight:900;letter-spacing:.12em;color:#8791a1;min-height:12px}
@@ -1050,7 +1052,8 @@ function renderRoad(next) {
     if (endless) { dot.textContent = '∞'; d.querySelector('.tg').textContent = 'ENDLESS'; d.querySelector('.nt').textContent = 'Bosses every 5 waves. How far can you go?'; }
     else {
       if (boss) {
-        const cv = bossThumb(bossKind(w)); if (cv) dot.appendChild(cv);
+        const bk = bossKind(w), art = ASSET.boss && ASSET.boss[bk === 'crane' ? 'crane' : bk === 'twin' ? 'twin' : 'dozer'];
+        if (art) { const im = document.createElement('img'); im.src = bossPic(bk === 'crane' ? 'crane' : bk === 'twin' ? 'twin' : 'dozer'); im.alt = ''; dot.appendChild(im); } else { const cv = bossThumb(bk); if (cv) dot.appendChild(cv); }
         const n = document.createElement('div'); n.textContent = 'WAVE ' + w; dot.appendChild(n);
       } else dot.textContent = w < next ? '✓' : w;
       d.querySelector('.tg').textContent = boss ? 'BOSS' : w === next ? 'NEXT' : w < next ? 'CLEARED' : 'WAVE ' + w;
