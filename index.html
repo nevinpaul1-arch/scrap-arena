@@ -2783,7 +2783,7 @@ const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platfor
 let installEvt = null;
 function updateInstallBtn() {
   document.body.classList.toggle('standalone', isStandalone());
-  const show = !isStandalone() && location.protocol === 'https:' && matchMedia('(pointer:coarse)').matches;
+  const show = !isStandalone() && window.isSecureContext && location.protocol !== 'file:' && matchMedia('(pointer:coarse)').matches;
   $('installBtn').classList.toggle('hidden', !show);
 }
 addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; updateInstallBtn(); });
@@ -2799,7 +2799,7 @@ $('installBtn').addEventListener('click', async () => {
 });
 $('installSheet').addEventListener('click', e => { if (e.target.id === 'installSheet') $('installSheet').classList.add('hidden'); });
 updateInstallBtn(); matchMedia('(display-mode: standalone)').addEventListener?.('change', updateInstallBtn);
-if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+if ('serviceWorker' in navigator && window.isSecureContext && location.protocol !== 'file:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 document.addEventListener('click', e => { const c = e.target.closest('[data-close]'); if (c) $(c.dataset.close).classList.add('hidden'); });
 $('howSheet').addEventListener('click', e => { if (e.target.id === 'howSheet') $('howSheet').classList.add('hidden'); });
 
