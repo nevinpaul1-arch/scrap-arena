@@ -110,9 +110,19 @@ export default {
     // multiplayer rooms: /api/room/ABCD/ws -> one Durable Object per room code
     const rm = url.pathname.match(/^\/api\/room\/([A-Z]{4})\/ws$/);
     if (rm) return env.ROOMS.get(env.ROOMS.idFromName(rm[1])).fetch(req);
-    // previews: /dev -> dev branch, /mp -> multiplayer branch (uncached); / -> main
-    const BR = { '/dev': 'dev', '/dev/': 'dev', '/mp': 'multiplayer', '/mp/': 'multiplayer' }, branch = BR[url.pathname], isDev = !!branch;
-    if (!isDev && url.pathname !== '/' && url.pathname !== '/index.html') return Response.redirect(url.origin + '/', 302);
+    // previews: /dev/ -> dev branch, /mp/ -> multiplayer branch (uncached); / -> main. Each also serves its app files.
+    const pm = url.pathname.match(/^(\/dev|\/mp)?(\/.*)?$/) || [];
+    const pre = pm[1] || '', rest = pm[2] || '';
+    const branch = pre === '/dev' ? 'dev' : pre === '/mp' ? 'multiplayer' : 'main', isDev = branch !== 'main';
+    if (pre && !rest) return Response.redirect(url.origin + pre + '/' + url.search, 302);
+    const sm = rest.match(/^\/(manifest\.webmanifest|sw\.js|icons\/[a-z0-9-]+\.png)$/);
+    if (sm) {
+      const f = sm[1], ct = f.endsWith('.png') ? 'image/png' : f.endsWith('.js') ? 'text/javascript; charset=utf-8' : 'application/manifest+json';
+      const fr = await fetch(SRC.replace('/main/index.html', '/' + branch + '/pwa/' + f) + (isDev ? '?t=' + Date.now() : ''), isDev ? { cf: { cacheTtl: 0 } } : { cf: { cacheTtl: 300, cacheEverything: true } });
+      if (!fr.ok) return new Response('not found', { status: 404 });
+      return new Response(fr.body, { headers: { 'content-type': ct, 'cache-control': (f === 'sw.js' || isDev) ? 'no-cache' : 'public, max-age=3600', 'x-content-type-options': 'nosniff' } });
+    }
+    if (rest !== '/' && rest !== '/index.html') return Response.redirect(url.origin + pre + '/', 302);
     const r = await fetch(isDev ? SRC.replace('/main/', '/' + branch + '/') + '?t=' + Date.now() : SRC, isDev ? { cf: { cacheTtl: 0 } } : { cf: { cacheTtl: 120, cacheEverything: true } });
     if (!r.ok) return new Response('Game temporarily unavailable', { status: 502 });
     return new Response(r.body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': isDev ? 'no-store' : 'public, max-age=60', 'x-content-type-options': 'nosniff' } });

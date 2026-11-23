@@ -2,12 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b0c0f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Scrap Arena">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Scrap Arena - Car Smash</title>
 <style>
   html,body{margin:0;height:100%;background:#0b0c0f;overflow:hidden;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#fff;touch-action:none;user-select:none;-webkit-user-select:none}
   canvas{display:block;width:100%;height:100%}
-  #hud{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:8px 12px;pointer-events:none;flex-wrap:wrap}
+  #hud{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left));pointer-events:none;flex-wrap:wrap}
   #hud .stats{display:flex;gap:16px;font-size:13px;letter-spacing:.08em;color:#aab3c2;padding:7px 12px;background:rgba(10,11,14,.72);border:1px solid #2d3340;border-radius:10px}
   #hud .stats b{color:#fff;font-size:18px;margin-left:4px;font-variant-numeric:tabular-nums}
   #status{display:flex;align-items:center;gap:10px;background:rgba(10,11,14,.72);border:1px solid #2d3340;border-radius:10px;padding:4px 10px 4px 4px}
@@ -137,7 +145,16 @@
   #mpPlayers .pl img{width:100%;aspect-ratio:960/500;object-fit:cover;border-radius:6px;display:block;margin-bottom:4px}
   #mpPlayers .pl span{display:block;font-weight:800;color:#fff} #mpPlayers .pl small{color:#8791a1}
   #mpPlayers .pl.empty{display:flex;align-items:center;justify-content:center;min-height:70px;border-style:dashed;color:#5d6675} #mpPlayers .pl.empty span{color:#5d6675;font-weight:600}
-  #howBtn,#selInfo,#selTools,#howSheet,#sheetBg{display:none}
+  #howBtn,#selInfo,#selTools,#howSheet,#sheetBg,#installSheet{display:none}
+  #menuLinks{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  #installBtn{background:#2a9d8f;border:0;color:#fff;border-radius:8px;padding:7px 12px;font-weight:800;font-size:13px;cursor:pointer;margin-top:10px}
+  #installBtn.hidden{display:none}
+  body.phone #installBtn{margin-top:0;font-size:12.5px}
+  #installSheet{position:fixed;inset:0;z-index:46;background:rgba(8,9,12,.86);align-items:center;justify-content:center;padding:14px;box-sizing:border-box}
+  #installSheet:not(.hidden){display:flex}
+  #installSheet .hs{position:relative;background:#14171d;border:1px solid #2d3340;border-radius:14px;padding:16px 20px;max-width:460px;max-height:100%;overflow:auto;color:#cfd6e2;font-size:14px;line-height:1.5;text-align:left}
+  #installSheet h2{margin:0 0 8px;font-size:18px} #installSheet ol{padding-left:20px;margin:8px 0} #installSheet li{margin:5px 0} #installSheet .k{display:inline-block;background:#262b35;border:1px solid #3a4150;border-radius:6px;padding:0 6px;font-weight:800;color:#fff}
+  body.standalone #fsMenu,body.standalone #fsGame{display:none!important}
   #howSheet{position:fixed;inset:0;z-index:45;background:rgba(8,9,12,.86);align-items:center;justify-content:center;padding:14px;box-sizing:border-box}
   #howSheet:not(.hidden){display:flex}
   #howSheet .hs{position:relative;background:#14171d;border:1px solid #2d3340;border-radius:14px;padding:16px 18px;max-width:560px;max-height:100%;overflow:auto;color:#cfd6e2;font-size:13.5px;line-height:1.45;text-align:left}
@@ -169,7 +186,7 @@
     body.phone #card{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-rows:auto auto auto auto 1fr;grid-template-areas:"t d" "f d" "n b" "m b" "h b"}
     body.phone #card h1{grid-area:t} body.phone #final{grid-area:f} body.phone #pname{grid-area:n} body.phone #modes{grid-area:m}
     body.phone #dailyBox{grid-area:d;align-self:start} body.phone #board{grid-area:b}
-    body.phone #howBtn,body.phone #mpBack{grid-area:h;align-self:start;justify-self:start}
+    body.phone #menuLinks,body.phone #mpBack{grid-area:h;align-self:start;justify-self:start}
     body.phone #mpBack{justify-self:end}
   }
   @media (orientation:portrait){
@@ -193,7 +210,7 @@
   body.phone .car .nm{font-size:12px}
   body.phone .car.locked .nm::after{content:' 🔒'}
   body.phone:not(.playing) #hud{visibility:hidden}
-  @media (orientation:landscape){ body.phone #fsMenu{top:auto;right:auto;bottom:max(10px,env(safe-area-inset-bottom));left:max(150px,calc(env(safe-area-inset-left) + 138px))} body.phone #devBtn{top:auto;right:auto;bottom:max(10px,env(safe-area-inset-bottom));left:max(200px,calc(env(safe-area-inset-left) + 188px))} }
+  @media (orientation:landscape){ body.phone #fsMenu{top:auto;right:auto;bottom:max(10px,env(safe-area-inset-bottom));left:max(300px,calc(env(safe-area-inset-left) + 288px))} body.phone #devBtn{top:auto;right:auto;bottom:max(10px,env(safe-area-inset-bottom));left:max(350px,calc(env(safe-area-inset-left) + 338px))} }
   body.phone #selInfo img{display:block;width:100%;height:clamp(60px,26vh,120px);object-fit:cover;border-radius:7px;margin-bottom:6px;background:#56627b}
   @media (orientation:portrait){ body.phone #selInfo img{height:clamp(70px,14vh,130px)} }
   body.phone #selInfo{display:block;background:#14171d;border:1px solid #2d3340;border-radius:10px;padding:8px 10px;min-height:0;overflow:auto;text-align:left}
@@ -398,11 +415,17 @@
       <button id="goOnline">ONLINE<small>Play with friends: co-op or versus</small></button>
     </div>
     <div id="dailyBox"></div>
-    <button id="howBtn">❓ How to play</button>
+    <div id="menuLinks"><button id="howBtn">❓ How to play</button><button id="installBtn" class="hidden">📲 Install app</button></div>
     <button id="mpBack" style="display:none">BACK TO LOBBY</button>
     <div id="board"></div>
   </div>
 </div>
+<div id="installSheet" class="hidden"><div class="hs">
+  <button class="shClose" data-close="installSheet">✕</button>
+  <h2>📲 Install Scrap Arena</h2>
+  <div id="installSteps"></div>
+  <p style="color:#8791a1;font-size:12.5px;margin:8px 0 0">Once installed it opens fullscreen from your home screen, with no browser bars, and single-player works offline.</p>
+</div></div>
 <div id="howSheet" class="hidden"><div class="hs">
   <button class="shClose" data-close="howSheet">✕</button>
   <h2>HOW TO PLAY</h2>
@@ -2754,6 +2777,29 @@ $('openGarage').addEventListener('click', () => openSheet('garage'));
 $('openRoad').addEventListener('click', () => { openSheet('road'); const n = $('road').querySelector('.wv.next'); if (n) n.scrollIntoView({ inline: 'center', block: 'nearest' }); });
 $('sheetBg').addEventListener('click', () => openSheet(null));
 $('howBtn').addEventListener('click', () => $('howSheet').classList.remove('hidden'));
+// ---- installable app: fullscreen from the home screen, offline single-player ----
+const isStandalone = () => matchMedia('(display-mode: fullscreen)').matches || matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let installEvt = null;
+function updateInstallBtn() {
+  document.body.classList.toggle('standalone', isStandalone());
+  const show = !isStandalone() && location.protocol === 'https:' && matchMedia('(pointer:coarse)').matches;
+  $('installBtn').classList.toggle('hidden', !show);
+}
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; updateInstallBtn(); });
+addEventListener('appinstalled', () => { installEvt = null; updateInstallBtn(); });
+$('installBtn').addEventListener('click', async () => {
+  if (installEvt) { installEvt.prompt(); try { await installEvt.userChoice; } catch (e) {} installEvt = null; updateInstallBtn(); return; }
+  const safari = isIOS && /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
+  $('installSteps').innerHTML = isIOS ? (safari
+      ? '<ol><li>Tap the <span class="k">Share</span> button (square with an arrow) in Safari\'s toolbar.</li><li>Scroll down and tap <span class="k">Add to Home Screen</span>.</li><li>Tap <span class="k">Add</span>, then open Scrap Arena from your home screen.</li></ol>'
+      : '<ol><li>Tap the <span class="k">Share</span> button in your browser (in Chrome it\'s at the top right).</li><li>Tap <span class="k">Add to Home Screen</span>. If you don\'t see it, open this page in Safari and do it there.</li><li>Open Scrap Arena from your home screen.</li></ol>')
+    : '<ol><li>Open your browser\'s menu <span class="k">⋮</span>.</li><li>Tap <span class="k">Install app</span> or <span class="k">Add to Home screen</span>.</li><li>Open Scrap Arena from your home screen.</li></ol>';
+  $('installSheet').classList.remove('hidden');
+});
+$('installSheet').addEventListener('click', e => { if (e.target.id === 'installSheet') $('installSheet').classList.add('hidden'); });
+updateInstallBtn(); matchMedia('(display-mode: standalone)').addEventListener?.('change', updateInstallBtn);
+if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 document.addEventListener('click', e => { const c = e.target.closest('[data-close]'); if (c) $(c.dataset.close).classList.add('hidden'); });
 $('howSheet').addEventListener('click', e => { if (e.target.id === 'howSheet') $('howSheet').classList.add('hidden'); });
 
