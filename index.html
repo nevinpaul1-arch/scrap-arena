@@ -259,6 +259,40 @@
   body.phone #devPanel .row2{margin-top:10px} body.phone #devPanel .row2 button{padding:9px;font-size:13px}
   @media (orientation:portrait){ body.phone #devPanel .waves{grid-template-columns:repeat(10,minmax(0,1fr))} body.phone #mpPlayers{grid-template-columns:repeat(3,minmax(0,1fr))} }
   #netInfo{position:fixed;left:50%;transform:translateX(-50%);bottom:max(6px,env(safe-area-inset-bottom));z-index:6;background:rgba(10,12,16,.6);border-radius:8px;padding:2px 8px;font:700 11px system-ui,sans-serif;color:#9aa3b2;pointer-events:none}
+  #vsBar{display:none;position:fixed;top:max(8px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:5;background:rgba(10,12,16,.78);border:1px solid #2d3340;border-radius:12px;padding:4px 6px;gap:6px;align-items:center;font:800 18px system-ui,sans-serif;pointer-events:none}
+  body.vs.playing #vsBar{display:flex}
+  #vsBar b{min-width:38px;text-align:center;border-radius:8px;padding:2px 8px;color:#fff} #vsBar .b{background:#3a86ff} #vsBar .r{background:#ff4d5a}
+  #vsBar .t{min-width:54px;text-align:center;color:#fff;font-variant-numeric:tabular-nums} #vsBar .t.low{color:#ffd166}
+  body.vs #hud .stats{display:none}
+  #respawnMsg{display:none;position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:5;font:900 26px system-ui,sans-serif;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8);pointer-events:none;text-align:center}
+  #respawnMsg small{display:block;font-size:13px;font-weight:700;color:#cfd6e2}
+  #mpPlayers.vsMode{display:block}
+  .vsRow{display:grid;grid-template-columns:52px repeat(3,minmax(0,1fr));gap:6px;align-items:stretch;margin-bottom:6px}
+  .vsRow>b{display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:12px;letter-spacing:.06em;color:#fff}
+  .vsRow.t0>b{background:#3a86ff} .vsRow.t1>b{background:#ff4d5a}
+  .vsBox{background:#1a1e26;border:2px solid #2d3340;border-radius:10px;padding:4px;text-align:center;font-size:11.5px;min-height:58px;color:#cfd6e2}
+  .vsRow.t0 .vsBox:not(.empty){border-color:#3a86ff66} .vsRow.t1 .vsBox:not(.empty){border-color:#ff4d5a66}
+  .vsBox.me{box-shadow:0 0 0 2px #ffd166 inset}
+  .vsBox img{width:100%;max-height:44px;object-fit:cover;border-radius:6px;display:block;margin-bottom:2px}
+  .vsBox span{display:block;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .vsBox small{color:#8791a1}
+  .vsBox.empty{border-style:dashed;color:#8791a1;font-weight:800;cursor:pointer;font-size:13px}
+  .vsRow.t0 .vsBox.empty:hover{border-color:#3a86ff;color:#fff} .vsRow.t1 .vsBox.empty:hover{border-color:#ff4d5a;color:#fff}
+  #mpPlayers h4 small{font-weight:600;color:#8791a1;letter-spacing:0;text-transform:none}
+  .vsVotes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .vsVote{background:#1a1e26;border:2px solid #2d3340;border-radius:10px;padding:4px;color:#dfe5ee;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:12px}
+  .vsVote img{height:34px;max-width:100%;object-fit:contain} .vsVote i{font-style:normal;font-size:24px;line-height:34px}
+  .vsVote span{font-weight:800} .vsVote em{font-style:normal;font-size:10.5px;color:#8791a1}
+  .vsVote.on{border-color:#ffd166;background:#2a2617}
+  body.phone .vsRow{grid-template-columns:40px repeat(3,minmax(0,1fr));gap:5px;margin-bottom:5px} body.phone .vsBox{min-height:44px;padding:3px;font-size:10.5px} body.phone .vsBox img{max-height:26px}
+  body.phone .vsBox small{display:none} body.phone .vsBox{min-height:34px;padding:2px} body.phone .vsBox img{max-height:21px!important} body.phone .vsRow{margin-bottom:4px!important;gap:4px!important} body.phone .vsVote{min-height:26px!important;padding:2px 4px!important} body.phone #mpLobby .code{margin:0} body.phone #mpLobby .mode{margin:2px 0 4px} body.phone #mpPlayers h4{margin:4px 0 3px;font-size:11px} body.phone #mpPlayers h4 small{font-size:10px}
+  body.phone .vsVote{flex-direction:row;justify-content:center;gap:5px;min-height:30px} body.phone .vsVote em{font-size:10px} body.phone .vsVote em::before{content:'· '}
+  body.phone #mpModeTxt{font-size:11.5px;line-height:1.25}
+  body.phone .vsVote img{height:24px} body.phone .vsVote i{font-size:18px;line-height:24px} body.phone .vsVote{font-size:11px;padding:3px}
+  .vsRes{margin:6px 0} .vsRes .sc{display:flex;justify-content:center;gap:12px;font:900 24px system-ui,sans-serif} .vsRes .sub{text-align:center;color:#8791a1;font-size:12px;margin:2px 0 6px}
+  .vsRes table{width:100%;border-collapse:collapse;font-size:12.5px} .vsRes th{color:#8791a1;font-weight:700;text-align:right;padding:3px 5px;border-bottom:1px solid #2d3340} .vsRes th:first-child,.vsRes td:first-child{text-align:left}
+  .vsRes td{text-align:right;padding:3px 5px;border-bottom:1px solid #1f242d;font-variant-numeric:tabular-nums} .vsRes td i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+  .vsRes td small{color:#6f7888;margin-left:6px;font-size:10.5px} .vsRes tr.me td{background:#2a2617}
+  body.phone .vsRes{max-height:52vh;overflow:auto} body.phone .vsRes .sc{font-size:18px} body.phone .vsRes table{font-size:11px} body.phone .vsRes td small{display:none}
   #devBtn{position:fixed;top:12px;right:12px;z-index:22;background:#1a1e26;color:#9aa3b2;border:1px dashed #4a5262;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:800;letter-spacing:.08em;cursor:pointer}
   #overlay.hidden ~ #devBtn{display:none}
   #devPanel{position:fixed;inset:0;z-index:40;background:rgba(8,9,12,.86);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow:auto}
@@ -347,6 +381,8 @@
 <body>
 <canvas id="c"></canvas>
 <div id="netInfo" style="display:none"></div>
+<div id="vsBar"><b class="b">0</b><span class="t">3:00</span><b class="r">0</b></div>
+<div id="respawnMsg"></div>
 <div id="hud">
   <div class="stats"><span>WAVE <b id="hw">1</b></span><span>SCORE <b id="hs">0</b></span><span>BEST <b id="hb">0</b></span><span>SCRAP <b id="hsc" style="color:#ffd166">0</b></span><span>CAR <b id="hc" style="font-size:14px">-</b></span></div>
   <div id="status">
@@ -654,7 +690,11 @@ const TYPES = {
 const TYPE_INTRO = { 2: 'flanker', 3: 'rammer', 4: 'bomber', 6: 'tank' };
 /* online multiplayer state (see ONLINE MULTIPLAYER below) */
 const MAXP = 6, COOP_MAX = 2;
-const NET = { role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [] };
+// ---- team versus: blue vs red, 3:00 match, kill = 5, boss = 25, respawn after 3 s ----
+const TEAM_COL = ['#3a86ff', '#ff4d5a'], TEAM_NAME = ['BLUE', 'RED'], VS_LEN = 180, VS_BOSS_AT = 120, VS_RESPAWN = 3, VS_KILL = 5, VS_BOSS_PTS = 25;
+const VS = { matchT: VS_LEN, score: [0, 0], boss: 'none', bossState: 0, warned: false };
+let BLAST = false; // true while a barrel blast is dealing damage (team-mates can hurt each other that way)
+const NET = { vs: { slots: ['', '', '', '', '', ''], votes: {} }, role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [] };
 const RTC_ICE = [{ urls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'] }];
 const RTC = { peers: new Map(), me: null, lastRx: 0, rpT: 0 };
 const rtcOk = p => !!(p && p.u && p.u.readyState === 'open' && p.r && p.r.readyState === 'open');
@@ -1155,7 +1195,7 @@ function spawnEnemy(i, type) {
   cars.push(c); return c;
 }
 function resetPlayerPos() {
-  if (mpOn()) { const hs = cars.filter(c => c.isPlayer); hs.forEach((h, i) => { const sp = netSpawn(i, hs.length); h.x = sp[0]; h.y = sp[1]; h.a = sp[2]; h.vx = h.vy = h.spin = 0; h.wp = null; h.grip = 14; }); snapCamera(); return; }
+  if (mpOn()) { const hs = cars.filter(c => c.isPlayer); hs.forEach((h, i) => { const sp = versusOn() ? vsSpawnPos(h) : netSpawn(i, hs.length); h.x = sp[0]; h.y = sp[1]; h.a = sp[2]; h.vx = h.vy = h.spin = 0; h.wp = null; h.grip = 14; }); snapCamera(); return; }
   player.x = W / 2; player.y = H / 2 + 150; player.a = -Math.PI / 2; player.vx = player.vy = player.spin = 0; player.wp = null; player.grip = 14; snapCamera();
 }
 function startWave() {
@@ -1180,7 +1220,7 @@ function startWave() {
   if (fresh) introT = 2.4;
   const hz = (ai !== arenaIdxPrev) ? HAZ_TXT[arena.id] : '';
   arenaIdxPrev = ai;
-  if (versusOn()) { introT = 2.6; banner('VERSUS DERBY', 'Last car standing wins  /  ' + ARENAS[arenaIdx].name, 2600); beep(440, .1); updateHud(); return; }
+  if (versusOn()) { introT = 2.6; banner('TEAM DERBY', 'Most points in 3:00 wins  /  kill +' + VS_KILL + (VS.boss !== 'none' ? '  /  boss +' + VS_BOSS_PTS : '') + '  /  ' + ARENAS[arenaIdx].name, 2800); beep(440, .1); updateHud(); return; }
   if (isBossWave(wave)) { const bi = BOSS_INFO[bossKind(wave)]; introT = 2.8; banner('BOSS WAVE', bi.name + '<br>' + bi.hint + (hz ? '<br>' + hz : ''), 3200); }
   else banner(gameMode === 'daily' ? 'DAILY ' + wave : 'WAVE ' + wave, sub + n + ' cars' + (fresh ? '<br>NEW: ' + TYPES[fresh].name.toUpperCase() + ' - ' + TYPES[fresh].desc : '') + (hz ? '<br>' + hz : ''), fresh || hz ? 2800 : 1600);
   beep(440, .1); setTimeout(() => beep(660, .16), 150);
@@ -1533,7 +1573,7 @@ function partFx(v, pick, nx, ny, closing) {
 }
 function hitCar(v, cp, atk, closing, nx, ny, noKb) {
   if (v.inv > 0 || v.dead) return false;
-  if (v.isPlayer && atk && atk.isPlayer && atk !== v && mpOn() && !versusOn()) return false; // no friendly fire in co-op
+  if (v.isPlayer && atk && atk.isPlayer && atk !== v && mpOn() && (!versusOn() || (v.team === atk.team && !BLAST))) return false; // no friendly fire (co-op, or team-mates in versus unless it's a blast)
   if (v.armor) {
     v.armor = 0; v.inv = .6;
     spark(cp[0], cp[1], 18, 240, '#8fe3ff'); ring(v.x, v.y, 44, '#4cc9f0', .35, 4); thud(.35, 220);
@@ -1555,7 +1595,8 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
     if (--v.php[force] > 0) {
       v.inv = .45; spark(cp[0], cp[1], 22, 300, '#ffd166'); crunch(.5); thud(.5, 90); shake = Math.min(18, shake + 7);
       dropScrap(cp[0], cp[1], 2);
-      if (atk && atk.isPlayer) { combo.n = combo.t > 0 ? combo.n + 1 : 1; combo.t = 2.2; const pts = 15 * comboMult(); score += pts; addText(v.x, v.y - 60, 'CRACKED!  +' + pts, '#ffd166'); hitStop = Math.max(hitStop, .07); SFX.clang(1); SFX.gasp(); }
+      if (atk && atk.isPlayer && versusOn()) { v.lastTeam = atk.team; atk.dmg = (atk.dmg || 0) + 15; atk.bossDmg = (atk.bossDmg || 0) + 15; atk.score = (atk.score || 0) + 15; addText(v.x, v.y - 60, 'CRACKED!', '#ffd166'); }
+      else if (atk && atk.isPlayer) { combo.n = combo.t > 0 ? combo.n + 1 : 1; combo.t = 2.2; const pts = 15 * comboMult(); score += pts; addText(v.x, v.y - 60, 'CRACKED!  +' + pts, '#ffd166'); hitStop = Math.max(hitStop, .07); SFX.clang(1); SFX.gasp(); }
       addDent(v, cp, 1.4);
       updateHud(); return true;
     }
@@ -1573,7 +1614,8 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
   }
   hitFx(cp[0], cp[1], closing); nev('h', cp[0] | 0, cp[1] | 0, closing | 0);
   let txt = PNAME[pick].toUpperCase() + ' GONE!', col = v.isPlayer ? '#ff6b75' : '#ffd166';
-  if (atk && atk.isPlayer && atk !== v && (!v.isPlayer || versusOn())) {
+  if (atk && atk.isPlayer && atk !== v && versusOn() && v.boss) v.lastTeam = atk.team;
+  if (atk && atk.isPlayer && atk !== v && (!v.isPlayer || versusOn()) && !(versusOn() && v.isPlayer && v.team === atk.team)) {
     combo.n = combo.t > 0 ? combo.n + 1 : 1; combo.t = 2.2;
     const mult = comboMult();
     let pts = 10 * mult, bonus = [];
@@ -1582,7 +1624,7 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
     const px = v.x + nx * 34, py = v.y + ny * 34;
     const pinned = !noKb && (px < M || px > W - M || py < M || py > H - M || OBST_C.some(o => Math.hypot(o.x - px, o.y - py) < o.r + 6));
     if (pinned && !v.boss && v.lost < 5) { losePart(v, region, nx, ny, closing); pts += 30; bonus.push('PINNED! +30'); }
-    if (versusOn()) atk.score = (atk.score || 0) + pts; else score += pts; atk.nitro = Math.min(1, atk.nitro + .2 * (atk.nitroEff || 1) * nitroK());
+    if (versusOn()) { atk.score = (atk.score || 0) + pts; atk.dmg = (atk.dmg || 0) + pts; if (v.boss) atk.bossDmg = (atk.bossDmg || 0) + pts; } else score += pts; atk.nitro = Math.min(1, atk.nitro + .2 * (atk.nitroEff || 1) * nitroK());
     if (combo.n >= 3) SFX.combo(Math.min(combo.n, 8)); if (pinned || combo.n === 4) SFX.cheer(.6);
     txt += '  +' + pts;
     bonus.forEach((b, i) => addText(v.x, v.y - 54 - i * 16, b, '#7dffb0'));
@@ -1604,15 +1646,23 @@ function killCar(c, atk) {
   if (c.isPlayer) {
     if (!mpOn()) { gameOverT = 1.8; slowT = .9; }
     addText(c.x, c.y - 40, mpOn() ? (c.pname || 'PLAYER').toUpperCase() + ' WRECKED!' : 'WRECKED!', '#ff6b75', true); SFX.wreck();
-    if (versusOn() && atk && atk.isPlayer && atk !== c) { atk.score = (atk.score || 0) + 300; atk.kos = (atk.kos || 0) + 1; addText(atk.x, atk.y - 50, 'KO  +300', '#7dffb0', true); }
+    if (versusOn()) {
+      c.deaths = (c.deaths || 0) + 1; c.respawnT = VS_RESPAWN; c._deadAt = performance.now();
+      if (atk && atk.isPlayer && atk !== c && atk.team !== c.team) { atk.kos = (atk.kos || 0) + 1; atk.score = (atk.score || 0) + 100; VS.score[atk.team] += VS_KILL; addText(atk.x, atk.y - 50, TEAM_NAME[atk.team] + ' +' + VS_KILL, TEAM_COL[atk.team], true); }
+    }
   }
   else {
     dropScrap(c.x, c.y, c.boss ? 30 : 5);
     if (c.boss && c.partner && !c.partner.dead) {
       const o = c.partner; o.rage = true; o.maxSpeed *= 1.35; o.accel *= 1.45; o.turnRate *= 1.2; o.mass *= 1.2; o.ai.cool = 0;
-      const pts = 300 * Math.max(1, wave / 5); score += pts; SFX.cheer(1.2); SFX.gasp();
-      ring(c.x, c.y, 120, '#ff5a4e', .5, 8); shake = 24; scorch(c.x, c.y, 60); addText(c.x, c.y - 60, 'TWIN DOWN!  +' + pts, '#ffd23f', true);
+      const pts = versusOn() ? 0 : 300 * Math.max(1, wave / 5); score += pts; SFX.cheer(1.2); SFX.gasp();
+      ring(c.x, c.y, 120, '#ff5a4e', .5, 8); shake = 24; scorch(c.x, c.y, 60); addText(c.x, c.y - 60, versusOn() ? 'TWIN DOWN!' : 'TWIN DOWN!  +' + pts, '#ffd23f', true);
       banner('RAGE!', 'the other twin is out for revenge', 1800);
+    } else if (c.boss && versusOn()) {
+      SFX.cheer(1.8); SFX.horn(); bossDownFx(c); nev('bd', c.id); VS.bossState = 2;
+      const tm = atk && atk.isPlayer ? atk.team : c.lastTeam;
+      if (tm === 0 || tm === 1) { VS.score[tm] += VS_BOSS_PTS; if (atk && atk.isPlayer) atk.score = (atk.score || 0) + 250; addText(c.x, c.y - 60, 'BOSS DOWN!  ' + TEAM_NAME[tm] + ' +' + VS_BOSS_PTS, TEAM_COL[tm], true); banner('BOSS DOWN!', TEAM_NAME[tm] + ' TEAM +' + VS_BOSS_PTS + ' points', 2200); }
+      else banner('BOSS DOWN!', 'nobody gets the points', 1800);
     } else if (c.boss) { SFX.cheer(1.8); SFX.horn(); const pts = 500 * Math.max(1, wave / 5); score += pts; bossDownFx(c); nev('bd', c.id); addText(c.x, c.y - 60, 'BOSS DOWN!  +' + pts, '#ffd23f', true); banner('BOSS DOWN!', '+' + pts + ' points  /  +30 scrap', 2000); }
     else if (atk && atk.isPlayer) {
       const mult = comboMult(), pts = 100 * mult;
@@ -1639,7 +1689,7 @@ function explode(b) {
     const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy); if (d > R) continue;
     const k = 1 - d / R, nx = dx / (d || 1), ny = dy / (d || 1);
     o.vx += nx * 460 * k / o.mass; o.vy += ny * 460 * k / o.mass; o.spin = clamp(o.spin + rand(-5, 5) * k, -8, 8);
-    if (d < R * .8) hitCar(o, [o.x - nx * 20, o.y - ny * 20], b.by, 320, nx, ny, true);
+    if (d < R * .8) { BLAST = true; try { hitCar(o, [o.x - nx * 20, o.y - ny * 20], b.by, 320, nx, ny, true); } finally { BLAST = false; } }
   }
   for (const ob of barrels) if (ob.alive && Math.hypot(ob.x - b.x, ob.y - b.y) < R * .95) triggerBarrel(ob, b.by);
 }
@@ -1943,6 +1993,7 @@ function step(dt) {
 
   // wave logic
   if (state === 'play') {
+    if (versusOn() && NET.role === 'host') vsTick(dt);
     const over = mpOn() ? netRoundOver() : player.dead;
     if (over) {
       if (mpOn() && !NET.overArmed) { NET.overArmed = true; gameOverT = versusOn() ? 2.6 : 2.2; }
@@ -2083,6 +2134,7 @@ const BEAM = (() => { const cv = document.createElement('canvas'); cv.width = 12
 function drawCar(c) {
   const fade = carFade(c), now = performance.now();
   ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.a);
+  if (versusOn() && c.isPlayer && c.team != null && !c.dead) { ctx.globalAlpha = fade * .85; ctx.strokeStyle = TEAM_COL[c.team]; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(0, 0, (c.cL || L) * .62, (c.cW || WD) * .85, 0, 0, 6.283); ctx.stroke(); ctx.globalAlpha = 1; }
   if (!c.dead && !c.boss) { // beams under the body + a steady red glow at the rear
     const fx = (c.cL || L) / 2 - 3, lz = (c.cW || WD) / 2 * .6, rx = -(c.cL || L) / 2;
     ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = fade * .32;
@@ -2159,7 +2211,17 @@ function drawArrows() {
     ctx.restore();
   }
 }
+function vsHud() {
+  if (!versusOn() || state !== 'play') { if ($('respawnMsg').style.display !== 'none') $('respawnMsg').style.display = 'none'; return; }
+  const t = Math.ceil(VS.matchT), txt = Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'), bar = $('vsBar');
+  if (bar._t !== txt) { bar._t = txt; bar.querySelector('.t').textContent = txt; bar.querySelector('.t').classList.toggle('low', t <= 30); }
+  if (bar._s !== VS.score.join()) { bar._s = VS.score.join(); bar.querySelector('.b').textContent = VS.score[0]; bar.querySelector('.r').textContent = VS.score[1]; }
+  const rm = $('respawnMsg'), dead = player && player.dead && VS.matchT > 0;
+  if (dead) { const left = Math.max(0, VS_RESPAWN - (performance.now() - (player._deadAt || performance.now())) / 1000); rm.innerHTML = 'WRECKED<small>back in ' + Math.ceil(left) + '...</small>'; }
+  rm.style.display = dead ? '' : 'none';
+}
 function render() {
+  try { vsHud(); } catch (e) {}
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
   ctx.fillStyle = '#14161a'; ctx.fillRect(0, 0, innerWidth, innerHeight);
   shX = shake > .2 ? (Math.random() - .5) * shake * ppu * .6 : 0; shY = shake > .2 ? (Math.random() - .5) * shake * ppu * .6 : 0;
@@ -2208,7 +2270,7 @@ function render() {
   ctx.globalAlpha = 1;
   if (state === 'play') { drawArrows(); drawBossBar(); }
   if (state === 'play' || state === 'over') drawEmotes();
-  if (mpOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname + (versusOn() ? '  ' + (c.score || 0) : ''), sx, ny); }
+  if (mpOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = versusOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
   if (flashA > .01) { ctx.fillStyle = 'rgba(255,240,220,' + flashA.toFixed(3) + ')'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
   if (hurtA > .02) {
     const R = Math.max(innerWidth, innerHeight), g = ctx.createRadialGradient(innerWidth / 2, innerHeight / 2, R * .3, innerWidth / 2, innerHeight / 2, R * .75);
@@ -2301,12 +2363,53 @@ $('devGo').addEventListener('click', () => {
 for (const k of Object.keys(SFX)) { const f = SFX[k]; SFX[k] = (...a) => { nev('s', k, ...a); return f(...a); }; SFX[k].raw = f; }
 function losePartQuiet(c, n) { for (let i = 0; i < n; i++) { const rem = PARTS.filter(p => c.parts[p] && p !== 'bumper'); if (!rem.length) break; c.parts[rem[(Math.random() * rem.length) | 0]] = false; c.lost++; } }
 function netSpawn(i, n) {
-  if (versusOn()) { const pts = [[170, 150, .6], [W - 170, H - 150, -2.5], [W - 170, 150, 2.5], [170, H - 150, -.6], [W / 2, 110, Math.PI / 2], [W / 2, H - 110, -Math.PI / 2]]; return pts[i % 6]; }
+  if (versusOn()) return vsSpawnPos(i);
   const off = [[0, 0], [-90, 0], [90, 0], [-45, 80], [45, 80], [0, -80]][i % 6]; return [W / 2 + off[0], H / 2 + 150 + off[1], -Math.PI / 2];
+}
+function vsSpawnPos(c) { // blue starts on the left, red on the right, spread down their side
+  const team = typeof c === 'object' ? c.team | 0 : (c % 2), k = typeof c === 'object' ? (c.slot | 0) % 3 : (c >> 1) % 3;
+  const ys = [H / 2, H / 2 - 160, H / 2 + 160];
+  return [team ? W - 150 : 150, ys[k], team ? Math.PI : 0];
+}
+function vsRespawn(c) {
+  const sp = vsSpawnPos(c), y = sp[1] + rand(-40, 40);
+  Object.assign(c, { dead: false, deadT: 0, x: sp[0], y, a: sp[2], vx: 0, vy: 0, spin: 0, lost: 0, inv: 2, nitro: Math.max(c.nitro, .5), armor: 0, slam: null, _key: '', grip: 14 });
+  for (const p of PARTS) c.parts[p] = true;
+  if (c.dents) c.dents = [];
+  ring(c.x, c.y, 60, TEAM_COL[c.team | 0], .5, 5);
+  addText(c.x, c.y - 44, (c.pname || '').toUpperCase() + ' IS BACK', TEAM_COL[c.team | 0]);
+}
+function spawnVsBoss() {
+  const k = VS.boss, list = k === 'twin' ? ['twin', 'twin'] : [k === 'crane' ? 'crane' : 'boss'];
+  const hs = cars.filter(o => o.isPlayer && !o.dead);
+  let bx = W / 2, by = H / 2, tries = 0;
+  do { bx = rand(M + 140, W - M - 140); by = rand(M + 110, H - M - 110); tries++; } // somewhere random, away from players and obstacles
+  while (tries < 120 && (hs.some(o => Math.hypot(o.x - bx, o.y - by) < 280) || OBST_C.some(o => Math.hypot(o.x - bx, o.y - by) < o.r + 90)));
+  list.forEach((t, i) => {
+    const c = spawnEnemy(i, t);
+    c.x = clamp(bx + (list.length > 1 ? (i ? 85 : -85) : 0), M + 60, W - M - 60); c.y = by; c.a = rand(-3.1, 3.1);
+    // tougher in versus: more health, faster, nastier specials
+    const mult = t === 'twin' ? 2 : 2.5; for (const p of Object.keys(c.php)) c.php[p] = Math.round(c.php[p] * mult); c.phpMax = Object.values(c.php).reduce((a2, b2) => a2 + b2, 0);
+    c.maxSpeed *= 1.15; c.accel *= 1.2; c.turnRate *= 1.1; c.inv = 1.2;
+    if (c.arm) c.arm.w *= 1.3; if (c.slamT != null) c.slamT = 3.5;
+    c.ai.target = null; c.ai.retarget = 0;
+    ring(c.x, c.y, 140, '#ffd23f', .6, 10); spark(c.x, c.y, 50, 380, '#ffd23f');
+  });
+  VS.bossState = 1; shake = 22; flashA = .25; SFX.horn(); boomSnd();
+  banner('BOSS INCOMING!', BOSS_INFO[k].name + '<br>wreck it for +' + VS_BOSS_PTS + ' team points', 2600);
+}
+function vsTick(dt) { // host only: match clock, boss arrival, respawns
+  if (introT > 0) return;
+  VS.matchT = Math.max(0, VS.matchT - dt);
+  if (VS.boss !== 'none' && VS.bossState === 0) {
+    if (!VS.warned && VS.matchT <= VS_BOSS_AT + 5) { VS.warned = true; banner('BOSS IN 5', BOSS_INFO[VS.boss].name + ' is coming', 1600); }
+    if (VS.matchT <= VS_BOSS_AT) spawnVsBoss();
+  }
+  for (const c of cars) if (c.isPlayer && c.dead && VS.matchT > 0) { c.respawnT = (c.respawnT ?? VS_RESPAWN) - dt; if (c.respawnT <= 0) vsRespawn(c); }
 }
 function netRoundOver() {
   const hs = cars.filter(c => c.isPlayer), alive = hs.filter(c => !c.dead);
-  if (versusOn()) return hs.length >= 2 ? alive.length <= 1 : alive.length === 0;
+  if (versusOn()) return VS.matchT <= 0;
   return alive.length === 0;
 }
 function netDriveRemote(c, dt) {
@@ -2385,7 +2488,7 @@ function netBroadcast(snap, ev) {
 function netSend(o) { try { if (NET.ws && NET.ws.readyState === 1) NET.ws.send(typeof o === 'string' ? o : JSON.stringify(o)); } catch (e) {} }
 const FLAG = { dead: 1, braking: 2, reversing: 4, boost: 8, rage: 16, slam: 32, windup: 64, armor: 128, hb: 256 };
 const P4 = ['hood', 'trunk', 'doorL', 'doorR'];
-function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '', Math.round(c.accel || 0), Math.round(c.maxSpeed || 0), +(c.turnRate || 0).toFixed(3), +(c.nitroEff || 1).toFixed(2)]; }
+function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '', Math.round(c.accel || 0), Math.round(c.maxSpeed || 0), +(c.turnRate || 0).toFixed(3), +(c.nitroEff || 1).toFixed(2), c.team == null ? -1 : c.team]; }
 function netSnapshot() {
   NET.metaT -= 1; if (NET.metaT <= 0) { NET.metaT = 30; NET.metaSent.clear(); }
   const metas = [], cs = [];
@@ -2396,7 +2499,7 @@ function netSnapshot() {
     cs.push([c.id, Math.round(c.x), Math.round(c.y), +c.a.toFixed(3), Math.round(c.vx), Math.round(c.vy), f, pm, c.lost, Math.round(c.nitro * 100), Math.round(c.slip), c.php ? P4.map(p => c.php[p]) : 0, c.arm ? +c.arm.ang.toFixed(3) : 0, c.score || 0, c.kos || 0, c.isPlayer && NET.inT[c.pid] ? [NET.inT[c.pid][0], Math.round(performance.now() - NET.inT[c.pid][1])] : 0]);
   }
   netBroadcast({ t: Math.round(performance.now()), w: wave, wm: waveMode, it: +Math.max(0, introT).toFixed(2), sc: score, cb: [combo.n, +Math.max(0, combo.t).toFixed(2)], ar: arenaIdx, st: state, cars: cs, m: metas,
-    pk: pickups.map(p => [p.x | 0, p.y | 0, p.k, +(p.life - p.t).toFixed(1)]), br: barrels.map(b => b.alive ? 1 : 0), cr: crusher ? [crusher.phase, +crusher.e.toFixed(2)] : 0 }, NET.ev);
+    pk: pickups.map(p => [p.x | 0, p.y | 0, p.k, +(p.life - p.t).toFixed(1)]), br: barrels.map(b => b.alive ? 1 : 0), cr: crusher ? [crusher.phase, +crusher.e.toFixed(2)] : 0, vs: versusOn() ? [+VS.matchT.toFixed(1), VS.score[0], VS.score[1], VS.bossState] : 0 }, NET.ev);
   NET.ev = [];
 }
 function netLayoutMsg() { return ['ar', arenaIdx, { g: LAY.groups.map(g => [g.k, g.x | 0, g.y | 0]), b: LAY.barrels.map(b => [b[0] | 0, b[1] | 0]), o: LAY.oil.map(o => [o[0] | 0, o[1] | 0, o[2]]), p: LAY.puddles.map(p => [p.x | 0, p.y | 0, p.rx | 0, p.ry | 0, +p.rot.toFixed(2), p.seed]) }]; }
@@ -2413,13 +2516,14 @@ function netApplyLayout(ai, L2) {
   const hz = HAZ[arena.id] || {}; crusher = hz.crusher ? Object.assign({ phase: 'idle', t: 4.5, e: 1, bt: 0 }, hz.crusher) : null;
 }
 function netGuestCar(m) {
-  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName, acc, ms, tr, ne] = m;
+  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName, acc, ms, tr, ne, tm] = m;
   let c = NET.byId.get(id);
   if (!c) { c = makeCar(0, 0, 0, col, !!isP, 1); c.id = id; c.init = false; NET.byId.set(id, c); }
   Object.assign(c, { type, styleId, col, isPlayer: !!isP, pid, pname, boss: !!boss, bossKind, cL: cL || undefined, cW: cW || undefined, phpMax, twinIdx, maxLost, carName });
   if (boss && !c.php) c.php = { hood: 2, trunk: 2, doorL: 2, doorR: 2 };
   if (bossKind === 'crane' && !c.arm) c.arm = { ang: 0, w: 1, len: 150, r: 19, cd: new Map() };
   if (acc) { c.accel = acc; c.maxSpeed = ms; c.turnRate = tr; c.nitroEff = ne; }
+  c.team = tm >= 0 ? tm : undefined;
   if (isP && pid === PID) player = c;
   return c;
 }
@@ -2428,7 +2532,7 @@ function netRowState(c, d) {
   const f = d[6], wasDead = c.dead;
   c.dead = !!(f & 1); c.braking = !!(f & 2); c.reversing = !!(f & 4); c.boost = !!(f & 8); c.rage = !!(f & 16); c.slam = (f & 32) ? (c.slam || { t: .85, max: .85 }) : null; c.armor = (f & 128) ? 1 : 0; c.handbrake = !!(f & 256);
   if (c.ai) c.ai.mode = (f & 64) ? 'windup' : 'chase';
-  if (c.dead && !wasDead) c.deadT = 0;
+  if (c.dead && !wasDead) { c.deadT = 0; c._deadAt = performance.now(); }
   let changed = false; PARTS.forEach((p, i) => { const on = !!(d[7] & (1 << i)); if (c.parts[p] !== on) { c.parts[p] = on; changed = true; } });
   if (changed || c.lost !== d[8] || wasDead !== c.dead) c._key = '';
   c.lost = d[8]; c.nitro = d[9] / 100; c.slip = d[10];
@@ -2460,6 +2564,7 @@ function netApplySnap(s) {
   pickups = s.pk.map(([x, y, k, rem]) => ({ x, y, k, t: 0, life: rem }));
   s.br.forEach((a, i) => { if (barrels[i]) barrels[i].alive = !!a; });
   if (crusher && s.cr) { crusher.phase = s.cr[0]; crusher.e = s.cr[1]; }
+  if (s.vs) { VS.matchT = s.vs[0]; VS.score = [s.vs[1], s.vs[2]]; VS.bossState = s.vs[3]; }
   if ($('hw').textContent != wave || NET.hudT-- <= 0) { NET.hudT = 8; updateHud(); }
 }
 // my own car: predicted locally, nudged toward what the host says
@@ -2631,17 +2736,18 @@ function netTick(rdt) {
 }
 function netOnMessage(raw) {
   let m; try { m = JSON.parse(raw); } catch (e) { return; }
-  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestStart(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
+  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestStart(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
   if (m.c === 'denied') { mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full.', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
   if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
   if (m.c === 'left') { const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c && !c.dead && NET.started) { killCar(c, null); addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' LEFT', '#cfd6e2'); } delete NET.inputs[m.pid]; return; }
   if (m.c === 'pong') { if (rtcDirect()) return; const r = performance.now() - m.t; NET.ping = Math.round(r); NET.rtt += (r / 1000 - NET.rtt) * (NET.rtt > .5 ? 1 : .3); return; }
   if (NET.role === 'host' && m.f) { if (m.d) { if (m.d.rtc) rtcHostSignal(m.f, m.d.rtc); else netHostFrom(m.f, m.d); } return; }
+  if (m.vs) { if (NET.role === 'guest') { NET.vs = m.vs; renderMpLobby(); } return; }
   if (m.rtcTo) { if (m.rtcTo === PID && NET.role === 'guest') rtcGuestSignal(m.rtc); return; }
   if (m.c === 'hostleft') return;
   if (NET.role === 'guest' && !rtcDirect()) netGuestData(m); // when the direct link is flowing, ignore the relay copy
 }
-function netHostFrom(pid, d) { if (d.i) { NET.inputs[pid] = d.i; NET.inT[pid] = [+d.i[5] || 0, performance.now()]; } }
+function netHostFrom(pid, d) { if (d.vq) { vsRequest(pid, d.vq); return; } if (d.i) { NET.inputs[pid] = d.i; NET.inT[pid] = [+d.i[5] || 0, performance.now()]; } }
 function netGuestData(m) {
   if (m.s && NET.started) netApplySnap(m.s);
   const t = (m.s && m.s.t) || m.t;
@@ -2669,12 +2775,14 @@ function netLeave(quiet) {
 function netStartGame() {
   NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null; NET.evq = []; NET.inHist = []; NET.inT = {}; NET.off = null; NET.rt = null; NET.localHit = null; NET.lastT = 0; NET.jit = 0; NET.list = null;
   $('mpPanel').classList.add('hidden'); $('overlay').classList.add('hidden'); $('card').classList.remove('over');
-  document.body.classList.add('mp');
+  document.body.classList.add('mp'); document.body.classList.toggle('vs', NET.lobby.mode === 'versus');
+  if (NET.lobby.mode === 'versus') Object.assign(VS, { matchT: VS_LEN, score: [0, 0], bossState: 0 });
   gameMode = 'waves'; devRun = false; daily = null;
   const a = audio(); if (a && a.resume) a.resume(); startEngine();
   if (isTouch && fsOK && !fsEl()) setFullscreen(true);
   if (NET.role === 'host') {
     NET.mode = NET.lobby.mode; NET.vsArena = (Math.random() * 3) | 0;
+    if (NET.mode === 'versus') { vsSync(true); Object.assign(VS, { matchT: VS_LEN, score: [0, 0], boss: vsVoteResult(), bossState: 0, warned: false }); }
     cars = []; debris = []; parts = []; texts = []; rings = []; pickups = []; booms = []; emotes = [];
     wave = 0; score = 0; shake = 0; gameOverT = 0; paused = false; hitStop = 0; slowT = 0; flashA = 0; hurtA = 0; combo.n = 0; combo.t = 0;
     seenTypes = new Set(); scrap = 0; scrapItems = []; UP.armor = UP.nitro = UP.ram = 0; arenaIdxPrev = -1; arenaIdx = -1; kills = 0; runT0 = performance.now(); srand = Math.random;
@@ -2682,7 +2790,9 @@ function netStartGame() {
     const ps = NET.lobby.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
     ps.forEach((p, i) => {
       const c = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); c.pid = p.pid; c.pname = p.name;
-      applyCar(c, CAR_BY_ID[p.car] || CAR_BY_ID.cruiser); c.score = 0; c.kos = 0; cars.push(c);
+      applyCar(c, CAR_BY_ID[p.car] || CAR_BY_ID.cruiser); c.score = 0; c.kos = 0; c.deaths = 0; c.dmg = 0; c.bossDmg = 0;
+      if (NET.lobby.mode === 'versus') { const si = NET.vs.slots.indexOf(p.pid); c.slot = si < 0 ? 0 : si % 3; c.team = si >= 3 ? 1 : 0; }
+      cars.push(c);
       if (p.pid === PID) player = c;
     });
     state = 'play'; NET.metaSent.clear(); NET.metaT = 0;
@@ -2695,17 +2805,33 @@ function netStartGame() {
   }
   updateHud();
 }
+function vsResultsHtml(r) {
+  const P = r.players.map(p => ({ name: p[0], car: p[1], pts: p[2], k: p[3], pid: p[5], team: p[6], d: p[7], dmg: p[8], boss: p[9] }));
+  const tot = P.reduce((a2, p) => a2 + p.dmg, 0) || 1, mvp = P.slice().sort((a2, b2) => b2.pts - a2.pts)[0];
+  const row = p => '<tr class="' + (p.pid === PID ? 'me' : '') + '"><td><i style="background:' + TEAM_COL[p.team] + '"></i>' + esc(p.name) + (mvp && p === mvp ? ' ⭐' : '') + '<small>' + esc(p.car) + '</small></td><td>' + p.k + '</td><td>' + p.d + '</td><td>' + (p.k / Math.max(1, p.d)).toFixed(1) + '</td><td>' + Math.round(p.dmg / tot * 100) + '%</td><td>' + (p.boss || '-') + '</td><td>' + p.pts + '</td></tr>';
+  const body = [0, 1].map(t => P.filter(p => p.team === t).sort((a2, b2) => b2.pts - a2.pts).map(row).join('')).join('');
+  const bossTxt = r.vs.boss === 'none' ? 'No boss' : BOSS_INFO[r.vs.boss].name + (r.vs.bossState === 2 ? ' wrecked' : ' survived');
+  return '<div class="vsRes"><div class="sc"><b style="color:' + TEAM_COL[0] + '">BLUE ' + r.vs.score[0] + '</b><span>–</span><b style="color:' + TEAM_COL[1] + '">' + r.vs.score[1] + ' RED</b></div><div class="sub">3:00 Team Derby · kill +' + VS_KILL + ' · ' + bossTxt + '</div>' +
+    '<table><tr><th>Player</th><th>K</th><th>D</th><th>K/D</th><th>DMG</th><th>Boss</th><th>Pts</th></tr>' + body + '</table></div>';
+}
 function netShowResults(r) {
   if (NET.role === 'host' && NET.started && !r.hostLeft) {
     const hs = cars.filter(c => c.isPlayer);
-    r = { mode: NET.mode, wave, score, players: hs.map(c => [c.pname, c.carName, c.score || 0, c.kos || 0, c.dead ? 1 : 0, c.pid]) };
-    const alive = hs.filter(c => !c.dead); if (NET.mode === 'versus') r.winner = alive.length === 1 ? alive[0].pid : '';
+    r = { mode: NET.mode, wave, score, players: hs.map(c => [c.pname, c.carName, c.score || 0, c.kos || 0, c.dead ? 1 : 0, c.pid, c.team | 0, c.deaths || 0, Math.round(c.dmg || 0), Math.round(c.bossDmg || 0)]) };
+    if (NET.mode === 'versus') r.vs = { score: VS.score.slice(), winner: VS.score[0] > VS.score[1] ? 0 : VS.score[1] > VS.score[0] ? 1 : -1, boss: VS.boss, bossState: VS.bossState };
     nev('over', r); netSnapshot(); NET.started = false; netSend({ c: 'reset' });
   } else if (NET.role === 'guest') NET.started = false;
-  state = 'over'; paused = false; $('pauseMenu').classList.add('hidden'); document.body.classList.remove('mp');
+  state = 'over'; paused = false; $('pauseMenu').classList.add('hidden'); document.body.classList.remove('mp', 'vs');
   const h1 = $('overlay').querySelector('#card h1');
   if (r.hostLeft) { h1.innerHTML = 'MATCH <span>ENDED</span>'; $('final').textContent = r.lost ? 'Lost connection to the room.' : 'The host left the room.'; }
   else {
+    if (r.mode === 'versus' && r.vs) {
+      const w = r.vs.winner; h1.innerHTML = w < 0 ? "IT'S A <span>DRAW</span>" : '<span style="color:' + TEAM_COL[w] + '">' + TEAM_NAME[w] + '</span> TEAM WINS!';
+      $('final').innerHTML = vsResultsHtml(r);
+      $('card').classList.add('over'); $('overlay').classList.remove('hidden');
+      if (NET.ws) { $('mpBack').style.display = ''; } else $('mpBack').style.display = 'none';
+      return;
+    }
     const win = r.winner && r.players.find(p => p[5] === r.winner);
     h1.innerHTML = r.mode === 'versus' ? (win ? esc(win[0]).toUpperCase() + ' <span>WINS!</span>' : 'NO <span>WINNER</span>') : 'TEAM <span>WRECKED</span>';
     const rows = r.players.slice().sort((a2, b2) => r.mode === 'versus' ? (a2[4] - b2[4]) || (b2[2] - a2[2]) : 0)
@@ -2715,6 +2841,48 @@ function netShowResults(r) {
   $('card').classList.add('over'); $('overlay').classList.remove('hidden');
   if (NET.ws) { $('mpBack').style.display = ''; } else $('mpBack').style.display = 'none';
 }
+// ---- team versus lobby: the host keeps the slot list and the boss votes and shares them ----
+function vsSync(quiet) {
+  const V = NET.vs, ps = (NET.lobby && NET.lobby.players) || [], ids = new Set(ps.map(p => p.pid));
+  V.slots = V.slots.map(p => ids.has(p) ? p : '');
+  for (const k of Object.keys(V.votes)) if (!ids.has(k)) delete V.votes[k];
+  for (const p of ps) if (!V.slots.includes(p.pid)) {
+    const nb = V.slots.slice(0, 3).filter(Boolean).length, nr = V.slots.slice(3).filter(Boolean).length;
+    const order = nb <= nr ? [0, 1, 2, 3, 4, 5] : [3, 4, 5, 0, 1, 2], i = order.find(j => !V.slots[j]); if (i != null) V.slots[i] = p.pid;
+  }
+  netSend({ vs: V }); if (!quiet) renderMpLobby();
+}
+function vsRequest(pid, q) {
+  const V = NET.vs; if (NET.started) return;
+  if (q.slot != null && q.slot >= 0 && q.slot < 6 && !V.slots[q.slot]) { V.slots = V.slots.map(p => p === pid ? '' : p); V.slots[q.slot] = pid; }
+  if (q.vote && ['dozer', 'crane', 'twin', 'none'].includes(q.vote)) V.votes[pid] = q.vote;
+  vsSync();
+}
+function vsAct(q) { if (NET.role === 'host') vsRequest(PID, q); else netSend({ vq: q }); }
+function vsVoteResult() {
+  const n = { dozer: 0, crane: 0, twin: 0, none: 0 }; for (const v of Object.values(NET.vs.votes)) n[v]++;
+  const top = Math.max(...Object.values(n)); if (!top) return 'none';
+  const tied = Object.keys(n).filter(k => n[k] === top); return tied[(Math.random() * tied.length) | 0];
+}
+const BTHURL = {}, BLOBURL = {};
+// lobby re-renders often: point <img> at short blob: URLs instead of pasting 100 KB data: URIs into the HTML each time
+function blobUrl(d) { if (!d || !d.startsWith('data:')) return d || ''; if (BLOBURL[d.length + d.slice(-40)]) return BLOBURL[d.length + d.slice(-40)];
+  const [h, b64] = d.split(','), mime = h.slice(5).split(';')[0], bin = atob(b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return (BLOBURL[d.length + d.slice(-40)] = URL.createObjectURL(new Blob([u8], { type: mime }))); }
+const showUrl = id => blobUrl(ASSET.show[id]);
+function bossPic(k) { if (BTHURL[k] == null) { const cv = bossThumb(k); BTHURL[k] = cv ? blobUrl(cv.toDataURL()) : ''; } return BTHURL[k]; }
+function vsLobbyHtml(L2) {
+  const V = NET.vs, byPid = Object.fromEntries(L2.players.map(p => [p.pid, p]));
+  const box = i => { const pid = V.slots[i], p = pid && byPid[pid];
+    if (!p) return '<button class="vsBox empty" data-slot="' + i + '">＋ Join</button>';
+    return '<div class="vsBox' + (pid === PID ? ' me' : '') + '"><img src="' + showUrl(p.car) + '"><span>' + esc(p.name) + (pid === PID ? ' (you)' : '') + '</span><small>' + (p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div>'; };
+  const row = t => '<div class="vsRow t' + t + '"><b>' + TEAM_NAME[t] + '</b>' + [0, 1, 2].map(j => box(t * 3 + j)).join('') + '</div>';
+  const n = { dozer: 0, crane: 0, twin: 0, none: 0 }; for (const v of Object.values(V.votes)) n[v]++;
+  const mine = V.votes[PID];
+  const opt = (k, label) => '<button class="vsVote' + (mine === k ? ' on' : '') + '" data-vote="' + k + '">' + (k !== 'none' && bossPic(k) ? '<img src="' + bossPic(k) + '">' : '<i>🚫</i>') + '<span>' + label + '</span><em>' + n[k] + ' vote' + (n[k] === 1 ? '' : 's') + '</em></button>';
+  return row(0) + row(1) + '<h4>BOSS VOTE <small>(arrives after 1:00 at a random spot · wreck it for +' + VS_BOSS_PTS + ')</small></h4><div class="vsVotes">' + opt('dozer', 'The Dozer') + opt('crane', 'The Crane') + opt('twin', 'The Twins') + opt('none', 'No boss') + '</div>';
+}
+document.addEventListener('click', e => { const t = e.target.closest('#mpPlayers [data-slot], #mpPlayers [data-vote]'); if (!t) return; if (t.dataset.slot != null) vsAct({ slot: +t.dataset.slot }); else vsAct({ vote: t.dataset.vote }); });
 // ---- lobby UI ----
 let mpCar = lsGet('scrapArenaMpCar', 'cruiser');
 function mpMsg(t) { const a = $('mpMsg'), b = $('mpMsg2'); if (a) a.textContent = t; if (b) b.textContent = t; }
@@ -2729,14 +2897,17 @@ function renderMpLobby() {
   if (!inRoom) return;
   const L2 = NET.lobby, amHost = NET.role === 'host';
   $('mpRoom').textContent = NET.room;
-  $('mpModeTxt').innerHTML = L2.mode === 'versus' ? '<b>VERSUS DERBY</b> - smash each other, last car standing wins' : '<b>CO-OP WAVES</b> - team up against the waves and bosses';
+  $('mpModeTxt').innerHTML = L2.mode === 'versus' ? '<b>TEAM DERBY</b> - blue vs red, 3:00, kill +' + VS_KILL + ', boss +' + VS_BOSS_PTS + '. Tap an empty box to switch team.' : '<b>CO-OP WAVES</b> - team up against the waves and bosses';
   $('mpModeSw').style.display = amHost ? '' : 'none'; $('mpModeSw').textContent = L2.mode === 'versus' ? (L2.players.length > COOP_MAX ? 'Co-op is 2 players max' : 'Switch to Co-op') : 'Switch to Versus'; $('mpModeSw').disabled = L2.mode === 'versus' && L2.players.length > COOP_MAX;
   const ps = L2.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
-  $('mpPlayers').innerHTML = ps.map(p => '<div class="pl"><img src="' + (ASSET.show[p.car] || '') + '"><span>' + esc(p.name) + (p.pid === PID ? ' (you)' : '') + '</span><small>' + (p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div>').join('') +
-    Array.from({ length: Math.max(0, (L2.mode === 'versus' ? MAXP : COOP_MAX) - ps.length) }, () => '<div class="pl empty"><span>Waiting for a friend...</span></div>').join('');
-  const need = L2.mode === 'versus' ? 2 : 1;
-  $('mpStart').style.display = amHost ? '' : 'none'; $('mpStart').disabled = ps.length < need;
-  $('mpStart').textContent = ps.length < need ? 'NEED 2 PLAYERS' : 'START MATCH';
+  $('mpPlayers').classList.toggle('vsMode', L2.mode === 'versus');
+  const html = L2.mode === 'versus' ? vsLobbyHtml(L2) : ps.map(p => '<div class="pl"><img src="' + showUrl(p.car) + '"><span>' + esc(p.name) + (p.pid === PID ? ' (you)' : '') + '</span><small>' + (p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div>').join('') +
+    (L2.mode === 'versus' ? '' : Array.from({ length: Math.max(0, COOP_MAX - ps.length) }, () => '<div class="pl empty"><span>Waiting for a friend...</span></div>').join(''));
+  if ($('mpPlayers')._h !== html) { $('mpPlayers').innerHTML = html; $('mpPlayers')._h = html; }
+  const nb = NET.vs.slots.slice(0, 3).filter(Boolean).length, nr = NET.vs.slots.slice(3).filter(Boolean).length;
+  const ok = L2.mode === 'versus' ? nb > 0 && nr > 0 : ps.length >= 1;
+  $('mpStart').style.display = amHost ? '' : 'none'; $('mpStart').disabled = !ok;
+  $('mpStart').textContent = ok ? 'START MATCH' : 'NEED 1 PLAYER PER TEAM';
   $('mpWait').style.display = amHost ? 'none' : ''; 
 }
 function mpOpen(code) {
@@ -2992,7 +3163,7 @@ updateHud();
 window.__sa = { get state() { return state; }, get wave() { return wave; }, get score() { return score; }, get cars() { return cars; }, get player() { return player; },
   get pickups() { return pickups; }, get arena() { return arena.id; }, combo, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { if (c.boss) { killCar(c, player); continue; } c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x + 26 * Math.cos(c.a), c.y + 26 * Math.sin(c.a)], player, 300, Math.cos(c.a), Math.sin(c.a)); } },
   spawnPickup() { spawnPickup(); }, get scrap() { return scrap; }, hitRegion(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; c.armor = 0; return hitCar(c, cp, a === undefined ? player : a, 300, Math.cos(c.a), Math.sin(c.a)); }, get introT() { return introT; }, get joy() { return joy; }, setScrap(n) { scrap = n; }, get UP() { return UP; }, get barrels() { return barrels; }, get crusher() { return crusher; },
-  get mode() { return gameMode; }, get net() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
+  get mode() { return gameMode; }, get net() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
 })();
 </script>
 </body>
