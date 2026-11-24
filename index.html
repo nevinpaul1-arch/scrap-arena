@@ -259,6 +259,7 @@
   body.phone #devPanel .waves button{padding:5px 0;font-size:11.5px}
   body.phone #devPanel .row2{margin-top:10px} body.phone #devPanel .row2 button{padding:9px;font-size:13px}
   @media (orientation:portrait){ body.phone #devPanel .waves{grid-template-columns:repeat(10,minmax(0,1fr))} body.phone #mpPlayers{grid-template-columns:repeat(3,minmax(0,1fr))} }
+  #netStatus{position:fixed;left:50%;top:max(54px,calc(env(safe-area-inset-top) + 48px));transform:translateX(-50%);z-index:40;background:rgba(10,12,16,.82);border:1px solid #ffd166;border-radius:10px;padding:6px 14px;font:800 13px system-ui,sans-serif;color:#ffd166;pointer-events:none;white-space:nowrap}
   #netInfo{position:fixed;left:50%;transform:translateX(-50%);bottom:max(6px,env(safe-area-inset-bottom));z-index:6;background:rgba(10,12,16,.6);border-radius:8px;padding:2px 8px;font:700 11px system-ui,sans-serif;color:#9aa3b2;pointer-events:none}
   #vsBar{display:none;position:fixed;top:max(8px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:5;background:rgba(10,12,16,.78);border:1px solid #2d3340;border-radius:12px;padding:4px 6px;gap:6px;align-items:center;font:800 18px system-ui,sans-serif;pointer-events:none}
   body.vs.playing #vsBar{display:flex}
@@ -393,7 +394,7 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="netInfo" style="display:none"></div>
+<div id="netInfo" style="display:none"></div><div id="netStatus" style="display:none"></div>
 <div id="vsBar"><b class="b">0</b><span class="t">3:00</span><b class="r">0</b></div>
 <div id="respawnMsg"></div>
 <div id="hud">
@@ -726,8 +727,8 @@ const MAXP = 6, COOP_MAX = 2;
 const TEAM_COL = ['#3a86ff', '#ff4d5a'], TEAM_NAME = ['BLUE', 'RED'], VS_LEN = 180, VS_BOSS_AT = 120, VS_RESPAWN = 3, VS_KILL = 5, VS_BOSS_PTS = 25;
 const VS = { matchT: VS_LEN, score: [0, 0], boss: 'none', bossState: 0, warned: false };
 let BLAST = false; // true while a barrel blast is dealing damage (team-mates can hurt each other that way)
-const NET = { vs: { slots: ['', '', '', '', '', ''], votes: {} }, role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [] };
-const RTC_ICE = [{ urls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'] }];
+const NET = { vs: { slots: ['', '', '', '', '', ''], votes: {} }, role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [], away: {}, acc: 0, jpk: 0, lastSnapAt: 0 };
+let RTC_ICE = [{ urls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'] }];
 const RTC = { peers: new Map(), me: null, lastRx: 0, rpT: 0 };
 const rtcOk = p => !!(p && p.u && p.u.readyState === 'open' && p.r && p.r.readyState === 'open');
 const rtcDirect = () => NET.role === 'guest' && rtcOk(RTC.me) && performance.now() - RTC.lastRx < 400;
@@ -2375,13 +2376,15 @@ function render() {
 let last = 0;
 function frame(t) {
   requestAnimationFrame(frame);
-  const rdt = Math.min(.033, (t - last) / 1000 || .016); last = t;
+  const raw = Math.min(.1, (t - last) / 1000 || .016), rdt = Math.min(.033, raw); last = t;
   if (mpOn()) { hitStop = 0; slowT = 0; }
   if ((state === 'play' || state === 'over') && (!paused || mpOn())) {
-    if (hitStop > 0) hitStop -= rdt;
+    if (mpOn() && NET.role === 'host') { // fixed 120 Hz steps: the match runs at the same speed however the host's phone is coping
+      NET.acc = Math.min(.1, (NET.acc || 0) + raw); let n = 0; while (NET.acc >= 1 / 120 && n++ < 12) { step(1 / 120); NET.acc -= 1 / 120; }
+    } else if (hitStop > 0) hitStop -= rdt;
     else { let dt = rdt; if (slowT > 0) { slowT -= rdt; dt *= .35; } step(dt / 2); step(dt / 2); }
   }
-  netTick(rdt);
+  netTick(rdt, raw);
   updateCamera(rdt); render(); frameHud();
   if (engGain && player && !muted) {
     const sp = Math.hypot(player.vx, player.vy);
@@ -2497,7 +2500,7 @@ function vsTick(dt) { // host only: match clock, boss arrival, respawns
     if (!VS.warned && VS.matchT <= VS_BOSS_AT + 5) { VS.warned = true; banner('BOSS IN 5', BOSS_INFO[VS.boss].name + ' is coming', 1600); }
     if (VS.matchT <= VS_BOSS_AT) spawnVsBoss();
   }
-  for (const c of cars) if (c.isPlayer && c.dead && VS.matchT > 0) { c.respawnT = (c.respawnT ?? VS_RESPAWN) - dt; if (c.respawnT <= 0) vsRespawn(c); }
+  for (const c of cars) if (c.isPlayer && c.dead && !c.gone && VS.matchT > 0) { c.respawnT = (c.respawnT ?? VS_RESPAWN) - dt; if (c.respawnT <= 0) vsRespawn(c); }
 }
 function netRoundOver() {
   const hs = cars.filter(c => c.isPlayer), alive = hs.filter(c => !c.dead);
@@ -2505,7 +2508,9 @@ function netRoundOver() {
   return alive.length === 0;
 }
 function netDriveRemote(c, dt) {
-  const inp = NET.inputs[c.pid] || [0, 0, 0, 0, 0];
+  let inp = NET.inputs[c.pid] || [0, 0, 0, 0, 0];
+  { const rp = RTC.peers.get(c.pid), now = performance.now(), it = NET.inT[c.pid]; // reconnecting, or nothing heard for 1.5 s: let go of the controls
+    if ((NET.away[c.pid] && !(rp && now - (rp.lastRx || 0) < 1500)) || (it && now - it[1] > 1500)) inp = [0, 0, 0, 0, inp[4], 0, 0, inp[7]]; }
   c.steer = clamp(+inp[0] || 0, -1, 1); c.throttle = clamp(+inp[1] || 0, -1, 1); c.handbrake = !!inp[2];
   if ((inp[6] | 0) > (c.jseq | 0)) { c.jdir = inp[7] < 0 ? -1 : 1; c.jseq = inp[6] | 0; }
   const want = !!inp[3] && introT <= 0;
@@ -2524,8 +2529,16 @@ function rtcClose() {
 }
 function rtcAddIce(p, c) { if (p.ready) p.pc.addIceCandidate(c).catch(() => {}); else (p.pend || (p.pend = [])).push(c); }
 function rtcReady(p) { p.ready = true; for (const c of p.pend || []) p.pc.addIceCandidate(c).catch(() => {}); p.pend = null; }
+function rtcGuestKick() { // (re)start my direct link once the server list is in
+  if (RTC.pending) return; RTC.pending = true;
+  (NET.iceP || Promise.resolve()).then(() => { RTC.pending = false; if (NET.role === 'guest') rtcGuestStart(); });
+}
+function netIce() {
+  const base = API || location.origin;
+  NET.iceP = Promise.race([fetch(base + '/api/ice').then(r => r.json()).then(d => { if (d && Array.isArray(d.iceServers) && d.iceServers.length) RTC_ICE = d.iceServers; }).catch(() => {}), new Promise(r => setTimeout(r, 2500))]);
+}
 function rtcGuestStart() {
-  rtcClose(); if (!window.RTCPeerConnection) return;
+  rtcClose(); if (!window.RTCPeerConnection) return; RTC.at = performance.now(); RTC.tries = (RTC.tries || 0) + 1;
   let pc; try { pc = new RTCPeerConnection({ iceServers: RTC_ICE }); } catch (e) { return; }
   const p = { pc };
   p.u = pc.createDataChannel('u', { ordered: false, maxRetransmits: 0 }); // snapshots + controls: newest wins, never wait for a lost one
@@ -2642,8 +2655,9 @@ function netApplySnap(s) {
   // clock offset (local - host). Track the fastest delivery; let it drift up slowly so a route change can't freeze us.
   const o = now - ht;
   if (NET.off == null || o < NET.off) NET.off = o; else NET.off += Math.min(o - NET.off, 2);
-  const late = o - NET.off; NET.jit += (late - NET.jit) * .1;
-  NET.interp = clamp((45 + NET.jit * 2) / 1000, .05, .2); // buffer: about 1.5 snapshots (30/s) plus measured jitter
+  const late = o - NET.off; NET.jit += (late - NET.jit) * .1; NET.jpk = Math.max(late, (NET.jpk || 0) * .996); NET.lastSnapAt = now;
+  // buffer: about 1.5 snapshots (30/s) plus enough to ride out the recent worst delay spikes (they decay over ~5 s)
+  NET.interp = clamp((45 + Math.max(NET.jit * 2.2, NET.jpk * .85)) / 1000, .05, .35);
   const list = [];
   for (const d of s.cars) {
     const c = NET.byId.get(d[0]); if (!c) continue; list.push(c);
@@ -2668,7 +2682,7 @@ function netOwnAuth(c, d) {
   // (same physics as the host) to work out where it is "now", then ease toward that.
   // d[15] = [my send time of the last controls the host used, how long the host has been using them] -> exactly which of my
   // controls the host has already played, without guessing from ping
-  const now = performance.now(), from = d[15] && d[15][0] ? clamp(d[15][0] + d[15][1], now - 450, now) : now - clamp(NET.rtt, .03, .4) * 1000;
+  const now = performance.now(), from = d[15] && d[15][0] ? clamp(d[15][0] + d[15][1], now - 1000, now) : now - clamp(NET.rtt, .03, .9) * 1000;
   const sim = Object.assign({}, c, { x: d[1], y: d[2], a: d[3], vx: d[4], vy: d[5], jtT: 0 });
   { let js = c.jseen | 0; for (const h of NET.inHist) { if (h[0] > from) break; js = h[5] | 0; } sim.jseen = js; sim.jseq = js; }
   let tPrev = from;
@@ -2718,7 +2732,7 @@ function netInterpCar(c, rt) {
   const A = h[i], B = h[i + 1], da = A[1];
   if (c._row !== da && c !== player) { c._row = da; netRowState(c, da); }
   if (!B) { // ran past the newest snapshot: coast on velocity for a moment
-    const e = clamp((rt - A[0]) / 1000, 0, .15);
+    const e = clamp((rt - A[0]) / 1000, 0, .3);
     c.x = da[1] + da[4] * e; c.y = da[2] + da[5] * e; c.a = da[3]; c.vx = da[4]; c.vy = da[5]; return;
   }
   const db = B[1], T = (B[0] - A[0]) / 1000, u = clamp((rt - A[0]) / (B[0] - A[0] || 1), 0, 1);
@@ -2768,7 +2782,7 @@ function guestStep(dt) {
     NET.myIn = [+st.toFixed(2), +th.toFixed(2), hb, nos, NET.emo, player.jseq | 0, player.jdir || 1];
     if (player.pred) { // run my car's physics right away so steering feels instant
       player.steer = st; player.throttle = th; player.handbrake = !!hb; player.boost = !!nos && player.nitro > 0 && th >= 0 && introT <= 0;
-      const tn = performance.now(); NET.inHist.push([tn, st, th, hb, player.boost ? 1 : 0, player.jseq | 0, player.jdir || 1]); while (NET.inHist.length && NET.inHist[0][0] < tn - 600) NET.inHist.shift();
+      const tn = performance.now(); NET.inHist.push([tn, st, th, hb, player.boost ? 1 : 0, player.jseq | 0, player.jdir || 1]); while (NET.inHist.length && NET.inHist[0][0] < tn - 1200) NET.inHist.shift();
       driveCar(player, dt);
       const k = Math.min(1, dt * 6); player.x += player.cx * k; player.y += player.cy * k; player.cx *= 1 - k; player.cy *= 1 - k;
       if (player.ca) { player.a += player.ca * k; player.ca *= 1 - k; }
@@ -2776,7 +2790,7 @@ function guestStep(dt) {
     }
   } else NET.myIn = [0, 0, 0, 0, NET.emo];
   const tgt = performance.now() - (NET.off || 0) - NET.interp * 1000;
-  if (NET.rt == null || Math.abs(tgt - NET.rt) > 250) NET.rt = tgt; else { NET.rt += dt * 1000; NET.rt += (tgt - NET.rt) * Math.min(1, dt * 2.5); } // drift gently toward the target instead of jumping
+  if (NET.rt == null || Math.abs(tgt - NET.rt) > 600) NET.rt = tgt; else { NET.rt += dt * 1000; NET.rt += (tgt - NET.rt) * Math.min(1, dt * 2.5); } // drift gently toward the target instead of jumping
   const rt = NET.rt;
   while (NET.evq.length && NET.evq[0][0] <= rt) netEvents(NET.evq.shift()[1]);
   if (NET.evq.length > 60) netEvents(NET.evq.shift()[1]);
@@ -2807,14 +2821,15 @@ function guestStep(dt) {
   for (const p of pickups) p.life -= dt;
   shake *= Math.exp(-6 * dt); flashA *= Math.exp(-7 * dt); hurtA *= Math.exp(-3 * dt);
 }
-function netTick(rdt) {
+function netTick(rdt, raw) {
+  netStatusTick();
   const ni = $('netInfo'), showNi = !!(NET.role && NET.started && state === 'play');
   if (ni.style.display !== (showNi ? '' : 'none')) ni.style.display = showNi ? '' : 'none';
   if (showNi && (NET.niT = (NET.niT || 0) - rdt) <= 0) { NET.niT = .5; const p = NET.ping || 0, col = p < 90 ? '#3ddc84' : p < 170 ? '#ffd166' : '#ff5a5a';
     ni.innerHTML = (NET.role === 'host' ? 'HOST · ' : '') + 'ping <b style="color:' + col + '">' + (p ? p + ' ms' : '...') + '</b>' + (NET.role === 'guest' ? ' · ' + (rtcDirect() ? 'direct' : 'relay') + ' · buffer ' + Math.round(NET.interp * 1000) + ' ms' : ' · direct ' + [...RTC.peers.values()].filter(rtcOk).length + '/' + Math.max(0, ((NET.lobby && NET.lobby.players) || []).length - 1)); }
   if (!NET.role || !NET.started) return;
   if (NET.role === 'host') {
-    NET.snapT -= rdt;
+    NET.snapT -= raw || rdt;
     if (NET.snapT <= 0) { NET.snapT = Math.max(-.034, NET.snapT) + 1 / 30; netSnapshot(); }
   } else if (state === 'play') {
     NET.sendT -= rdt;
@@ -2826,15 +2841,22 @@ function netTick(rdt) {
       if (!sent) netSend(msg);
       NET.lastIn = cur; NET.sendT = 1 / 30; NET.forceSend = false;
     }
+    { const nowR = performance.now(), wait = (RTC.tries || 0) < 4 ? 10000 : 30000; // direct link down for a while: try again (the relay carries on meanwhile)
+      if (!NET.recon && !RTC.pending && (!rtcOk(RTC.me) || nowR - RTC.lastRx > 3000) && nowR - (RTC.at || 0) > wait) rtcGuestKick(); }
     if (rtcOk(RTC.me) && (RTC.rpT -= rdt) <= 0) { RTC.rpT = 1; try { RTC.me.u.send('{"c":"rp","t":' + performance.now() + '}'); } catch (e) {} }
   }
 }
 function netOnMessage(raw) {
   let m; try { m = JSON.parse(raw); } catch (e) { return; }
-  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestStart(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
+  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
+  if (m.c === 'denied' && NET.recon) { netGiveUp(m.why === 'started' || m.why === 'gone' ? 'Lost connection to the room.' : null); return; }
   if (m.c === 'denied') { mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full.', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
   if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
-  if (m.c === 'left') { const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c && !c.dead && NET.started) { killCar(c, null); addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' LEFT', '#cfd6e2'); } delete NET.inputs[m.pid]; return; }
+  if (m.c === 'left') { delete NET.away[m.pid]; const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c) c.gone = true; if (c && !c.dead && NET.started) { killCar(c, null); addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' LEFT', '#cfd6e2'); } delete NET.inputs[m.pid]; return; }
+  if (m.c === 'away') { NET.away[m.pid] = 1; const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c && NET.started) addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' RECONNECTING...', '#ffd166'); return; }
+  if (m.c === 'back') { delete NET.away[m.pid]; const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c) { c.gone = false; if (NET.started) addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' IS BACK', '#3ddc84'); } NET.metaSent.clear(); return; }
+  if (m.c === 'hostaway') { NET.hostAway = true; return; }
+  if (m.c === 'hostback') { NET.hostAway = false; return; }
   if (m.c === 'pong') { if (rtcDirect()) return; const r = performance.now() - m.t; NET.ping = Math.round(r); NET.rtt += (r / 1000 - NET.rtt) * (NET.rtt > .5 ? 1 : .3); return; }
   if (NET.role === 'host' && m.f) { if (m.d) { if (m.d.rtc) rtcHostSignal(m.f, m.d.rtc); else netHostFrom(m.f, m.d); } return; }
   if (m.vs) { if (NET.role === 'guest') { NET.vs = m.vs; renderMpLobby(); } return; }
@@ -2848,27 +2870,73 @@ function netGuestData(m) {
   const t = (m.s && m.s.t) || m.t;
   if (m.e && m.e.length) { if (t && NET.started) { const mine = m.e.filter(netMine), rest = m.e.filter(e => !netMine(e)); if (mine.length) netEvents(mine); if (rest.length) { NET.evq.push([t, rest]); NET.evq.sort((a, b) => a[0] - b[0]); } } else netEvents(m.e); }
 }
-function netConnect(code, create, mode) {
-  netLeave(true);
-  pname = ($('pname').value || '').trim().slice(0, 12) || 'Player'; try { localStorage.setItem('scrapArenaName', pname); } catch (e) {}
+function netConnect(code, create, mode, resume) {
+  if (!resume) {
+    netLeave(true);
+    pname = ($('pname').value || '').trim().slice(0, 12) || 'Player'; try { localStorage.setItem('scrapArenaName', pname); } catch (e) {}
+    NET.conn = { code, create, mode: mode || 'coop' }; NET.joined = false; NET.recon = null; NET.hostAway = false; NET.away = {}; RTC.tries = 0; netIce();
+  } else { const o = NET.ws; NET.ws = null; if (o) { try { o.onclose = o.onmessage = null; o.close(); } catch (e) {} } }
+  clearInterval(NET.pingI);
   const base = (API || location.origin).replace(/^http/, 'ws');
-  const q = new URLSearchParams({ pid: PID, name: pname, car: mpCar, create: create ? '1' : '0', mode: mode || 'coop', max: '6', cmax: '2' });
-  let ws; try { ws = new WebSocket(base + '/api/room/' + code + '/ws?' + q); } catch (e) { mpMsg('Could not connect.'); return; }
-  NET.ws = ws; NET.room = code; NET.role = create ? 'host' : 'guest'; NET.started = false;
-  mpMsg('Connecting...');
-  ws.onopen = () => { mpMsg(''); netSend({ c: 'ping', t: performance.now() }); NET.pingI = setInterval(() => netSend({ c: 'ping', t: performance.now() }), 2000); };
-  ws.onmessage = e => netOnMessage(e.data);
-  ws.onclose = () => { if (NET.ws === ws) { const was = NET.started; netLeave(true); if (was && state === 'play') netShowResults({ hostLeft: true, lost: true }); else if (!$('mpPanel').classList.contains('hidden') && !$('mpMsg').textContent) mpMsg('Disconnected.'); } };
+  const q = new URLSearchParams({ pid: PID, name: pname, car: mpCar, create: create ? '1' : '0', mode: (NET.conn && NET.conn.mode) || 'coop', max: '6', cmax: '2' });
+  if (resume) q.set('re', '1');
+  let ws; try { ws = new WebSocket(base + '/api/room/' + code + '/ws?' + q); } catch (e) { if (resume) netLost(); else mpMsg('Could not connect.'); return; }
+  NET.ws = ws; NET.wsAt = NET.lastWsRx = performance.now();
+  if (!resume) { NET.room = code; NET.role = create ? 'host' : 'guest'; NET.started = false; mpMsg('Connecting...'); }
+  ws.onopen = () => { if (!resume) mpMsg(''); NET.lastWsRx = performance.now(); netSend({ c: 'ping', t: performance.now() }); clearInterval(NET.pingI); NET.pingI = setInterval(() => netSend({ c: 'ping', t: performance.now() }), 2000); };
+  ws.onmessage = e => { NET.lastWsRx = performance.now(); netOnMessage(e.data); };
+  ws.onclose = () => { if (NET.ws === ws) netLost(); };
+}
+// connection dropped (phone switched apps, changed network, lost signal...): keep the match going and reconnect quietly
+const RECON_MS = 28000;
+function netLost() {
+  if (!NET.role || !NET.conn) return;
+  if (!NET.joined) { const w = NET.ws; NET.ws = null; netLeave(true); if (!$('mpPanel').classList.contains('hidden')) mpMsg('Could not connect. Check your connection and try again.'); return; }
+  const now = performance.now();
+  if (!NET.recon) NET.recon = { until: now + RECON_MS, n: 0 };
+  if (now > NET.recon.until) { netGiveUp(); return; }
+  if (NET.ws) { const o = NET.ws; NET.ws = null; try { o.onclose = o.onmessage = null; o.close(); } catch (e) {} }
+  clearTimeout(NET.reconT);
+  NET.reconT = setTimeout(netRetry, Math.min(2500, 250 + 400 * NET.recon.n));
+}
+function netRetry() { clearTimeout(NET.reconT); if (!NET.role || !NET.recon || !NET.conn) return; NET.recon.n++; netConnect(NET.conn.code, NET.conn.create, NET.conn.mode, true); }
+function netGiveUp(why) {
+  const was = NET.started && state === 'play'; NET.recon = null; clearTimeout(NET.reconT); netLeave(true);
+  if (was) netShowResults({ hostLeft: true, lost: true }); else { renderMpLobby(); mpMsg(why || 'Lost connection to the room.'); }
+}
+// watchdog: a socket can die without telling us (mobile networks). No message for 6 s = treat it as dropped.
+setInterval(() => {
+  if (!NET.role || !NET.conn) return;
+  const now = performance.now();
+  if (NET.recon) { if (now > NET.recon.until) netGiveUp(); else if (NET.ws && NET.ws.readyState === 0 && now - NET.wsAt > 5000) netLost(); return; }
+  if (NET.ws && now - NET.lastWsRx > 6000) netLost();
+}, 1000);
+function netWake() { // back in the app / back online: check the link straight away
+  if (!NET.role || !NET.conn || !NET.joined) return;
+  if (NET.recon) { NET.recon.until = Math.max(NET.recon.until, performance.now() + 8000); netRetry(); return; }
+  if (!NET.ws || NET.ws.readyState !== 1 || performance.now() - NET.lastWsRx > 2500) netLost();
+}
+addEventListener('visibilitychange', () => { if (!document.hidden) netWake(); });
+addEventListener('online', netWake);
+addEventListener('pageshow', netWake);
+function netStatusTick() {
+  const el = $('netStatus'); let t = '';
+  if (NET.role && NET.joined) {
+    if (NET.recon) t = 'Connection lost · reconnecting...';
+    else if (NET.role === 'guest' && NET.hostAway) t = 'Host lost connection · waiting for them...';
+    else if (NET.role === 'guest' && NET.started && state === 'play' && NET.lastSnapAt && performance.now() - NET.lastSnapAt > 1500) t = 'Waiting for the host...';
+  }
+  if (el.textContent !== t) { el.textContent = t; el.style.display = t ? '' : 'none'; }
 }
 function netLeave(quiet) {
-  const ws = NET.ws; NET.ws = null; clearInterval(NET.pingI); rtcClose();
-  if (ws) { try { ws.onclose = null; ws.close(); } catch (e) {} }
+  const ws = NET.ws; NET.ws = null; clearInterval(NET.pingI); clearTimeout(NET.reconT); NET.recon = null; NET.conn = null; NET.joined = false; NET.hostAway = false; NET.away = {}; rtcClose();
+  if (ws) { try { if (ws.readyState === 1) ws.send('{"c":"bye"}'); ws.onclose = ws.onmessage = null; ws.close(); } catch (e) {} }
   NET.role = null; NET.started = false; NET.lobby = null; NET.byId.clear(); NET.inputs = {}; NET.ev = []; NET.overArmed = false;
   document.body.classList.remove('mp');
   if (!quiet) renderMpLobby();
 }
 function netStartGame() {
-  NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null; NET.evq = []; NET.inHist = []; NET.inT = {}; NET.off = null; NET.rt = null; NET.localHit = null; NET.lastT = 0; NET.jit = 0; NET.list = null;
+  NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null; NET.evq = []; NET.inHist = []; NET.inT = {}; NET.off = null; NET.rt = null; NET.localHit = null; NET.lastT = 0; NET.jit = 0; NET.jpk = 0; NET.acc = 0; NET.lastSnapAt = 0; NET.list = null;
   $('mpPanel').classList.add('hidden'); $('overlay').classList.add('hidden'); $('card').classList.remove('over');
   document.body.classList.add('mp'); document.body.classList.toggle('vs', NET.lobby.mode === 'versus');
   if (NET.lobby.mode === 'versus') Object.assign(VS, { matchT: VS_LEN, score: [0, 0], bossState: 0 });
@@ -2970,7 +3038,7 @@ function vsLobbyHtml(L2) {
   const V = NET.vs, byPid = Object.fromEntries(L2.players.map(p => [p.pid, p]));
   const box = i => { const pid = V.slots[i], p = pid && byPid[pid];
     if (!p) return '<button class="vsBox empty" data-slot="' + i + '"><span>＋ Join</span></button>';
-    return '<div class="vsBox' + (pid === PID ? ' me' : '') + '"><img src="' + tileUrl(p.car) + '" alt=""><div class="cap"><span>' + esc(p.name) + (pid === PID ? ' (you)' : '') + '</span><small>' + (p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div></div>'; };
+    return '<div class="vsBox' + (pid === PID ? ' me' : '') + '"><img src="' + tileUrl(p.car) + '" alt=""><div class="cap"><span>' + esc(p.name) + (pid === PID ? ' (you)' : '') + '</span><small>' + (p.away ? 'RECONNECTING · ' : p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div></div>'; };
   const row = t => '<div class="vsRow t' + t + '"><b>' + TEAM_NAME[t] + '</b>' + [0, 1, 2].map(j => box(t * 3 + j)).join('') + '</div>';
   const n = { dozer: 0, crane: 0, twin: 0, none: 0 }; for (const v of Object.values(V.votes)) n[v]++;
   const mine = V.votes[PID];
@@ -2996,7 +3064,7 @@ function renderMpLobby() {
   $('mpModeSw').style.display = amHost ? '' : 'none'; $('mpModeSw').textContent = L2.mode === 'versus' ? (L2.players.length > COOP_MAX ? 'Co-op is 2 players max' : 'Switch to Co-op') : 'Switch to Versus'; $('mpModeSw').disabled = L2.mode === 'versus' && L2.players.length > COOP_MAX;
   const ps = L2.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
   $('mpPlayers').classList.toggle('vsMode', L2.mode === 'versus');
-  const html = L2.mode === 'versus' ? vsLobbyHtml(L2) : ps.map(p => '<div class="pl"><img src="' + tileUrl(p.car) + '"><span>' + esc(p.name) + (p.pid === PID ? ' (you)' : '') + '</span><small>' + (p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div>').join('') +
+  const html = L2.mode === 'versus' ? vsLobbyHtml(L2) : ps.map(p => '<div class="pl"><img src="' + tileUrl(p.car) + '"><span>' + esc(p.name) + (p.pid === PID ? ' (you)' : '') + '</span><small>' + (p.away ? 'RECONNECTING · ' : p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div>').join('') +
     (L2.mode === 'versus' ? '' : Array.from({ length: Math.max(0, COOP_MAX - ps.length) }, () => '<div class="pl empty"><span>Waiting for a friend...</span></div>').join(''));
   if ($('mpPlayers')._h !== html) { $('mpPlayers').innerHTML = html; $('mpPlayers')._h = html; }
   const nb = NET.vs.slots.slice(0, 3).filter(Boolean).length, nr = NET.vs.slots.slice(3).filter(Boolean).length;
@@ -3260,7 +3328,7 @@ updateHud();
 window.__sa = { get state() { return state; }, get wave() { return wave; }, get score() { return score; }, get cars() { return cars; }, get player() { return player; },
   get pickups() { return pickups; }, get arena() { return arena.id; }, combo, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { if (c.boss) { killCar(c, player); continue; } c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x + 26 * Math.cos(c.a), c.y + 26 * Math.sin(c.a)], player, 300, Math.cos(c.a), Math.sin(c.a)); } },
   spawnPickup() { spawnPickup(); }, get scrap() { return scrap; }, hitRegion(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; c.armor = 0; return hitCar(c, cp, a === undefined ? player : a, 300, Math.cos(c.a), Math.sin(c.a)); }, get introT() { return introT; }, get joy() { return joy; }, setScrap(n) { scrap = n; }, get UP() { return UP; }, get barrels() { return barrels; }, get crusher() { return crusher; },
-  get mode() { return gameMode; }, setWaveNow(n) { wave = n; }, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { c.dead = true; c.deadT = 0; } }, get checkpoint() { return getCheckpoint(); }, get wave() { return wave; }, get net() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, get skids() { const n = performance.now(); return SKID.slices.filter(x => x.used && n - x.t0 < SKID.LIFE).length; }, skidAlpha() { const n = performance.now(); return SKID.slices.filter(x => x.used).map(x => +clamp((SKID.LIFE - (n - x.t0)) / SKID.FADE, 0, 1).toFixed(2)); }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
+  get mode() { return gameMode; }, setWaveNow(n) { wave = n; }, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { c.dead = true; c.deadT = 0; } }, get checkpoint() { return getCheckpoint(); }, get wave() { return wave; }, get net() { return NET }, get netView() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, get skids() { const n = performance.now(); return SKID.slices.filter(x => x.used && n - x.t0 < SKID.LIFE).length; }, skidAlpha() { const n = performance.now(); return SKID.slices.filter(x => x.used).map(x => +clamp((SKID.LIFE - (n - x.t0)) / SKID.FADE, 0, 1).toFixed(2)); }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
 })();
 </script>
 </body>

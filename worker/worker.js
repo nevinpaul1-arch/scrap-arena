@@ -55,9 +55,22 @@ async function top(env, mode, period, day, pid) {
   return { rows, total, mine };
 }
 
+let ICE_CACHE = null;
 async function api(req, env, url) {
   const p = url.pathname;
   if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
+  if (p === '/api/ice') { // WebRTC servers: Cloudflare TURN when a key is set up, otherwise free STUN only
+    const stun = [{ urls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'] }];
+    if (!env.TURN_KEY_ID || !env.TURN_KEY_TOKEN) return json({ iceServers: stun });
+    if (ICE_CACHE && ICE_CACHE.exp > Date.now()) return json({ iceServers: ICE_CACHE.v });
+    try {
+      const r = await fetch('https://rtc.live.cloudflare.com/v1/turn/keys/' + env.TURN_KEY_ID + '/credentials/generate-ice-servers', { method: 'POST', headers: { authorization: 'Bearer ' + env.TURN_KEY_TOKEN, 'content-type': 'application/json' }, body: JSON.stringify({ ttl: 86400 }) });
+      const d = await r.json();
+      const v = (d.iceServers || []).map(x => Object.assign({}, x, { urls: [].concat(x.urls || []).filter(u => !/:53(\?|$)/.test(u)) })).filter(x => x.urls.length);
+      if (!v.length) return json({ iceServers: stun });
+      ICE_CACHE = { v, exp: Date.now() + 6 * 3600e3 }; return json({ iceServers: v });
+    } catch (e) { return json({ iceServers: stun }); }
+  }
   if (p === '/api/daily') {
     const day = dayStr(), y = dayStr(Date.now() - 864e5);
     const yt = (await env.DB.prepare('SELECT name, MAX(score) AS score FROM scores WHERE mode=\'daily\' AND day=?1 GROUP BY pid ORDER BY score DESC LIMIT 1').bind(y).first()) || null;
@@ -130,70 +143,121 @@ export default {
 };
 
 // ---------- multiplayer room: lobby + relay. The host's browser runs the game; this object only passes messages. ----------
+// Phones drop connections (app switch, network change, screen lock), so a dropped player keeps their place for a while
+// and can reconnect into the same match. The room record lives in storage so it survives the object sleeping.
 const MAX_PLAYERS = 4, MAX_CAP = 6; // older pages don't send max/cmax, so they keep 4
+const HOST_GRACE = 30000, GUEST_GRACE = 30000;
 export class Room {
-  constructor(ctx, env) { this.ctx = ctx; }
+  constructor(ctx, env) { this.ctx = ctx; this.R = null; ctx.blockConcurrencyWhile(async () => { this.R = (await ctx.storage.get('R')) || null; }); }
+  async save() { if (this.R) await this.ctx.storage.put('R', this.R); else await this.ctx.storage.delete('R'); await this.plan(); }
+  async plan() { // next alarm = earliest grace deadline
+    const R = this.R; let t = 0;
+    if (R) { if (R.hostAway) t = R.hostAway + HOST_GRACE; for (const k in R.away || {}) { const d = R.away[k].t + GUEST_GRACE; if (!t || d < t) t = d; } }
+    if (t) await this.ctx.storage.setAlarm(t); else await this.ctx.storage.deleteAlarm();
+  }
   peers() { return this.ctx.getWebSockets().map(ws => ({ ws, me: ws.deserializeAttachment() || {} })).filter(p => !p.me.dead); }
+  hostPeer() { const R = this.R; return R ? this.peers().find(p => p.me.pid === R.hostPid) : null; }
   lobby(extra) {
-    const ps = this.peers();
-    const host = ps.find(p => p.me.host);
-    const msg = JSON.stringify(Object.assign({ c: 'lobby', mode: host ? host.me.mode || 'coop' : 'coop', started: !!(host && host.me.started), players: ps.filter(p => !p.me.dead).map(p => ({ pid: p.me.pid, name: p.me.name, car: p.me.car, host: !!p.me.host })) }, extra || {}));
+    const R = this.R; if (!R) return;
+    const ps = this.peers(), seen = new Set(), players = [];
+    for (const p of ps) { if (seen.has(p.me.pid)) continue; seen.add(p.me.pid); players.push({ pid: p.me.pid, name: p.me.name, car: p.me.car, host: p.me.pid === R.hostPid }); }
+    if (R.hostAway && !seen.has(R.hostPid)) { seen.add(R.hostPid); players.unshift({ pid: R.hostPid, name: R.hostName, car: R.hostCar, host: true, away: true }); }
+    for (const k in R.away || {}) if (!seen.has(k)) players.push({ pid: k, name: R.away[k].name, car: R.away[k].car, host: false, away: true });
+    const msg = JSON.stringify(Object.assign({ c: 'lobby', mode: R.mode || 'coop', started: !!R.started, players }, extra || {}));
     for (const p of ps) { try { p.ws.send(msg); } catch (e) {} }
   }
+  send(ws, o) { try { ws.send(typeof o === 'string' ? o : JSON.stringify(o)); } catch (e) {} }
   async fetch(req) {
     if (req.headers.get('Upgrade') !== 'websocket') return new Response('expected websocket', { status: 426 });
     const url = new URL(req.url), pid = (url.searchParams.get('pid') || '').replace(/[^a-z0-9]/gi, '').slice(0, 24);
     const name = (url.searchParams.get('name') || 'Driver').replace(/[^\p{L}\p{N} _.\-]/gu, '').slice(0, 12) || 'Driver';
     const car = (url.searchParams.get('car') || 'cruiser').replace(/[^a-z]/g, '').slice(0, 12);
-    const create = url.searchParams.get('create') === '1';
+    const create = url.searchParams.get('create') === '1', resume = url.searchParams.get('re') === '1';
     if (pid.length < 8) return new Response('bad pid', { status: 400 });
     const pair = new WebSocketPair(), client = pair[0], server = pair[1];
     this.ctx.acceptWebSocket(server);
-    const ps = this.peers().filter(p => p.ws !== server), host = ps.find(p => p.me.host);
-    const deny = why => { server.serializeAttachment({ pid, dead: true }); server.send(JSON.stringify({ c: 'denied', why })); server.close(4000, why); return new Response(null, { status: 101, webSocket: client }); };
-    // same player reconnecting replaces the old socket
-    for (const p of ps) if (p.me.pid === pid) { try { p.ws.close(4001, 'replaced'); } catch (e) {} }
-    const others = ps.filter(p => p.me.pid !== pid);
-    if (!others.length && !create) return deny('no-room');
-    if (others.length && create) return deny('taken');
-    const cap = !host ? MAX_PLAYERS : host.me.mode === 'versus' ? (host.me.max || MAX_PLAYERS) : (host.me.cmax || host.me.max || MAX_PLAYERS);
-    if (others.length >= cap) return deny('full');
-    if (host && host.me.started && host.me.pid !== pid) return deny('started');
-    const isHost = !others.length;
-    server.serializeAttachment({ pid, name, car, host: isHost, max: isHost ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('max') || MAX_PLAYERS)) : 0, cmax: isHost && url.searchParams.get('cmax') ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('cmax') || 2)) : 0, mode: url.searchParams.get('mode') === 'versus' ? 'versus' : 'coop', started: false });
-    this.lobby();
+    const deny = why => { server.serializeAttachment({ pid, dead: true }); this.send(server, { c: 'denied', why }); server.close(4000, why); return new Response(null, { status: 101, webSocket: client }); };
+    // a room with nobody connected and nobody expected back is gone
+    let R = this.R;
+    if (R && !R.hostAway && !this.peers().some(p => p.ws !== server && p.me.pid === R.hostPid)) R = this.R = null;
+    // same player reconnecting replaces the old socket (marked first so its close doesn't count as leaving)
+    for (const p of this.peers()) if (p.ws !== server && p.me.pid === pid) { p.me.dead = true; try { p.ws.serializeAttachment(p.me); p.ws.close(4001, 'replaced'); } catch (e) {} }
+    if (!R) {
+      if (!create || resume) return deny(resume ? 'gone' : 'no-room');
+      R = this.R = { hostPid: pid, hostName: name, hostCar: car, mode: url.searchParams.get('mode') === 'versus' ? 'versus' : 'coop',
+        max: Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('max') || MAX_PLAYERS)), cmax: url.searchParams.get('cmax') ? Math.min(MAX_CAP, Math.max(2, +url.searchParams.get('cmax') || 2)) : 0,
+        started: false, roster: [], away: {}, hostAway: 0 };
+    } else if (pid === R.hostPid) { // host back
+      R.hostAway = 0; R.hostName = name; R.hostCar = car;
+      for (const p of this.peers()) if (p.ws !== server) this.send(p.ws, '{"c":"hostback"}');
+    } else {
+      if (create) return deny('taken');
+      const back = !!R.away[pid] || R.roster.includes(pid);
+      if (R.started && !back) return deny('started');
+      const others = new Set(this.peers().filter(p => p.ws !== server && p.me.pid !== pid).map(p => p.me.pid));
+      if (R.hostAway) others.add(R.hostPid); for (const k in R.away) if (k !== pid) others.add(k);
+      const cap = R.mode === 'versus' ? R.max : (R.cmax || R.max);
+      if (!back && others.size >= cap) return deny('full');
+      if (R.away[pid]) { delete R.away[pid]; const h = this.hostPeer(); if (h) this.send(h.ws, { c: 'back', pid }); }
+    }
+    server.serializeAttachment({ pid, name, car });
+    await this.save(); this.lobby();
     return new Response(null, { status: 101, webSocket: client });
   }
   async webSocketMessage(ws, msg) {
-    const me = ws.deserializeAttachment() || {};
-    if (me.dead) return;
+    const me = ws.deserializeAttachment() || {}, R = this.R;
+    if (me.dead || !R) return;
     if (typeof msg !== 'string') return;
+    const isHost = me.pid === R.hostPid;
     if (msg.charCodeAt(0) === 123 && msg.indexOf('"c":') > 0 && msg.length < 400) { // small control messages
       let m; try { m = JSON.parse(msg); } catch (e) { return; }
-      if (m.c === 'car') { me.car = String(m.car || '').replace(/[^a-z]/g, '').slice(0, 12); ws.serializeAttachment(me); this.lobby(); return; }
-      if (m.c === 'mode' && me.host) { if (m.mode !== 'versus' && me.cmax && this.peers().length > me.cmax) { this.lobby(); return; }
-        me.mode = m.mode === 'versus' ? 'versus' : 'coop'; ws.serializeAttachment(me); this.lobby(); return; }
-      if (m.c === 'start' && me.host) { me.started = true; ws.serializeAttachment(me); this.lobby({ go: true }); return; }
-      if (m.c === 'reset' && me.host) { me.started = false; ws.serializeAttachment(me); this.lobby(); return; }
       if (m.c === 'ping') { ws.send('{"c":"pong","t":' + (+m.t || 0) + '}'); return; }
+      if (m.c === 'car') { me.car = String(m.car || '').replace(/[^a-z]/g, '').slice(0, 12); ws.serializeAttachment(me); if (isHost) { R.hostCar = me.car; await this.save(); } this.lobby(); return; }
+      if (m.c === 'mode' && isHost) { if (m.mode !== 'versus' && R.cmax && this.peers().length + Object.keys(R.away).length > R.cmax) { this.lobby(); return; }
+        R.mode = m.mode === 'versus' ? 'versus' : 'coop'; await this.save(); this.lobby(); return; }
+      if (m.c === 'start' && isHost) { R.started = true; R.roster = [...new Set(this.peers().map(p => p.me.pid).concat(Object.keys(R.away)))]; await this.save(); this.lobby({ go: true }); return; }
+      if (m.c === 'reset' && isHost) { R.started = false; R.roster = []; await this.save(); this.lobby(); return; }
+      if (m.c === 'bye') { me.bye = true; ws.serializeAttachment(me); await this.gone(ws, me, true); try { ws.close(1000, 'bye'); } catch (e) {} return; }
     }
-    const ps = this.peers();
-    if (me.host) { // host -> everyone else (snapshots + events), passed through untouched
-      for (const p of ps) if (p.ws !== ws) { try { p.ws.send(msg); } catch (e) {} }
+    if (isHost) { // host -> everyone else (snapshots + events), passed through untouched
+      for (const p of this.peers()) if (p.ws !== ws) { try { p.ws.send(msg); } catch (e) {} }
     } else { // guest -> host, tagged with who sent it
-      const h = ps.find(p => p.me.host);
+      const h = this.hostPeer();
       if (h) { try { h.ws.send('{"f":"' + me.pid + '","d":' + msg + '}'); } catch (e) {} }
     }
   }
-  async webSocketClose(ws, code) { this.left(ws); }
-  async webSocketError(ws) { this.left(ws); }
-  left(ws) {
-    const me = ws.deserializeAttachment() || {};
-    if (me.dead) return;
+  async webSocketClose(ws, code) { try { ws.close(code === 1005 || code === 1006 ? 1000 : code, 'closed'); } catch (e) {} const me = ws.deserializeAttachment() || {}; await this.gone(ws, me, false); }
+  async webSocketError(ws) { const me = ws.deserializeAttachment() || {}; await this.gone(ws, me, false); }
+  async gone(ws, me, onPurpose) {
+    const R = this.R;
+    if (me.dead || !R) return;
     me.dead = true; try { ws.serializeAttachment(me); } catch (e) {}
-    const ps = this.peers().filter(p => p.ws !== ws && !p.me.dead);
-    if (me.host) { for (const p of ps) { try { p.ws.send('{"c":"hostleft"}'); p.ws.close(4002, 'host left'); } catch (e) {} } return; }
-    const h = ps.find(p => p.me.host); if (h) { try { h.ws.send('{"c":"left","pid":"' + me.pid + '"}'); } catch (e) {} }
-    this.lobby();
+    if (this.peers().some(p => p.me.pid === me.pid)) return; // already reconnected on a newer socket
+    const ps = this.peers();
+    if (me.pid === R.hostPid) {
+      if (onPurpose) { // host left on purpose: close the room
+        for (const p of ps) { try { p.ws.send('{"c":"hostleft"}'); p.ws.close(4002, 'host left'); } catch (e) {} }
+        this.R = null; await this.save(); return;
+      }
+      R.hostAway = Date.now(); for (const p of ps) this.send(p.ws, '{"c":"hostaway"}');
+    } else {
+      const h = this.hostPeer();
+      if (onPurpose) { delete R.away[me.pid]; R.roster = R.roster.filter(k => k !== me.pid); if (h) this.send(h.ws, { c: 'left', pid: me.pid }); }
+      else { R.away[me.pid] = { t: Date.now(), name: me.name, car: me.car }; if (h) this.send(h.ws, { c: 'away', pid: me.pid }); }
+      if (!ps.length && !R.hostAway) { this.R = null; await this.save(); return; }
+    }
+    await this.save(); this.lobby();
+  }
+  async alarm() {
+    const R = this.R; if (!R) return;
+    const now = Date.now(), ps = this.peers();
+    if (R.hostAway && now - R.hostAway >= HOST_GRACE - 50) {
+      for (const p of ps) { try { p.ws.send('{"c":"hostleft"}'); p.ws.close(4002, 'host left'); } catch (e) {} }
+      this.R = null; await this.save(); return;
+    }
+    const h = this.hostPeer();
+    for (const k in R.away) if (now - R.away[k].t >= GUEST_GRACE - 50) { delete R.away[k]; R.roster = R.roster.filter(x => x !== k); if (h) this.send(h.ws, { c: 'left', pid: k }); }
+    if (!ps.length && !R.hostAway) { this.R = null; await this.save(); return; }
+    await this.save(); this.lobby();
   }
 }
