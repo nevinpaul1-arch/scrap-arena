@@ -817,9 +817,9 @@ function jTurnFire(c, dir) {
 }
 function jTurnInput(c, tgt, stickBack, mag, l, r) {
   const now = performance.now();
-  // stick: out a quarter turn and back again within half a second
+  // stick: out a quarter turn and back again within one second
   if (stickBack && tgt != null && mag > .45) {
-    const H2 = c.jHist || (c.jHist = []); H2.push([now, tgt]); while (H2.length && H2[0][0] < now - 520) H2.shift();
+    const H2 = c.jHist || (c.jHist = []); H2.push([now, tgt]); while (H2.length && H2[0][0] < now - 1000) H2.shift();
     const a0 = H2[0][1];
     if (now - H2[0][0] > 160 && Math.abs(wrap(tgt - a0)) < .45) {
       let dev = 0; for (const h of H2) { const d = wrap(h[1] - a0); if (Math.abs(d) > Math.abs(dev)) dev = d; }
