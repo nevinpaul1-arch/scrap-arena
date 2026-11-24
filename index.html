@@ -59,6 +59,7 @@
   #modes button small{font-size:11.5px;font-weight:600;letter-spacing:.02em;opacity:.9;line-height:1.35;text-transform:none}
   button#goDaily{background:#1d6fd8;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:800;letter-spacing:.06em;cursor:pointer}
   button#goDaily:hover{background:#2a82f0}
+  button#goCont{background:#2a9d8f;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:800;letter-spacing:.06em;cursor:pointer} button#goCont:hover{background:#33b3a3} button#goCont.hidden{display:none}
   button#go:disabled,button#goDaily:disabled{opacity:.6;cursor:default}
   #dailyBox{margin:10px auto 0;max-width:520px;background:#141922;border:1px solid #2a3442;border-radius:10px;padding:10px 12px;font-size:13px;color:#b9c1ce;text-align:left;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center}
   #dailyBox .ic{font-size:26px;grid-row:span 2}
@@ -459,6 +460,7 @@
     <input id="pname" maxlength="14" placeholder="Your name" autocomplete="off" spellcheck="false">
     <div id="modes">
       <button id="go">WAVES<small>The classic run: endless waves, unlock cars</small></button>
+      <button id="goCont" class="hidden">CONTINUE</button>
       <button id="goDaily">DAILY<small id="dailySub">Same challenge for everyone today</small></button>
       <button id="goOnline">ONLINE<small>Play with friends: co-op or versus</small></button>
     </div>
@@ -482,6 +484,7 @@
     <li><b>Joystick</b> (left thumb): point where you want to go. Pull back to brake and reverse.</li>
     <li><b>DRIFT</b>: hold to slide around corners. Drifting fills nitro.</li>
     <li><b>NOS</b>: hold for a burst of speed.</li>
+    <li><b>J-turn</b>: when you're reversing, keep the stick pointed behind you (or tap <b>DRIFT</b>) and the car whips round to face that way.</li>
     <li><b>Shake your phone</b> to show how you feel.</li>
   </ul>
   <p>Chain hits for combos, pin cars against walls for double damage, grab 🔧 repair, 🛡 armor and ⚡ nitro pickups. Arrows at the screen edge point to cars you can't see. Clearing a wave repairs 2 parts. A boss shows up every 5th wave.</p>
@@ -785,7 +788,26 @@ function makeCar(x, y, a, col, isPlayer, wave) {
   };
 }
 
+// J-turn: while reversing, keep the stick behind you (or tap DRIFT) and the car whips round 180° and drives off
+const JT_DUR = .42, JT_HOLD = .38;
+function jTurnInput(c, dt, tgt, stickBack, hbEdge, steerDir) {
+  if (c.jtT > 0) return false;
+  const vf = c.vx * Math.cos(c.a) + c.vy * Math.sin(c.a);
+  if (stickBack && vf < -55) c.jHold = (c.jHold || 0) + dt; else if ((c.jHold || 0) > 0) c.jHold = 0; else c.jHold = Math.min(0, (c.jHold || 0) + dt);
+  if (!((c.jHold || 0) > JT_HOLD || (hbEdge && vf < -40 && (c.jHold || 0) >= 0))) return false;
+  const d = tgt != null ? wrap(tgt - c.a) : (steerDir || 1);
+  c.jdir = d >= 0 ? 1 : -1; c.jseq = (c.jseq | 0) + 1; c.jHold = -.7; // short cooldown
+  addText(c.x, c.y - 40, 'J-TURN!', '#8fe3ff'); c.nitro = Math.min(1, c.nitro + .08);
+  return true;
+}
 function driveCar(c, dt) {
+  if ((c.jseq | 0) !== (c.jseen | 0)) { c.jseen = c.jseq | 0; if (!(c.jtT > 0)) { c.jtT = JT_DUR; c.jtDir = c.jdir || 1; } }
+  if (c.jtT > 0) {
+    const k = Math.min(dt, c.jtT); c.a += c.jtDir * Math.PI / JT_DUR * k; c.jtT -= dt;
+    const dm = Math.exp(-2.2 * dt); c.vx *= dm; c.vy *= dm; c.slip = 180; c.braking = false; c.reversing = false; c.spin = 0;
+    if (c.jtT <= 0) { c.jtT = 0; const sp = Math.max(170, Math.hypot(c.vx, c.vy) * .6); c.vx = Math.cos(c.a) * sp; c.vy = Math.sin(c.a) * sp; }
+    c.x += c.vx * dt; c.y += c.vy * dt; return;
+  }
   const fx = Math.cos(c.a), fy = Math.sin(c.a), rx = -fy, ry = fx;
   let vf = c.vx * fx + c.vy * fy, vl = c.vx * rx + c.vy * ry;
   const bf = c.boost ? 1 : 0, thr = c.boost ? 1 : c.throttle;
@@ -1239,6 +1261,25 @@ function startWave() {
   beep(440, .1); setTimeout(() => beep(660, .16), 150);
   updateHud();
 }
+// ---- checkpoints: beating a boss in a Waves run saves a point you can continue from ----
+const CK_KEY = 'scrapArenaCheckpoint';
+let resumeCk = null;
+function getCheckpoint() { try { const c = JSON.parse(localStorage.getItem(CK_KEY) || 'null'); return c && c.v === 1 && c.wave > 0 ? c : null; } catch (e) { return null; } }
+function saveCheckpoint() {
+  if (gameMode !== 'waves' || devRun || mpOn() || !isBossWave(wave)) return false;
+  lsSet(CK_KEY, { v: 1, wave, score, scrap, up: { armor: UP.armor, nitro: UP.nitro, ram: UP.ram }, kills, ms: Math.round(performance.now() - runT0), seen: [...seenTypes], car: selId, at: Date.now() });
+  renderContinue(); return true;
+}
+function renderContinue() {
+  const ck = getCheckpoint(), b = $('goCont'); if (!b) return;
+  b.classList.toggle('hidden', !ck);
+  if (ck) b.innerHTML = 'CONTINUE<small>From wave ' + (ck.wave + 1) + ' · score ' + ck.score + ' · checkpoint</small>';
+}
+function continueRun() {
+  const ck = getCheckpoint(); if (!ck) return;
+  resumeCk = ck; selId = CAR_BY_ID[ck.car] ? ck.car : selId;
+  begin('waves', ck.wave + 1);
+}
 function newGame() {
   cars = []; debris = []; parts = []; texts = []; rings = []; pickups = []; booms = [];
   wave = 0; score = 0; shake = 0; gameOverT = 0; paused = false; hitStop = 0; slowT = 0; flashA = 0; hurtA = 0; combo.n = 0; combo.t = 0;
@@ -1247,6 +1288,11 @@ function newGame() {
   if (gameMode === 'daily' && !devRun) { selId = daily.car; dailyPractice = !!dailyDone(); }
   if (devRun) { dailyPractice = true; if (DEV.scrap) scrap = 500; }
   mctx.clearRect(0, 0, W, H);
+  const ck = resumeCk; resumeCk = null;
+  if (ck && gameMode === 'waves' && !devRun) { // pick up from the checkpoint: same wave, score, scrap and upgrades
+    wave = ck.wave; score = ck.score; scrap = ck.scrap || 0; Object.assign(UP, ck.up || {}); kills = ck.kills || 0;
+    runT0 = performance.now() - (ck.ms || 0); seenTypes = new Set(ck.seen || []);
+  }
   player = makeCar(W / 2, H / 2 + 150, -Math.PI / 2, PLAYER_COL, true, 1);
   applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player);
   cars.push(player);
@@ -1907,6 +1953,8 @@ function step(dt) {
         player.throttle = -m; player.steer = vf > 25 ? 0 : clamp(-db * 2.6, -1, 1);
       } else { player.steer = clamp(diff * 2.6, -1, 1); player.throttle = m; }
     } else joy.rev = false;
+    { const hbNow = !!(keys.Space || touch.hand), tgt = joy.active && joy.mag > .15 ? Math.atan2(joy.dy / TK, joy.dx) : null;
+      jTurnInput(player, dt, tgt, joy.active && joy.rev && joy.mag > .15, hbNow && !player.hbPrev, (r ? 1 : 0) - (l ? 1 : 0)); player.hbPrev = hbNow; }
     player.boost = want && player.nitro > 0 && !b;
     if (player.boost) { player.nitro = Math.max(0, player.nitro - .85 * dt / (player.nitroEff || 1)); if (!wasBoost) whoosh(); }
     wasBoost = player.boost;
@@ -2023,7 +2071,9 @@ function step(dt) {
         h.inv = 1; h.nitro = Math.min(1, h.nitro + .3);
       }
       score += 50 * wave;
+      const ckSaved = saveCheckpoint();
       if (gameMode === 'daily' && !devRun && wave >= DAILY_WAVES) { score += 1000; SFX.win(); banner('DAILY COMPLETE!', '+' + (50 * wave + 1000) + ' finish bonus', 2400); }
+      else if (ckSaved) banner('BOSS BEATEN', '+' + (50 * wave) + '  /  ✅ checkpoint saved: you can continue from wave ' + (wave + 1), 2600);
       else banner('WAVE CLEARED', '+' + (50 * wave) + (fixed ? '  /  ' + fixed + ' parts repaired' : '') + (gameMode === 'daily' ? '' : wave % 2 === 0 ? '  /  new car + new arena next' : ''), 2200);
       beep(523, .1); setTimeout(() => beep(784, .2), 130); if (!(gameMode === 'daily' && wave >= DAILY_WAVES)) SFX.cheer(1);
       updateHud();
@@ -2119,8 +2169,8 @@ function endGame(won, quit) {
   }
   best = Math.max(best, scores.length ? scores[0].score : 0);
   updateHud();
-  $('final').textContent = msg;
-  renderBoard(idx); renderDailyBox();
+  { const ck = !isD && !quit ? getCheckpoint() : null; $('final').textContent = msg + (ck ? '  •  Checkpoint saved at wave ' + (ck.wave + 1) + ': tap CONTINUE' : ''); }
+  renderBoard(idx); renderDailyBox(); renderContinue();
   $('card').classList.add('over'); $('banner').classList.remove('show');
   $('overlay').querySelector('#card h1').innerHTML = won ? 'DAILY <span>DONE</span>' : quit ? 'RUN <span>ENDED</span>' : 'YOU’RE <span>SCRAP</span>';
   $('overlay').classList.remove('hidden');
@@ -2428,6 +2478,7 @@ function netRoundOver() {
 function netDriveRemote(c, dt) {
   const inp = NET.inputs[c.pid] || [0, 0, 0, 0, 0];
   c.steer = clamp(+inp[0] || 0, -1, 1); c.throttle = clamp(+inp[1] || 0, -1, 1); c.handbrake = !!inp[2];
+  if ((inp[6] | 0) > (c.jseq | 0)) { c.jdir = inp[7] < 0 ? -1 : 1; c.jseq = inp[6] | 0; }
   const want = !!inp[3] && introT <= 0;
   c.boost = want && c.nitro > 0 && c.throttle >= 0;
   if (c.boost) c.nitro = Math.max(0, c.nitro - .85 * dt / (c.nitroEff || 1));
@@ -2589,10 +2640,11 @@ function netOwnAuth(c, d) {
   // d[15] = [my send time of the last controls the host used, how long the host has been using them] -> exactly which of my
   // controls the host has already played, without guessing from ping
   const now = performance.now(), from = d[15] && d[15][0] ? clamp(d[15][0] + d[15][1], now - 450, now) : now - clamp(NET.rtt, .03, .4) * 1000;
-  const sim = Object.assign({}, c, { x: d[1], y: d[2], a: d[3], vx: d[4], vy: d[5] });
+  const sim = Object.assign({}, c, { x: d[1], y: d[2], a: d[3], vx: d[4], vy: d[5], jtT: 0 });
+  { let js = c.jseen | 0; for (const h of NET.inHist) { if (h[0] > from) break; js = h[5] | 0; } sim.jseen = js; sim.jseq = js; }
   let tPrev = from;
   for (const h of NET.inHist) { if (h[0] <= from) continue; const dt = Math.min(.05, (h[0] - tPrev) / 1000); tPrev = h[0]; if (dt <= 0) continue;
-    sim.steer = h[1]; sim.throttle = h[2]; sim.handbrake = !!h[3]; sim.boost = !!h[4]; driveCar(sim, dt); netQuietCollide(sim, false); }
+    sim.steer = h[1]; sim.throttle = h[2]; sim.handbrake = !!h[3]; sim.boost = !!h[4]; sim.jseq = h[5] | 0; sim.jdir = h[6] || 1; driveCar(sim, dt); netQuietCollide(sim, false); }
   const ex = sim.x - c.x, ey = sim.y - c.y, err = Math.hypot(ex, ey), dv = Math.hypot(sim.vx - c.vx, sim.vy - c.vy);
   if (!c.pred || wasDead || err > 110) { // first frame, respawn, teleport or a big knock: snap
     c.x = sim.x; c.y = sim.y; c.a = sim.a; c.vx = sim.vx; c.vy = sim.vy; c.cx = c.cy = c.ca = 0; c.pred = true; return;
@@ -2683,10 +2735,12 @@ function guestStep(dt) {
       else { st = clamp(diff * 2.6, -1, 1); th = m; }
     } else joy.rev = false;
     const nos = !!(keys.ShiftLeft || keys.ShiftRight || touch.nos) ? 1 : 0, hb = (keys.Space || touch.hand) ? 1 : 0;
-    NET.myIn = [+st.toFixed(2), +th.toFixed(2), hb, nos, NET.emo];
+    if (player.pred) { const tgt = joy.active && joy.mag > .15 ? Math.atan2(joy.dy / TK, joy.dx) : null; jTurnInput(player, dt, tgt, joy.active && joy.rev && joy.mag > .15, hb && !player.hbPrev, st); }
+    player.hbPrev = !!hb;
+    NET.myIn = [+st.toFixed(2), +th.toFixed(2), hb, nos, NET.emo, player.jseq | 0, player.jdir || 1];
     if (player.pred) { // run my car's physics right away so steering feels instant
       player.steer = st; player.throttle = th; player.handbrake = !!hb; player.boost = !!nos && player.nitro > 0 && th >= 0 && introT <= 0;
-      const tn = performance.now(); NET.inHist.push([tn, st, th, hb, player.boost ? 1 : 0]); while (NET.inHist.length && NET.inHist[0][0] < tn - 600) NET.inHist.shift();
+      const tn = performance.now(); NET.inHist.push([tn, st, th, hb, player.boost ? 1 : 0, player.jseq | 0, player.jdir || 1]); while (NET.inHist.length && NET.inHist[0][0] < tn - 600) NET.inHist.shift();
       driveCar(player, dt);
       const k = Math.min(1, dt * 6); player.x += player.cx * k; player.y += player.cy * k; player.cx *= 1 - k; player.cy *= 1 - k;
       if (player.ca) { player.a += player.ca * k; player.ca *= 1 - k; }
@@ -2739,7 +2793,7 @@ function netTick(rdt) {
     const cur = JSON.stringify(NET.myIn || [0, 0, 0, 0, 0]);
     const direct = rtcOk(RTC.me);
     if (NET.sendT <= 0 && (direct || cur !== NET.lastIn || NET.sendT < -.5 || NET.forceSend)) {
-      const msg = JSON.stringify({ i: (NET.myIn || [0, 0, 0, 0, 0]).concat(Math.round(performance.now())) });
+      const mi = NET.myIn || [0, 0, 0, 0, 0, 0, 1], msg = JSON.stringify({ i: mi.slice(0, 5).concat(Math.round(performance.now()), mi[5] | 0, mi[6] || 1) });
       let sent = false; if (direct) { try { RTC.me.u.send(msg); sent = true; } catch (e) {} }
       if (!sent) netSend(msg);
       NET.lastIn = cur; NET.sendT = 1 / 30; NET.forceSend = false;
@@ -3119,7 +3173,7 @@ $('pmResume').addEventListener('click', () => setPause(false));
 $('pmMenu').addEventListener('click', goMenu);
 setInterval(() => document.body.classList.toggle('playing', state === 'play'), 250);
 addEventListener('visibilitychange', () => { if (document.hidden && state === 'play' && !paused) setPause(true); });
-function begin(mode) {
+function begin(mode, fromWave) {
   if (devRun) { devRun = false; document.body.classList.remove('dev'); daily = null; }
   if (mode) gameMode = mode;
   if (gameMode === 'daily') { todayDaily(); dailyPractice = !!dailyDone(); }
@@ -3128,9 +3182,11 @@ function begin(mode) {
   const a = audio(); if (a && a.resume) a.resume(); startEngine();
   $('overlay').querySelector('#card h1').innerHTML = 'SCRAP <span>ARENA</span>';
   $('final').textContent = '';
-  showSelect(1, true);
+  if (!fromWave) resumeCk = null;
+  showSelect(fromWave || 1, true);
 }
 $('go').addEventListener('click', () => begin('waves'));
+$('goCont').addEventListener('click', continueRun); renderContinue();
 $('goDaily').addEventListener('click', () => begin('daily'));
 if (matchMedia('(pointer:coarse)').matches) { $('touch').classList.add('on'); document.body.classList.add('touch'); $('mute').style.display = 'none'; }
 document.querySelectorAll('#touch button').forEach(b => {
@@ -3176,7 +3232,7 @@ updateHud();
 window.__sa = { get state() { return state; }, get wave() { return wave; }, get score() { return score; }, get cars() { return cars; }, get player() { return player; },
   get pickups() { return pickups; }, get arena() { return arena.id; }, combo, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { if (c.boss) { killCar(c, player); continue; } c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x + 26 * Math.cos(c.a), c.y + 26 * Math.sin(c.a)], player, 300, Math.cos(c.a), Math.sin(c.a)); } },
   spawnPickup() { spawnPickup(); }, get scrap() { return scrap; }, hitRegion(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; c.armor = 0; return hitCar(c, cp, a === undefined ? player : a, 300, Math.cos(c.a), Math.sin(c.a)); }, get introT() { return introT; }, get joy() { return joy; }, setScrap(n) { scrap = n; }, get UP() { return UP; }, get barrels() { return barrels; }, get crusher() { return crusher; },
-  get mode() { return gameMode; }, get net() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
+  get mode() { return gameMode; }, setWaveNow(n) { wave = n; }, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { c.dead = true; c.deadT = 0; } }, get checkpoint() { return getCheckpoint(); }, get wave() { return wave; }, get net() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
 })();
 </script>
 </body>
