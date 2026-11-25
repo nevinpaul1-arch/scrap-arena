@@ -219,7 +219,8 @@
   body.phone .car.locked .nm::after{content:' 🔒'}
   body.phone:not(.playing) #hud{visibility:hidden}
   @media (orientation:landscape){ body.phone #fsMenu{top:auto;right:auto;bottom:max(10px,env(safe-area-inset-bottom));left:max(300px,calc(env(safe-area-inset-left) + 288px))} body.phone #devBtn{top:auto;right:auto;bottom:max(10px,env(safe-area-inset-bottom));left:max(350px,calc(env(safe-area-inset-left) + 338px))} }
-  body.phone #selInfo img{display:block;width:100%;height:clamp(60px,26vh,120px);object-fit:cover;border-radius:7px;margin-bottom:6px;background:#56627b}
+  body.phone #selInfo .perk{font-size:10.5px;line-height:1.25;padding:3px 6px;margin-top:3px}
+  body.phone #selInfo img{display:block;width:100%;height:clamp(54px,22vh,104px);object-fit:cover;border-radius:7px;margin-bottom:6px;background:#56627b}
   @media (orientation:portrait){ body.phone #selInfo img{height:clamp(70px,14vh,130px)} }
   body.phone #selInfo{display:block;background:#14171d;border:1px solid #2d3340;border-radius:10px;padding:8px 10px;min-height:0;overflow:auto;text-align:left}
   body.phone #selInfo .top{display:flex;justify-content:space-between;align-items:baseline;gap:6px} body.phone #selInfo .nm{font-weight:800;font-size:17px} body.phone #selInfo .role{font-size:11px;color:#8791a1}
@@ -378,7 +379,7 @@
   .car .nm{font-weight:800;font-size:16px;letter-spacing:.03em}
   .car .role{font-size:11px;color:#8791a1;white-space:nowrap}
   .car canvas,.car img.shot{display:block;width:100%;height:auto;aspect-ratio:960/500;border-radius:8px;object-fit:cover;background:#33424e}
-  .car.locked img.shot{filter:grayscale(1) brightness(.35)}
+  .car.locked img.shot{filter:grayscale(1) brightness(.55)} .car .shotW{position:relative} .car.locked .tlock{width:22%;max-width:64px}
   .car .st{display:grid;grid-template-columns:70px minmax(0,1fr) 40px;align-items:center;column-gap:8px;font-size:12px;color:#9aa3b2;margin-top:2px}
   .car .st .v{text-align:right;color:#cfd6e2;font-variant-numeric:tabular-nums}
   .car .bar{position:relative;height:6px;background:#2a2f38;border-radius:3px}
@@ -467,6 +468,12 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   #hubCar{position:relative;width:150%;max-width:none;margin-left:-25%;margin-right:-25%;max-height:68%;object-fit:contain;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);filter:drop-shadow(0 18px 18px rgba(0,0,0,.6));animation:float 4s ease-in-out infinite;margin-bottom:auto;margin-top:auto;transition:opacity .25s,transform .25s}
   #hubCar.swap{opacity:0;transform:translateX(30px) scale(.95)}
+  #hubCar.lockedCar{filter:grayscale(1) brightness(.62) drop-shadow(0 18px 18px rgba(0,0,0,.6));opacity:.85}
+  .lockOv{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:1;animation:lockIn .35s cubic-bezier(.2,1.5,.4,1) both}
+  .lockOv.hidden{display:none} .lockOv i{display:block;width:calc(var(--u)*11);min-width:52px;max-width:110px;aspect-ratio:64/72;background:url("data:image/svg+xml;utf8,%3Csvg%20viewBox%3D%220%200%2064%2072%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22lkg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23e2a51d%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a86f06%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M16%2032%20V22%20C16%208%2048%208%2048%2022%20V32%22%20fill%3D%22none%22%20stroke%3D%22%23cfd6e2%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M16%2032%20V22%20C16%208%2048%208%2048%2022%20V32%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.35%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%2230%22%20width%3D%2252%22%20height%3D%2238%22%20rx%3D%229%22%20fill%3D%22url%28%23lkg%29%22%20stroke%3D%22%235a3b02%22%20stroke-width%3D%222.5%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2233%22%20width%3D%2244%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%23fff%22%20opacity%3D%22.28%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2247%22%20r%3D%225.5%22%20fill%3D%22%233a2601%22%2F%3E%3Cpath%20d%3D%22M29.5%2050%20H34.5%20L33.5%2060%20H30.5%20Z%22%20fill%3D%22%233a2601%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;filter:drop-shadow(0 6px 14px rgba(0,0,0,.7))}
+  .lockOv b{font:900 11px system-ui,sans-serif;letter-spacing:.2em;color:#ffd166;background:rgba(0,0,0,.65);border:1px solid rgba(255,209,102,.45);padding:3px 9px;border-radius:999px}
+  @keyframes lockIn{from{transform:translate(-50%,-50%) scale(1.8);opacity:0}}
+  .tlock{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:30%;max-width:46px;aspect-ratio:64/72;background:url("data:image/svg+xml;utf8,%3Csvg%20viewBox%3D%220%200%2064%2072%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22lkg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23e2a51d%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a86f06%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M16%2032%20V22%20C16%208%2048%208%2048%2022%20V32%22%20fill%3D%22none%22%20stroke%3D%22%23cfd6e2%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M16%2032%20V22%20C16%208%2048%208%2048%2022%20V32%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.35%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%2230%22%20width%3D%2252%22%20height%3D%2238%22%20rx%3D%229%22%20fill%3D%22url%28%23lkg%29%22%20stroke%3D%22%235a3b02%22%20stroke-width%3D%222.5%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2233%22%20width%3D%2244%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%23fff%22%20opacity%3D%22.28%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2247%22%20r%3D%225.5%22%20fill%3D%22%233a2601%22%2F%3E%3Cpath%20d%3D%22M29.5%2050%20H34.5%20L33.5%2060%20H30.5%20Z%22%20fill%3D%22%233a2601%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;filter:drop-shadow(0 3px 6px rgba(0,0,0,.7));pointer-events:none}
   @keyframes float{0%,100%{translate:0 0}50%{translate:0 -6px}}
   .sticker{position:absolute;top:8%;right:8%;width:calc(var(--u)*10);min-width:46px;transform:rotate(12deg);filter:drop-shadow(0 6px 10px rgba(0,0,0,.55));animation:stick .6s cubic-bezier(.2,1.6,.4,1) both;cursor:pointer}
   .sticker[src=""]{display:none}
@@ -539,7 +546,8 @@
   #bsCars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
   .bsCar{border:1px solid #2d3340;background:#12151b;border-radius:12px;padding:6px;color:#dfe5ee;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
   .bsCar img{width:100%;aspect-ratio:2/1;object-fit:contain} .bsCar b{font:900 italic 13px system-ui,sans-serif} .bsCar small{font:700 10.5px system-ui,sans-serif;color:#8d97a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-  .bsCar.on{border-color:#ffae00;background:linear-gradient(180deg,rgba(255,174,0,.18),#12151b);box-shadow:0 0 0 2px rgba(255,174,0,.35)} .bsCar.lk{opacity:.4;cursor:not-allowed}
+  .bsPic{position:relative;display:block;width:100%} .bsCar.lk img{filter:grayscale(1) brightness(.6)}
+  .bsCar.on{border-color:#ffae00;background:linear-gradient(180deg,rgba(255,174,0,.18),#12151b);box-shadow:0 0 0 2px rgba(255,174,0,.35)} .bsCar.lk{opacity:.75;cursor:not-allowed}
   #bsDiff{display:flex;gap:6px;margin:6px 0 12px} #bsDiff button{flex:1;border:1px solid #2d3340;background:#12151b;color:#cfd6e2;border-radius:10px;padding:8px 4px;font:800 13px system-ui,sans-serif;cursor:pointer} #bsDiff button small{display:block;font-size:10.5px;color:#8d97a8;font-weight:700} #bsDiff button.on{border-color:#ffae00;color:#fff;background:rgba(255,174,0,.15)}
   .bsRules{margin:0;padding-left:18px;font-size:13px;line-height:1.45;color:#cfd6e2} .bsRules li{margin:3px 0} .bsRules b{color:#ffd166}
   #bsGo{width:100%;margin:0 0 12px;border:0;border-radius:12px;padding:14px;font:900 italic 20px system-ui,sans-serif;letter-spacing:.06em;color:#2a1600;background:linear-gradient(180deg,#ffc94a,#ff9800);cursor:pointer;box-shadow:0 8px 24px rgba(255,152,0,.35)} #bsGo:hover{filter:brightness(1.08)}
@@ -567,6 +575,7 @@
   .clubAward.none{cursor:pointer;justify-content:center}
   .vsRes img.cb{width:16px;vertical-align:-3px;margin-right:4px} .vsRes em.bot{font-style:normal;font-size:9px;font-weight:900;letter-spacing:.1em;background:#2d3340;color:#aab3c2;padding:1px 4px;border-radius:4px}
   .vsBox{position:relative} .vsBox img.cb{position:absolute;top:4px;right:4px;width:20px;height:20px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+  #mpCars button.lk,#mpCars2 button.lk{opacity:.45;cursor:not-allowed}
   .vsBox .botSeat{display:block;font-size:10.5px;color:#8d97a8;margin-top:3px;font-weight:700}
   .vsKinds{grid-column:1/-1;display:flex;gap:8px} .vsKind{flex:1;border:1px solid #2d3340;border-radius:12px;background:#12151b;color:#cfd6e2;padding:6px 10px;cursor:pointer;text-align:left;display:flex;flex-direction:column} .vsKind b{font:900 italic 14px system-ui,sans-serif} .vsKind small{font-size:10.5px;color:#8d97a8;font-weight:700}
   .vsKind.on{border-color:#ffae00;background:linear-gradient(180deg,rgba(255,174,0,.16),#12151b);color:#fff} .vsKind:disabled{cursor:default}
@@ -650,6 +659,7 @@
         <section class="stage" id="hubStage">
           <div class="cone"></div><div class="floor"><i></i></div>
           <img id="hubCar" alt="">
+          <div class="lockOv hidden" id="hubLock"><i></i><b id="hubLockTxt"></b></div>
           <img id="hubBadge" class="sticker" alt="">
           <button class="nav prev" id="hubPrev" aria-label="Previous car">‹</button><button class="nav next" id="hubNext" aria-label="Next car">›</button>
           <div class="plate"><div class="pl1"><b id="hubCarName"></b><small id="hubCarRole"></small></div><div class="pstats" id="hubStats"></div><div class="perkline" id="hubPerk"></div></div>
@@ -680,7 +690,7 @@
       <button id="goOnline">ONLINE<small>Play with friends: co-op or versus</small></button>
     </div>
     <div id="dailyBox"></div>
-    <div id="menuLinks"><button id="goHome">🏠 Menu</button><button id="howBtn">❓ How to play</button><button id="installBtn" class="hidden">📲 Install app</button></div>
+    <div id="menuLinks"><button id="goHome">🏠 Home</button><button id="howBtn">❓ How to play</button><button id="installBtn" class="hidden">📲 Install app</button></div>
     <button id="mpBack" style="display:none">BACK TO LOBBY</button>
     <div id="board"></div>
   </div>
@@ -1330,6 +1340,7 @@ function sat(a, b) {
 /* ---------- car roster & selection ---------- */
 // Modifiers are in % and each car nets to zero, so no car is strictly better.
 const PBASE = { accel: 560, maxSpeed: 360, turnRate: 2.7 };
+const LOCK_SVG = '<svg viewBox="0 0 64 72" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lkg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd76a"/><stop offset=".55" stop-color="#e2a51d"/><stop offset="1" stop-color="#a86f06"/></linearGradient></defs><path d="M16 32 V22 C16 8 48 8 48 22 V32" fill="none" stroke="#cfd6e2" stroke-width="8" stroke-linecap="round"/><path d="M16 32 V22 C16 8 48 8 48 22 V32" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.5" stroke-linecap="round"/><rect x="6" y="30" width="52" height="38" rx="9" fill="url(#lkg)" stroke="#5a3b02" stroke-width="2.5"/><rect x="10" y="33" width="44" height="7" rx="3.5" fill="#fff" opacity=".28"/><circle cx="32" cy="47" r="5.5" fill="#3a2601"/><path d="M29.5 50 H34.5 L33.5 60 H30.5 Z" fill="#3a2601"/></svg>';
 const CARS = [
   { id: 'cruiser', name: 'Cruiser', role: 'Muscle sedan', unlock: 1, spd: 0, hnd: 0, str: 0, col: ['#e63946', '#a6212c', '#ff7b84'] },
   { id: 'dart', name: 'Dart', role: 'Hot hatch', unlock: 1, spd: 6, hnd: 0, str: -6, col: ['#2f6fed', '#1e47a3', '#7fa8ff'] },
@@ -1458,7 +1469,8 @@ function buildSelect() {
     card.className = 'car' + (locked ? ' locked' : '') + (d.id === selId ? ' sel' : '') + (isD && !locked ? ' daily' : ''); card.dataset.id = d.id;
     const top = document.createElement('div'); top.className = 'top';
     top.innerHTML = '<span class="nm">' + d.name + '</span><span class="role">' + d.role + '</span>';
-    const cn = document.createElement('img'); cn.className = 'shot'; cn.alt = d.name; cn.src = ASSET.show[d.id];
+    const ci = document.createElement('img'); ci.className = 'shot'; ci.alt = d.name; ci.src = ASSET.show[d.id];
+    const cn = document.createElement('div'); cn.className = 'shotW'; cn.appendChild(ci); if (locked) { const lk = document.createElement('span'); lk.className = 'tlock'; cn.appendChild(lk); }
     const stats = document.createElement('div'); stats.className = 'stats';
     stats.innerHTML = [['Speed', d.spd], ['Handling', d.hnd], ['Strength', d.str]].map(([n, v]) => {
       const w = Math.min(50, Math.abs(v) * 2.4), left = v >= 0 ? 50 : 50 - w;
@@ -2824,7 +2836,8 @@ function render() {
   ctx.globalAlpha = 1;
   if (state === 'play') { drawArrows(); bombArrows(); drawBossBar(); }
   if (state === 'play' || state === 'over') drawEmotes();
-  if (mpOn() || teamOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = versusOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
+  if (mpOn() || teamOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = teamOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
+  bombMarkers();
   if (flashA > .01) { ctx.fillStyle = 'rgba(255,240,220,' + flashA.toFixed(3) + ')'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
   if (hurtA > .02) {
     const R = Math.max(innerWidth, innerHeight), g = ctx.createRadialGradient(innerWidth / 2, innerHeight / 2, R * .3, innerWidth / 2, innerHeight / 2, R * .75);
@@ -2964,6 +2977,7 @@ function clearSpot(x0, y0, rad, xr, yr) { // nearest spot to (x0,y0) with no obs
   }
   return [x0, y0];
 }
+function bombSlow() { for (const c of cars) if (c.isPlayer && !c._slowed) { c.maxSpeed *= .9; c.accel *= .9; c._slowed = true; } } // Bomb Run plays 10% slower
 function bombBases() { BOMB.bases = [clearSpot(255, H / 2, BOMB_R + 24, .5, 1), clearSpot(W - 255, H / 2, BOMB_R + 24, .5, 1)]; }
 function bombRound(first) {
   const B = BOMB; B.round++; B.st = 'wait'; B.t = first ? rand(2, 6) : rand(2, 7); B.carrier = 0; B.plant = 0; B.cool = 0; B.resetT = 0;
@@ -3160,6 +3174,26 @@ function drawBombTop() {
   if (B.st === 'carried') { const c = cars.find(o => o.id === B.carrier); if (c && !c.dead) drawBombSprite(c.x, c.y, .9, now, 14 + 2 * Math.sin(now * 6)); }
   if (B.st === 'fall') { const k = clamp(B.fall / 1.3, 0, 1); drawBombSprite(B.x, B.y, 1 + k * .5, now, k * k * 420); }
 }
+function bombMarkers() { // a big floating bomb pin over the carrier (or the loose bomb) that is never hidden by cars
+  if (!bombOn() || (state !== 'play' && state !== 'over')) return;
+  const B = BOMB, now = performance.now() / 1000; let x, y, col = '#ffb020', me = false;
+  if (B.st === 'carried') { const c = cars.find(o => o.id === B.carrier); if (!c || c.dead) return; x = c.x; y = c.y; col = TEAM_COL[c.team | 0]; me = c === player; }
+  else if (B.st === 'ground') { x = B.x; y = B.y; } else return;
+  const [sx, sy0] = w2s(x, y), bob = Math.sin(now * 5) * 3, sy = sy0 - 40 - 12 * ppu + bob, r = 19;
+  ctx.save();
+  const pulse = .5 + .5 * Math.sin(now * 7);
+  ctx.globalAlpha = .35 + .25 * pulse; ctx.fillStyle = '#ffb020'; ctx.beginPath(); ctx.arc(sx, sy, r + 6 + 3 * pulse, 0, 6.283); ctx.fill(); ctx.globalAlpha = 1;
+  ctx.fillStyle = 'rgba(12,14,18,.92)'; ctx.beginPath(); ctx.arc(sx, sy, r, 0, 6.283); ctx.fill();
+  ctx.lineWidth = 4; ctx.strokeStyle = col; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(sx - 8, sy + r - 1); ctx.lineTo(sx + 8, sy + r - 1); ctx.lineTo(sx, sy + r + 10); ctx.closePath(); ctx.fillStyle = col; ctx.fill();
+  const g = ctx.createRadialGradient(sx - 4, sy - 2, 1, sx, sy + 2, 11); g.addColorStop(0, '#6f7682'); g.addColorStop(1, '#0b0c0f');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy + 2.5, 10.5, 0, 6.283); ctx.fill(); ctx.fillStyle = '#ffb020'; ctx.fillRect(sx - 10.5, sy + 1, 21, 3);
+  ctx.fillStyle = '#3b3f47'; ctx.fillRect(sx - 3, sy - 11, 6, 5);
+  ctx.fillStyle = Math.floor(now * (B.plant > 0 ? 9 : 3)) % 2 ? '#ff3b30' : '#ffd166'; ctx.beginPath(); ctx.arc(sx, sy - 12, 3, 0, 6.283); ctx.fill();
+  if (B.plant > 0) { ctx.lineWidth = 4; ctx.strokeStyle = '#ffb020'; ctx.beginPath(); ctx.arc(sx, sy, r + 4, -Math.PI / 2, -Math.PI / 2 + 6.283 * Math.min(1, B.plant / BOMB_PLANT)); ctx.stroke(); }
+  if (me) { ctx.font = '900 11px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.8)'; ctx.strokeText('YOU', sx, sy - r - 6); ctx.fillStyle = '#ffd166'; ctx.fillText('YOU', sx, sy - r - 6); }
+  ctx.restore();
+}
 function bombHud() {
   const el = $('bombMsg'); if (!el) return;
   let t = '', cls = '';
@@ -3201,7 +3235,7 @@ function bombArrows() { // off-screen pointers: the bomb (amber) and, when carry
 function renderBombSheet() {
   const lim = Math.max(maxWave, 1), cars0 = CARS.filter(d => d.unlock <= lim);
   if (!cars0.some(d => d.id === SPB.car)) SPB.car = cars0[0].id;
-  $('bsCars').innerHTML = CARS.map(d => { const lk = d.unlock > lim; return '<button class="bsCar' + (d.id === SPB.car ? ' on' : '') + (lk ? ' lk' : '') + '" data-bcar="' + d.id + '"' + (lk ? ' disabled' : '') + '><img src="' + tileUrl(d.id) + '" alt=""><b>' + d.name + '</b><small>' + (lk ? '🔒 wave ' + d.unlock : d.perk ? PERKS[d.perk].icon + ' ' + PERKS[d.perk].name : d.role) + '</small></button>'; }).join('');
+  $('bsCars').innerHTML = CARS.map(d => { const lk = d.unlock > lim; return '<button class="bsCar' + (d.id === SPB.car ? ' on' : '') + (lk ? ' lk' : '') + '" data-bcar="' + d.id + '"' + (lk ? ' disabled' : '') + '><span class="bsPic"><img src="' + tileUrl(d.id) + '" alt="">' + (lk ? '<span class="tlock"></span>' : '') + '</span><b>' + d.name + '</b><small>' + (lk ? '🔒 wave ' + d.unlock : d.perk ? PERKS[d.perk].icon + ' ' + PERKS[d.perk].name : d.role) + '</small></button>'; }).join('');
   document.querySelectorAll('#bsDiff button').forEach(b => b.classList.toggle('on', +b.dataset.d === SPB.diff));
 }
 document.addEventListener('click', e => {
@@ -3231,6 +3265,7 @@ function startBombSP() {
   cars.push(player);
   let bi = (Math.random() * 12) | 0;
   for (const [t, s] of [[0, 1], [0, 2], [1, 0], [1, 1], [1, 2]]) cars.push(makeBot(t, s, bi++));
+  bombSlow();
   state = 'play'; $('overlay').classList.add('hidden'); document.body.classList.add('vs');
   startWave(); bombBases(); bombRound(true); snapCamera(); updateHud();
 }
@@ -3715,7 +3750,7 @@ function netStartGame() {
       cars.push(c);
       if (p.pid === PID) player = c;
     });
-    if (NET.mode === 'versus' && VS.kind === 'bomb') { let bi = (Math.random() * 12) | 0; for (let i = 0; i < 6; i++) if (!NET.vs.slots[i] || !ps.some(p => p.pid === NET.vs.slots[i])) cars.push(makeBot(i >= 3 ? 1 : 0, i % 3, bi++, 1)); }
+    if (NET.mode === 'versus' && VS.kind === 'bomb') { let bi = (Math.random() * 12) | 0; for (let i = 0; i < 6; i++) if (!NET.vs.slots[i] || !ps.some(p => p.pid === NET.vs.slots[i])) cars.push(makeBot(i >= 3 ? 1 : 0, i % 3, bi++, 1)); bombSlow(); }
     state = 'play'; NET.metaSent.clear(); NET.metaT = 0;
     const realSet = setArena; // broadcast the arena layout whenever it changes
     startWave(); if (VS.kind === 'bomb' && NET.mode === 'versus') { bombBases(); bombRound(true); } nev(...netLayoutMsg()); resetPlayerPos(); netSnapshot();
@@ -3827,7 +3862,8 @@ let mpCar = lsGet('scrapArenaMpCar', 'cruiser');
 function mpMsg(t) { const a = $('mpMsg'), b = $('mpMsg2'); if (a) a.textContent = t; if (b) b.textContent = t; }
 function mpCarChips(el) {
   el.innerHTML = '';
-  for (const d of CARS) { const b = document.createElement('button'); b.textContent = d.name; b.className = mpCar === d.id ? 'on' : ''; b.onclick = () => { mpCar = d.id; lsSet('scrapArenaMpCar', mpCar); netSend({ c: 'car', car: mpCar }); renderMpLobby(); }; el.appendChild(b); }
+  if (carLocked(CAR_BY_ID[mpCar] || CARS[0])) { mpCar = 'cruiser'; lsSet('scrapArenaMpCar', mpCar); }
+  for (const d of CARS) { const b = document.createElement('button'), lk = carLocked(d); b.textContent = (lk ? '🔒 ' : '') + d.name; b.className = (mpCar === d.id ? 'on' : '') + (lk ? ' lk' : ''); b.disabled = lk; if (lk) b.title = 'Reach wave ' + d.unlock + ' in Waves to unlock'; b.onclick = () => { if (lk) return; mpCar = d.id; lsSet('scrapArenaMpCar', mpCar); netSend({ c: 'car', car: mpCar }); renderMpLobby(); }; el.appendChild(b); }
 }
 function renderMpLobby() {
   const inRoom = !!NET.ws && !!NET.lobby;
@@ -4113,9 +4149,14 @@ function hubSetCar(id) {
   renderHubCar(true);
 }
 function renderHubCar(anim) {
-  const d = CAR_BY_ID[HUB.car] || CARS[0], lk = carLocked(d), img = $('hubCar');
-  const put = () => { img.src = showUrl(d.id); img.style.filter = lk ? 'brightness(.08) drop-shadow(0 0 1px rgba(255,255,255,.6))' : ''; img.classList.remove('swap'); };
-  if (anim) { img.classList.add('swap'); setTimeout(put, 160); } else put();
+  const d = CAR_BY_ID[HUB.car] || CARS[0], lk = carLocked(d), seq = HUB.seq = (HUB.seq || 0) + 1;
+  const put = () => { // a brand-new <img> each time: some phone browsers keep painting an old filter on a reused one
+    if (seq !== HUB.seq) return;
+    const old = $('hubCar'), img = document.createElement('img'); img.id = 'hubCar'; img.alt = d.name; img.src = showUrl(d.id); if (lk) img.className = 'lockedCar';
+    old.replaceWith(img);
+    $('hubLock').classList.toggle('hidden', !lk); $('hubLockTxt').textContent = lk ? 'WAVE ' + d.unlock : '';
+  };
+  if (anim) { $('hubCar').classList.add('swap'); $('hubLock').classList.add('hidden'); setTimeout(put, 160); } else put();
   $('hubCarName').textContent = d.name.toUpperCase(); $('hubCarRole').textContent = d.role;
   const bar = (n, v) => '<div>' + n + '<i><b style="width:' + clamp((v + 12) / 34 * 100, 4, 100).toFixed(0) + '%"></b></i></div>';
   $('hubStats').innerHTML = bar('SPEED', d.spd) + bar('HANDLING', d.hnd) + bar('STRENGTH', d.str);
@@ -4166,10 +4207,15 @@ function renderHubTicker() {
   const h = bits.join(i) + i; if ($('hubTicker')._h !== h) { $('hubTicker')._h = h; $('hubTicker').innerHTML = h; }
 }
 function renderHub() { if (!$('hub')) return; try { renderHubCar(false); renderHubProfile(); renderHubClub(); renderHubTiles(); renderHubTicker(); } catch (e) { console.error(e); } }
+let hubSyncing = false;
 function syncHub() {
+  if (hubSyncing) return; hubSyncing = true;
+  try { syncHub2(); } finally { hubSyncing = false; }
+}
+function syncHub2() {
   const at = !$('overlay').classList.contains('hidden') && !$('card').classList.contains('over');
   const was = document.body.classList.contains('atHub'); document.body.classList.toggle('atHub', at);
-  if (at) $('card').classList.remove('teamRes', 'spBomb');
+  if (at && ($('card').classList.contains('teamRes') || $('card').classList.contains('spBomb'))) $('card').classList.remove('teamRes', 'spBomb'); // only touch the class when needed: this runs from a class observer
   if (at && !was) { if ($('pname').parentNode !== $('pnameSlot')) $('pnameSlot').appendChild($('pname')); renderHub(); clubLoad(); }
   if ($('boardSheet').classList.contains('hidden') && $('board').parentNode === $('boardBody')) BOARD_HOME[0].insertBefore($('board'), BOARD_HOME[1]);
 }
