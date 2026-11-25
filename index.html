@@ -115,6 +115,11 @@
   @media (orientation:portrait) and (pointer:coarse){body.playing #rotate{display:flex}}
   button#goOnline{background:#2a9d5c;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:800;letter-spacing:.06em;cursor:pointer}
   button#goOnline:hover{background:#33b56b}
+  button#goBomb{background:#e08a00;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:800;letter-spacing:.06em;cursor:pointer} button#goBomb:hover{background:#f59e0b}
+  #card.teamRes #dailyBox,#card.teamRes #board,#card.teamRes #go,#card.teamRes #goCont,#card.teamRes #goDaily,#card.teamRes #goOnline{display:none!important}
+  #card.teamRes:not(.spBomb) #goBomb{display:none!important}
+  body.phone #card.teamRes #final{overflow:auto;min-height:0} body.phone #clubAwardBox .clubAward{margin:0;font-size:12px} body.phone #card.teamRes #modes button{padding:10px 12px}
+  #goHome{background:none;border:1px solid #3a4150;color:#cfd6e2;border-radius:8px;padding:7px 12px;font-weight:800;font-size:13px;cursor:pointer;margin:10px 6px 0 0}
   #mpBack{display:block;margin:6px auto 2px;background:#2a9d5c;color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:800;letter-spacing:.06em;cursor:pointer}
   #mpPanel{position:fixed;inset:0;z-index:41;background:rgba(8,9,12,.88);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow:auto;touch-action:manipulation}
   #mpPanel.hidden{display:none}
@@ -184,7 +189,9 @@
   body.phone #final{margin:0;font-size:12.5px}
   body.phone #mpBack{margin:0;padding:8px 12px}
   @media (orientation:landscape){
-    body.phone #card{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-rows:auto auto auto auto 1fr;grid-template-areas:"t d" "f d" "n b" "m b" "h b"}
+    body.phone #card{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-rows:auto auto auto auto auto 1fr;grid-template-areas:"t d" "f d" "c d" "n b" "m b" "h b"}
+    body.phone #card.teamRes{grid-template-columns:minmax(0,1.3fr) minmax(0,.85fr);grid-template-rows:auto auto auto 1fr;grid-template-areas:"t t" "f c" "f m" "f h"}
+    body.phone #clubAwardBox{grid-area:c}
     body.phone #card h1{grid-area:t} body.phone #final{grid-area:f} body.phone #pname{grid-area:n} body.phone #modes{grid-area:m}
     body.phone #dailyBox{grid-area:d;align-self:start} body.phone #board{grid-area:b}
     body.phone #menuLinks,body.phone #mpBack{grid-area:h;align-self:start;justify-self:start}
@@ -379,6 +386,7 @@
   .car .bar b{position:absolute;top:0;height:100%;border-radius:3px}
   .car .note{font-size:12px;font-weight:700;min-height:16px;margin-top:2px}
   .car .note.lock{color:#ffbe0b}
+  .car .perk{font-size:11px;line-height:1.3;color:#aeb7c6;margin-top:4px;padding:4px 6px;border-radius:6px;background:rgba(255,190,11,.08);border:1px solid rgba(255,190,11,.25)} .car .perk b{color:#ffd166;font-weight:800}
   .car .note.new{color:#3ddc84}
   .car.sel{border-color:#e63946;background:#261b1f}
   .car.locked{cursor:not-allowed}
@@ -390,13 +398,191 @@
   #selBar small{display:block;color:#6d7686;margin-top:8px;font-size:12px}
   @media (max-height:520px){#hudCar{width:84px;height:42px}#hud .stats{gap:10px;font-size:11px;padding:5px 9px}#hud .stats b{font-size:14px}.nosCol{min-width:72px}#combo{top:48px;font-size:20px}}
   @media (max-width:600px){#selBar small{display:none}#selBar{padding-top:10px;padding-bottom:12px}#selWrap{padding-bottom:6px}#hudCar{width:90px;height:45px}#hud .stats{gap:10px;font-size:11px}#hud .stats b{font-size:15px}}
+  /* ===================== MAIN MENU HUB ===================== */
+  #hub{display:none}
+  body.atHub #overlay{padding:0;background:radial-gradient(120% 90% at 50% 40%,rgba(16,18,25,.84),rgba(5,6,9,.96) 70%);overflow:hidden;align-items:stretch}
+  body.atHub #overlay #card{max-width:none;width:100%;height:100%;margin:0;display:block;padding:0}
+  body.atHub #card > :not(#hub){display:none!important}
+  body.atHub #hub{display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100%;box-sizing:border-box;padding:max(10px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));position:relative;text-align:left;color:#e8edf5;--u:min(1vh,1.6vw)}
+  body.atHub #fsMenu,body.atHub #devBtn,body.atHub #hud,body.atHub #vsBar,body.atHub #bombMsg,body.atHub #netStatus,body.atHub #banner{display:none!important}
+  #hub,#hub *{-webkit-text-size-adjust:none;text-size-adjust:none}
+  .hubBg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .hubBg::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+  .hubBg::after{content:'';position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(transparent,rgba(230,57,70,.07))}
+  .hubBg .sw{position:absolute;top:-30%;width:28%;height:160%;background:linear-gradient(90deg,transparent,rgba(255,190,90,.07),transparent);transform:rotate(18deg);filter:blur(6px);animation:sweep 9s linear infinite}
+  .hubBg .s2{animation-delay:-3s;background:linear-gradient(90deg,transparent,rgba(90,160,255,.06),transparent)} .hubBg .s3{animation-delay:-6s;width:14%}
+  @keyframes sweep{from{left:-40%}to{left:120%}}
+  .sparks b{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;background:#ffb347;box-shadow:0 0 8px 2px rgba(255,140,40,.7);animation:spark 7s linear infinite;opacity:0}
+  .sparks b:nth-child(1){left:8%;animation-delay:0s}.sparks b:nth-child(2){left:17%;animation-delay:-1.2s}.sparks b:nth-child(3){left:29%;animation-delay:-4.1s}.sparks b:nth-child(4){left:38%;animation-delay:-2.6s}.sparks b:nth-child(5){left:47%;animation-delay:-5.3s}.sparks b:nth-child(6){left:55%;animation-delay:-.7s}
+  .sparks b:nth-child(7){left:63%;animation-delay:-3.4s}.sparks b:nth-child(8){left:71%;animation-delay:-6.2s}.sparks b:nth-child(9){left:79%;animation-delay:-1.9s}.sparks b:nth-child(10){left:86%;animation-delay:-4.8s}.sparks b:nth-child(11){left:93%;animation-delay:-2.2s}.sparks b:nth-child(12){left:3%;animation-delay:-5.9s}
+  @keyframes spark{0%{transform:translate(0,0) scale(1);opacity:0}8%{opacity:1}100%{transform:translate(40px,-105vh) scale(.3);opacity:0}}
+  .hubTop,.hubMain,.hubFoot{position:relative;z-index:1}
+  /* top bar */
+  .hubTop{display:flex;align-items:center;gap:calc(var(--u)*1.6);min-height:0}
+  .logo{display:flex;align-items:baseline;gap:.22em;font:900 italic calc(var(--u)*5.6)/1 system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.02em;position:relative;padding-bottom:calc(var(--u)*1.4);white-space:nowrap;transform:skewX(-6deg)}
+  .logo .l1{color:#fff;text-shadow:0 2px 0 #9aa3b2,0 4px 14px rgba(0,0,0,.6)}
+  .logo .l2{background:linear-gradient(180deg,#ff8a8f 0%,#ff3846 45%,#9e1020 52%,#ff4d5a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 10px rgba(230,57,70,.45))}
+  .logo small{position:absolute;left:2px;bottom:-2px;font:800 calc(var(--u)*1.25)/1 system-ui,sans-serif;letter-spacing:.42em;color:#8d97a8;font-style:normal}
+  .logo::after{content:'';position:absolute;left:0;right:0;bottom:calc(var(--u)*1.9);height:3px;background:repeating-linear-gradient(-45deg,#ffbe0b 0 6px,#111 6px 12px);opacity:.0}
+  .profile{margin-left:auto;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:4px 14px 4px 4px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 6px 24px rgba(0,0,0,.35)}
+  .pBadge{width:calc(var(--u)*5.2);height:calc(var(--u)*5.2);min-width:34px;min-height:34px;border-radius:50%;border:0;padding:0;cursor:pointer;background:#1c2029 center/88% no-repeat;box-shadow:inset 0 0 0 2px rgba(255,255,255,.12);display:grid;place-items:center;font-size:18px;color:#ffd166;transition:transform .2s}
+  .pBadge:hover{transform:rotate(-8deg) scale(1.08)}
+  .pTxt{display:flex;flex-direction:column;min-width:0}
+  body.atHub #pname{background:transparent;border:0;color:#fff;font:800 calc(var(--u)*2.1) system-ui,sans-serif;padding:0;margin:0;width:calc(var(--u)*22);min-width:110px;max-width:220px;outline:none;text-align:left;box-shadow:none}
+  body.atHub #pname::placeholder{color:#7d8696}
+  .pTxt small{font:700 calc(var(--u)*1.35) system-ui,sans-serif;color:#9aa3b2;letter-spacing:.06em;white-space:nowrap}
+  .pTxt small b{color:var(--cc,#ffd166)}
+  .topBtns{display:flex;gap:6px}
+  .topBtns button{height:calc(var(--u)*5.2);min-height:34px;min-width:34px;padding:0 10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(14,16,22,.6);color:#dfe5ee;font:800 14px system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px;backdrop-filter:blur(6px)}
+  .topBtns button span{font-size:11px;letter-spacing:.12em;color:#aab3c2}
+  .topBtns button:hover{background:rgba(40,46,60,.8)}
+  body.standalone #hubFs,body.nofs #hubFs{display:none}
+  /* three columns */
+  .hubMain{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) minmax(0,.95fr);gap:calc(var(--u)*2.2);min-height:0;padding:calc(var(--u)*1.6) 0}
+  .modes{display:flex;flex-direction:column;gap:calc(var(--u)*1.4);min-height:0;justify-content:center}
+  .tile{--a:#e63946;--b:#7a1018;position:relative;flex:1 1 0;max-height:calc(var(--u)*15);min-height:46px;display:flex;align-items:center;gap:calc(var(--u)*1.8);padding:0 calc(var(--u)*2.4) 0 calc(var(--u)*1.6);border:0;border-radius:14px;cursor:pointer;color:#fff;text-align:left;overflow:hidden;
+    background:linear-gradient(105deg,var(--a) 0%,var(--b) 70%,rgba(0,0,0,.6) 100%);box-shadow:0 8px 22px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.25),inset 0 -2px 0 rgba(0,0,0,.25);clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%);transition:transform .18s cubic-bezier(.2,.9,.3,1.3),filter .18s;animation:tileIn .5s cubic-bezier(.2,.9,.3,1.2) both}
+  .tile:nth-child(2){animation-delay:.06s}.tile:nth-child(3){animation-delay:.12s}.tile:nth-child(4){animation-delay:.18s}
+  @keyframes tileIn{from{transform:translateX(-40px);opacity:0}to{transform:none;opacity:1}}
+  .tile::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-55deg,rgba(255,255,255,.06) 0 2px,transparent 2px 12px);pointer-events:none}
+  .tile::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .5s}
+  .tile:hover{transform:translateX(6px) scale(1.02);filter:brightness(1.12)} .tile:hover::after{left:130%} .tile:active{transform:scale(.97)}
+  .tile .ico{flex:none;width:calc(var(--u)*7.4);height:calc(var(--u)*7.4);min-width:34px;min-height:34px;border-radius:50%;display:grid;place-items:center;font-size:calc(var(--u)*3.8);background:rgba(0,0,0,.28);box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 0 18px rgba(0,0,0,.3)}
+  .tile .tt{display:flex;flex-direction:column;min-width:0;z-index:1}
+  .tile b{font:900 italic calc(var(--u)*3.3)/1 system-ui,sans-serif;letter-spacing:.03em;text-shadow:0 2px 0 rgba(0,0,0,.25)}
+  .tile small{font:700 calc(var(--u)*1.55)/1.25 system-ui,sans-serif;opacity:.9;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile .tag{position:absolute;right:26px;top:8px;font:900 normal 10px system-ui,sans-serif;letter-spacing:.14em;padding:3px 7px;border-radius:6px;background:rgba(0,0,0,.35);color:#fff}
+  .tile .tag:empty{display:none}
+  .tile .tag.new{background:#fff;color:#a35a00;animation:pulseTag 1.4s ease-in-out infinite} .tile .tag.live{background:rgba(0,0,0,.3)} .tile .tag.live::before{content:'● ';color:#7dffb0}
+  @keyframes pulseTag{50%{transform:scale(1.12)}}
+  .t-waves{--a:#ef3b49;--b:#7d0f19} .t-bomb{--a:#ffae00;--b:#a24a00} .t-daily{--a:#2f7cf6;--b:#14347d} .t-online{--a:#22b35e;--b:#0d5a2c}
+  .t-bomb .ico{animation:wob 2.2s ease-in-out infinite} @keyframes wob{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(10deg) scale(1.06)}}
+  /* car stage */
+  .stage{position:relative;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+  .stage .cone,.stage .floor{pointer-events:none}
+  .stage .cone{position:absolute;left:50%;top:-12%;width:70%;height:95%;transform:translateX(-50%);background:radial-gradient(50% 100% at 50% 0%,rgba(255,236,200,.22),rgba(255,236,200,.05) 55%,transparent 75%);clip-path:polygon(38% 0,62% 0,100% 100%,0 100%);filter:blur(2px);animation:flick 5s ease-in-out infinite}
+  @keyframes flick{0%,100%{opacity:1}47%{opacity:.85}50%{opacity:.55}53%{opacity:.95}}
+  .stage .floor{position:absolute;left:50%;bottom:27%;width:86%;height:22%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(255,200,140,.28),rgba(230,57,70,.12) 55%,transparent 72%)}
+  .stage .floor i{position:absolute;inset:8% 10%;border-radius:50%;border:2px solid rgba(255,190,90,.35);border-top-color:transparent;border-bottom-color:rgba(255,120,60,.6);animation:spin 6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #hubCar{position:relative;width:150%;max-width:none;margin-left:-25%;margin-right:-25%;max-height:68%;object-fit:contain;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);filter:drop-shadow(0 18px 18px rgba(0,0,0,.6));animation:float 4s ease-in-out infinite;margin-bottom:auto;margin-top:auto;transition:opacity .25s,transform .25s}
+  #hubCar.swap{opacity:0;transform:translateX(30px) scale(.95)}
+  @keyframes float{0%,100%{translate:0 0}50%{translate:0 -6px}}
+  .sticker{position:absolute;top:8%;right:8%;width:calc(var(--u)*10);min-width:46px;transform:rotate(12deg);filter:drop-shadow(0 6px 10px rgba(0,0,0,.55));animation:stick .6s cubic-bezier(.2,1.6,.4,1) both;cursor:pointer}
+  .sticker[src=""]{display:none}
+  @keyframes stick{from{transform:rotate(40deg) scale(2.2);opacity:0}to{transform:rotate(12deg) scale(1);opacity:1}}
+  .stage .nav{position:absolute;top:38%;width:calc(var(--u)*6);height:calc(var(--u)*6);min-width:34px;min-height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(10,12,16,.55);color:#fff;font:400 26px/1 system-ui;cursor:pointer;backdrop-filter:blur(6px);z-index:2}
+  .stage .prev{left:0} .stage .next{right:0} .stage .nav:hover{background:rgba(230,57,70,.5)}
+  .plate{position:relative;width:100%;max-width:calc(var(--u)*62);background:linear-gradient(180deg,rgba(18,21,28,.85),rgba(10,12,16,.92));border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:calc(var(--u)*1.2) calc(var(--u)*1.8);box-shadow:0 10px 30px rgba(0,0,0,.45);box-sizing:border-box}
+  .plate::before{content:'';position:absolute;left:14px;right:14px;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--cc,#e63946),transparent)}
+  .pl1{display:flex;align-items:baseline;gap:10px} .pl1 b{font:900 italic calc(var(--u)*3)/1.05 system-ui,sans-serif;letter-spacing:.03em} .pl1 small{color:#8d97a8;font:700 calc(var(--u)*1.5) system-ui,sans-serif}
+  .pstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:calc(var(--u)*.8)}
+  .pstats div{font:800 calc(var(--u)*1.2) system-ui,sans-serif;letter-spacing:.1em;color:#8d97a8}
+  .pstats i{display:block;height:5px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:3px;overflow:hidden} .pstats i b{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#ffbe0b,#ff6b3d);transition:width .4s}
+  .perkline{margin-top:calc(var(--u)*.8);font:700 calc(var(--u)*1.45)/1.3 system-ui,sans-serif;color:#cdd4e0} .perkline:empty{display:none} .perkline b{color:#ffd166}
+  .perkline.lock{color:#ffbe0b}
+  .dots{display:flex;gap:5px;margin-top:6px} .dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18)} .dots i.on{background:#ff4d5a;box-shadow:0 0 8px #ff4d5a} .dots i.lk{background:rgba(255,255,255,.07)}
+  /* club card */
+  .clubCard{position:relative;min-height:0;display:flex;flex-direction:column;gap:calc(var(--u)*1);background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015) 60%);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:calc(var(--u)*1.6);box-sizing:border-box;overflow:hidden;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 34px rgba(0,0,0,.4)}
+  .clubCard::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:var(--cc,#ffbe0b)}
+  .clubCard::after{content:'';position:absolute;right:-30%;top:-30%;width:80%;height:80%;background:radial-gradient(closest-side,var(--cg,rgba(255,190,11,.18)),transparent);pointer-events:none}
+  .cc1{display:flex;align-items:center;gap:calc(var(--u)*1.4)} .cc1 img{width:calc(var(--u)*9);min-width:44px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));animation:bob 3s ease-in-out infinite} @keyframes bob{50%{transform:translateY(-3px) rotate(-3deg)}}
+  .cc1 small{display:block;font:800 calc(var(--u)*1.1) system-ui,sans-serif;letter-spacing:.2em;color:#8d97a8} .cc1 h3{margin:2px 0 0;font:900 italic calc(var(--u)*2.5)/1.05 system-ui,sans-serif} .cc1 em{font:700 calc(var(--u)*1.3) system-ui,sans-serif;color:#aab3c2}
+  .ccRank{display:flex;justify-content:space-between;font:800 calc(var(--u)*1.35) system-ui,sans-serif;color:#cdd4e0} .ccRank span{color:#8d97a8;font-weight:700}
+  .ccBar{height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden} .ccBar b{display:block;height:100%;background:var(--cc);box-shadow:0 0 10px var(--cc)}
+  .ccEv{display:flex;gap:10px;align-items:center;background:rgba(0,0,0,.25);border-radius:12px;padding:calc(var(--u)*.9) calc(var(--u)*1.1)} .ccEv .ei{font-size:calc(var(--u)*3.4)} .ccEv small{display:block;font:800 calc(var(--u)*1.05) system-ui,sans-serif;letter-spacing:.14em;color:#8d97a8} .ccEv b{font:900 calc(var(--u)*1.75) system-ui,sans-serif}
+  .ccStand{display:flex;flex-direction:column;gap:4px;min-height:0;overflow:hidden}
+  .ccStand div{display:grid;grid-template-columns:18px 22px 1fr auto;gap:6px;align-items:center;font:700 calc(var(--u)*1.3) system-ui,sans-serif;color:#cdd4e0} .ccStand img{width:20px} .ccStand i{height:5px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;font-style:normal} .ccStand i b{display:block;height:100%} .ccStand .me{color:#fff}
+  .ccGo{margin-top:auto;border:0;border-radius:12px;padding:calc(var(--u)*1.2);font:900 calc(var(--u)*1.6) system-ui,sans-serif;letter-spacing:.12em;color:#111;background:var(--cc,#ffbe0b);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)} .ccGo:hover{filter:brightness(1.1)}
+  .ccJoin{display:flex;justify-content:center;margin:calc(var(--u)*1) 0;height:calc(var(--u)*11)} .ccJoin img{width:calc(var(--u)*7.5);min-width:36px;margin:0 calc(var(--u)*-1.4);filter:drop-shadow(0 4px 8px rgba(0,0,0,.6));transition:transform .3s}
+  .ccJoin img:nth-child(odd){transform:translateY(8px) rotate(-8deg)} .ccJoin img:nth-child(even){transform:rotate(8deg)} .clubCard:hover .ccJoin img{transform:translateY(-4px)}
+  .ccList{display:flex;flex-direction:column;gap:5px;min-height:0;overflow:hidden} .ccList button{display:flex;align-items:center;gap:9px;border:0;background:rgba(0,0,0,.22);border-radius:10px;padding:5px 8px;color:#dfe5ee;cursor:pointer;text-align:left;box-shadow:inset 3px 0 0 var(--k)} .ccList button:hover{background:rgba(255,255,255,.07)} .ccList img{width:26px} .ccList b{display:block;font:900 italic 13px system-ui,sans-serif} .ccList small{font-size:11px;color:#8d97a8}
+  @media (max-height:640px){.ccList{display:none}}
+  .ccNo p{margin:0;color:#aab3c2;font:600 calc(var(--u)*1.45)/1.4 system-ui,sans-serif;text-align:center}
+  /* footer ticker */
+  .hubFoot{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+  .tick{white-space:nowrap;font:700 calc(var(--u)*1.35)/1.8 system-ui,sans-serif;color:#7f899a;letter-spacing:.06em}
+  .tick span{display:inline-block;padding-left:100%;animation:tick 38s linear infinite} .tick b{color:#ffd166} .tick i{font-style:normal;color:#3a4150;margin:0 14px}
+  @keyframes tick{to{transform:translateX(-100%)}}
+  /* small landscape phones */
+  @media (max-height:500px){
+    body.atHub #hub{padding:max(6px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(2px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+    .logo{font-size:26px;padding-bottom:9px} .logo small{font-size:7.5px;letter-spacing:.38em}
+    .profile{padding:3px 12px 3px 3px;gap:8px} .pBadge{width:34px;height:34px} body.atHub #pname{font-size:14px;width:150px;min-width:0} .pTxt small{font-size:9.5px}
+    .topBtns{gap:5px} .topBtns button{height:34px;min-width:34px;padding:0 8px;font-size:15px} .topBtns button span{display:none}
+    .hubMain{gap:12px;padding:8px 0 4px;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,.95fr)}
+    .modes{gap:7px} .tile{max-height:74px;min-height:52px;gap:10px;padding:0 18px 0 9px;border-radius:12px;clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%)}
+    .tile .ico{width:38px;height:38px;font-size:20px} .tile b{font-size:19px} .tile small{font-size:10.5px;margin-top:2px} .tile .tag{top:5px;right:18px;font-size:8.5px;padding:2px 5px}
+    .stage .nav{width:32px;height:32px;font-size:22px;top:30%} .sticker{width:44px;top:4%;right:6%}
+    .plate{padding:6px 11px;border-radius:12px} .pl1 b{font-size:17px} .pl1 small{font-size:10.5px} .pstats{gap:6px;margin-top:4px} .pstats div{font-size:8px} .pstats i{height:4px}
+    .perkline{font-size:10.5px;margin-top:4px} .dots{margin-top:4px} .dots i{width:5px;height:5px} .stage .floor{bottom:34%}
+    .clubCard{padding:10px 11px;gap:6px;border-radius:14px} .cc1{gap:9px} .cc1 img{width:42px;min-width:0} .cc1 small{font-size:8px} .cc1 h3{font-size:15px} .cc1 em{font-size:10px}
+    .ccRank{font-size:10px} .ccBar{height:5px} .ccEv{padding:5px 8px;gap:8px;border-radius:10px} .ccEv .ei{font-size:20px} .ccEv small{font-size:7.5px} .ccEv b{font-size:12px}
+    .ccStand{gap:2px} .ccStand div{font-size:10px;grid-template-columns:12px 16px 1fr auto;gap:5px} .ccStand img{width:15px} .ccStand div:nth-child(n+4){display:none}
+    .ccGo{padding:8px;font-size:11.5px;border-radius:10px} .ccJoin{height:46px;margin:2px 0} .ccJoin img{width:36px;margin:0 -6px} .ccNo p{font-size:10.5px}
+    .tick{font-size:10px;line-height:1.6}
+  }
+  /* portrait: stack */
+  @media (orientation:portrait) and (max-width:700px){
+    body.atHub #overlay{overflow:auto} body.atHub #hub{height:auto;min-height:100%;--u:min(.62vh,1.25vw)}
+    .hubTop{flex-wrap:wrap} .logo{font-size:34px} .profile{margin-left:0;order:3;width:100%;box-sizing:border-box} .topBtns{margin-left:auto}
+    .hubMain{grid-template-columns:1fr;gap:12px} .stage{order:-1;height:42vh} .tile{min-height:64px;max-height:none} .tile b{font-size:22px} .tile small{font-size:12px}
+  }
+  /* sheets for leaderboard, clubs and bomb run setup */
+  .bigSheet{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(4,5,8,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));box-sizing:border-box}
+  .bigSheet.hidden{display:none}
+  .bigSheet .bs{position:relative;width:min(980px,100%);max-height:100%;overflow:auto;background:linear-gradient(180deg,#171a22,#0e1015);border:1px solid #2d3340;border-radius:18px;padding:16px 18px;box-sizing:border-box;color:#dfe5ee;text-align:left;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:sheetIn .28s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes sheetIn{from{transform:translateY(24px) scale(.98);opacity:0}}
+  .bigSheet h2{margin:0 0 10px;font:900 italic 22px system-ui,sans-serif;letter-spacing:.05em}
+  /* bomb run setup */
+  .bsGrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px}
+  #bsCars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  .bsCar{border:1px solid #2d3340;background:#12151b;border-radius:12px;padding:6px;color:#dfe5ee;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .bsCar img{width:100%;aspect-ratio:2/1;object-fit:contain} .bsCar b{font:900 italic 13px system-ui,sans-serif} .bsCar small{font:700 10.5px system-ui,sans-serif;color:#8d97a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .bsCar.on{border-color:#ffae00;background:linear-gradient(180deg,rgba(255,174,0,.18),#12151b);box-shadow:0 0 0 2px rgba(255,174,0,.35)} .bsCar.lk{opacity:.4;cursor:not-allowed}
+  #bsDiff{display:flex;gap:6px;margin:6px 0 12px} #bsDiff button{flex:1;border:1px solid #2d3340;background:#12151b;color:#cfd6e2;border-radius:10px;padding:8px 4px;font:800 13px system-ui,sans-serif;cursor:pointer} #bsDiff button small{display:block;font-size:10.5px;color:#8d97a8;font-weight:700} #bsDiff button.on{border-color:#ffae00;color:#fff;background:rgba(255,174,0,.15)}
+  .bsRules{margin:0;padding-left:18px;font-size:13px;line-height:1.45;color:#cfd6e2} .bsRules li{margin:3px 0} .bsRules b{color:#ffd166}
+  #bsGo{width:100%;margin:0 0 12px;border:0;border-radius:12px;padding:14px;font:900 italic 20px system-ui,sans-serif;letter-spacing:.06em;color:#2a1600;background:linear-gradient(180deg,#ffc94a,#ff9800);cursor:pointer;box-shadow:0 8px 24px rgba(255,152,0,.35)} #bsGo:hover{filter:brightness(1.08)}
+  .bsH4{margin:0 0 6px;font:800 11px system-ui,sans-serif;letter-spacing:.18em;color:#8d97a8}
+  /* club HQ */
+  .clIntro{margin:0 0 10px;color:#aab3c2;font-size:13.5px;line-height:1.45}
+  .clPick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .clCard{position:relative;border:1px solid #2d3340;border-radius:16px;background:linear-gradient(170deg,color-mix(in srgb,var(--cc) 16%,#12151b),#0e1015 70%);padding:12px;color:#dfe5ee;cursor:pointer;display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;transition:transform .15s,box-shadow .15s}
+  .clCard:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 0 2px var(--cc)}
+  .clCard img{width:84px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))} .clCard b{font:900 italic 16px system-ui,sans-serif} .clCard em{font-size:11.5px;color:var(--cc)} .clCard small{font-size:11.5px;color:#8d97a8;line-height:1.35}
+  .clCard .go{margin-top:6px;font:900 11px system-ui,sans-serif;letter-spacing:.16em;padding:5px 12px;border-radius:999px;background:var(--cc);color:#111} .clCard.on .go{background:transparent;color:var(--cc);box-shadow:inset 0 0 0 2px var(--cc)}
+  .clHead{display:flex;gap:16px;align-items:center;padding:12px;border-radius:16px;background:linear-gradient(120deg,color-mix(in srgb,var(--cc) 22%,#12151b),#0e1015 70%);border:1px solid #2d3340}
+  .clHead img{width:110px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.6))} .clHead .txt{flex:1;min-width:0} .clHead small{font:800 11px system-ui,sans-serif;letter-spacing:.2em;color:#8d97a8} .clHead h3{margin:2px 0;font:900 italic 26px system-ui,sans-serif} .clHead em{color:var(--cc);font-size:13px}
+  .clHead .rank{display:flex;justify-content:space-between;margin-top:8px;font:800 13px system-ui,sans-serif} .clHead .rank span{color:#8d97a8} .clHead .rbar{height:7px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:4px} .clHead .rbar b{display:block;height:100%;background:var(--cc)}
+  .clHead .nums{display:flex;gap:18px;margin-top:8px;font-size:11px;color:#8d97a8} .clHead .nums b{display:block;font:900 18px system-ui,sans-serif;color:#fff}
+  .clGoal{margin:10px 0} .clGoal small,.clStand h4,.clTop h4,.clHow h4{display:block;margin:0 0 5px;font:800 11px system-ui,sans-serif;letter-spacing:.18em;color:#8d97a8}
+  .clGoal .gbar{position:relative;height:22px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden} .clGoal .gbar b{display:block;height:100%;opacity:.85} .clGoal .gbar span{position:absolute;inset:0;display:flex;align-items:center;padding-left:10px;font:800 12px system-ui,sans-serif}
+  .clEvent{display:flex;gap:12px;align-items:center;margin:10px 0;padding:10px 12px;border-radius:14px;background:linear-gradient(90deg,rgba(255,190,11,.14),rgba(255,190,11,.03));border:1px solid rgba(255,190,11,.3)} .clEvent .ei{font-size:34px} .clEvent small{font:800 10.5px system-ui,sans-serif;letter-spacing:.16em;color:#d9b45a} .clEvent b{display:block;font:900 italic 18px system-ui,sans-serif} .clEvent p{margin:2px 0 0;font-size:12.5px;color:#cfd6e2;line-height:1.4}
+  .clRow{display:grid;grid-template-columns:20px 26px minmax(90px,140px) 1fr auto;gap:8px;align-items:center;padding:4px 6px;border-radius:8px;font:700 13px system-ui,sans-serif} .clRow.mine{background:rgba(255,255,255,.06)} .clRow img{width:24px} .clRow .pos{color:#8d97a8;font-weight:900} .clRow .bar{height:8px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden} .clRow .bar b{display:block;height:100%} .clRow .pt{font-weight:900;text-align:right} .clRow .pt small{margin-left:6px;color:#8d97a8;font-weight:700}
+  .clTop,.clHow{margin-top:10px} .clTop .tm{display:flex;justify-content:space-between;font-size:13px;padding:3px 6px;border-radius:6px} .clTop .tm.me{background:rgba(255,255,255,.07);color:#fff}
+  .clHow ul{margin:0;padding-left:18px;font-size:12.5px;line-height:1.5;color:#cfd6e2}
+  .clSwitch,.clBack{margin-top:12px;background:none;border:1px solid #3a4150;color:#aab3c2;border-radius:10px;padding:8px 14px;font:800 12px system-ui,sans-serif;cursor:pointer}
+  .clubAward{display:flex;gap:10px;align-items:center;margin:10px auto 0;max-width:520px;padding:8px 12px;border-radius:12px;background:linear-gradient(90deg,color-mix(in srgb,var(--cc,#ffbe0b) 22%,transparent),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);text-align:left;font-size:13px;color:#dfe5ee;cursor:default}
+  .clubAward img{width:38px} .clubAward b{color:#fff} .clubAward em{color:#ffd166;font-style:normal;font-weight:800;margin-left:4px} .clubAward .up{color:#7dffb0;font-weight:900}
+  .clubAward.none{cursor:pointer;justify-content:center}
+  .vsRes img.cb{width:16px;vertical-align:-3px;margin-right:4px} .vsRes em.bot{font-style:normal;font-size:9px;font-weight:900;letter-spacing:.1em;background:#2d3340;color:#aab3c2;padding:1px 4px;border-radius:4px}
+  .vsBox{position:relative} .vsBox img.cb{position:absolute;top:4px;right:4px;width:20px;height:20px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+  .vsBox .botSeat{display:block;font-size:10.5px;color:#8d97a8;margin-top:3px;font-weight:700}
+  .vsKinds{grid-column:1/-1;display:flex;gap:8px} .vsKind{flex:1;border:1px solid #2d3340;border-radius:12px;background:#12151b;color:#cfd6e2;padding:6px 10px;cursor:pointer;text-align:left;display:flex;flex-direction:column} .vsKind b{font:900 italic 14px system-ui,sans-serif} .vsKind small{font-size:10.5px;color:#8d97a8;font-weight:700}
+  .vsKind.on{border-color:#ffae00;background:linear-gradient(180deg,rgba(255,174,0,.16),#12151b);color:#fff} .vsKind:disabled{cursor:default}
+  .bombCol ol{margin:4px 0;padding-left:18px;font-size:12px;line-height:1.4;color:#cfd6e2} .bombCol p{margin:4px 0 0;font-size:12px;color:#8d97a8}
+  #bombMsg{display:none;position:fixed;left:50%;top:max(52px,calc(env(safe-area-inset-top) + 46px));transform:translateX(-50%);z-index:6;background:rgba(10,12,16,.82);border:1px solid #3a3f4b;border-radius:999px;padding:5px 14px;font:800 13px system-ui,sans-serif;color:#ffd58a;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+  #bombMsg.hot{border-color:#ffb020;color:#ffb020;animation:pulseTag 1s ease-in-out infinite} #bombMsg.me{border-color:#ffb020;background:rgba(80,45,0,.85);color:#fff;font-size:14.5px} #bombMsg.alarm{border-color:var(--tc);color:#fff;background:color-mix(in srgb,var(--tc) 35%,rgba(10,12,16,.85))}
+  body.phone .clPick{grid-template-columns:repeat(3,minmax(0,1fr))} body.phone .clCard img{width:56px} body.phone .clCard small{display:none}
+  @media (max-height:500px){ .bigSheet .bs{padding:12px 14px} .bigSheet h2{font-size:18px;margin-bottom:6px} .bsCar img{aspect-ratio:2.4/1} .bsCar{padding:4px} .bsRules{font-size:11.5px;line-height:1.35} #bsGo{padding:10px;font-size:17px} #bsDiff{margin:4px 0 8px} #bsDiff button{padding:6px 4px} }
+  @media (max-width:700px){ .bsGrid{grid-template-columns:1fr} #bsCars{grid-template-columns:repeat(4,minmax(0,1fr))} .clPick{grid-template-columns:repeat(2,minmax(0,1fr))} .clHead img{width:72px} }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="netInfo" style="display:none"></div><div id="netStatus" style="display:none"></div>
 <div id="vsBar"><b class="b">0</b><span class="t">3:00</span><b class="r">0</b></div>
-<div id="respawnMsg"></div>
+<div id="respawnMsg"></div><div id="bombMsg"></div>
 <div id="hud">
   <div class="stats"><span>WAVE <b id="hw">1</b></span><span>SCORE <b id="hs">0</b></span><span>BEST <b id="hb">0</b></span><span>SCRAP <b id="hsc" style="color:#ffd166">0</b></span><span>CAR <b id="hc" style="font-size:14px">-</b></span></div>
   <div id="status">
@@ -447,6 +633,32 @@
 <div id="devTag">DEV RUN</div>
 <div id="overlay">
   <div id="card">
+    <div id="hub">
+      <div class="hubBg"><i class="sw s1"></i><i class="sw s2"></i><i class="sw s3"></i><div class="sparks"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div></div>
+      <header class="hubTop">
+        <div class="logo"><span class="l1">SCRAP</span><span class="l2">ARENA</span><small>DEMOLITION DERBY</small></div>
+        <div class="profile" id="hubProfile"><button class="pBadge" id="hubPBadge" title="Motor club"></button><div class="pTxt"><span class="pNameSlot" id="pnameSlot"></span><small id="hubRank"></small></div></div>
+        <div class="topBtns"><button id="hubBoard" title="Leaderboard">🏆<span>RANKS</span></button><button id="hubHow" title="How to play">❓<span>HOW</span></button><button id="hubInstall" class="hidden" title="Install">📲<span>APP</span></button><button id="hubFs" title="Fullscreen">⛶</button><button id="hubDev" title="Dev">🛠</button></div>
+      </header>
+      <div class="hubMain">
+        <nav class="modes">
+          <button class="tile t-waves" id="tWaves"><span class="ico">🔥</span><span class="tt"><b>WAVES</b><small id="tWavesSub">Endless waves · unlock cars</small></span><em class="tag" id="tCont"></em></button>
+          <button class="tile t-bomb" id="tBomb"><span class="ico">💣</span><span class="tt"><b>BOMB RUN</b><small>3v3 vs bots · plant the bomb</small></span><em class="tag new">NEW</em></button>
+          <button class="tile t-daily" id="tDaily"><span class="ico" id="tDailyIco">📅</span><span class="tt"><b>DAILY</b><small id="tDailySub">Same challenge for everyone</small></span><em class="tag" id="tStreak"></em></button>
+          <button class="tile t-online" id="tOnline"><span class="ico">🌐</span><span class="tt"><b>ONLINE</b><small>Co-op · Team Derby · Bomb Run</small></span><em class="tag live">LIVE</em></button>
+        </nav>
+        <section class="stage" id="hubStage">
+          <div class="cone"></div><div class="floor"><i></i></div>
+          <img id="hubCar" alt="">
+          <img id="hubBadge" class="sticker" alt="">
+          <button class="nav prev" id="hubPrev" aria-label="Previous car">‹</button><button class="nav next" id="hubNext" aria-label="Next car">›</button>
+          <div class="plate"><div class="pl1"><b id="hubCarName"></b><small id="hubCarRole"></small></div><div class="pstats" id="hubStats"></div><div class="perkline" id="hubPerk"></div></div>
+          <div class="dots" id="hubDots"></div>
+        </section>
+        <aside class="clubCard" id="hubClub"></aside>
+      </div>
+      <footer class="hubFoot"><div class="tick"><span id="hubTicker"></span></div></footer>
+    </div>
     <h1>SCRAP <span>ARENA</span></h1>
     <p class="intro">Ram the other cars. <b>Where you hit decides what falls off</b> &mdash; hood, bumper, trunk, doors. Lose all 5 parts and you're wrecked. Chain hits for combos, pin cars against walls for double damage, and grab repair, armor and nitro pickups. Watch out for new enemy types as the waves go on. Arrows at the screen edge point to cars you can't see. Collect scrap from wrecks to buy upgrades, and watch for oil, barrels and the boss every 5th wave.</p>
     <div class="keys" id="keysBox">
@@ -458,15 +670,17 @@
     </div>
     <p class="hint" style="font-size:13px;color:#8791a1">Taps and slow bumps don't count &mdash; hit hard. Clearing a wave repairs 2 of your parts. You pick a car at the start and after every 2 waves, and the arena changes too. New cars unlock as you go and stay unlocked. Progress and scores are saved in this browser.</p>
     <div id="final"></div>
+    <div id="clubAwardBox"></div>
     <input id="pname" maxlength="14" placeholder="Your name" autocomplete="off" spellcheck="false">
     <div id="modes">
       <button id="go">WAVES<small>The classic run: endless waves, unlock cars</small></button>
       <button id="goCont" class="hidden">CONTINUE</button>
       <button id="goDaily">DAILY<small id="dailySub">Same challenge for everyone today</small></button>
+      <button id="goBomb">BOMB RUN<small>3v3 vs bots · plant the bomb</small></button>
       <button id="goOnline">ONLINE<small>Play with friends: co-op or versus</small></button>
     </div>
     <div id="dailyBox"></div>
-    <div id="menuLinks"><button id="howBtn">❓ How to play</button><button id="installBtn" class="hidden">📲 Install app</button></div>
+    <div id="menuLinks"><button id="goHome">🏠 Menu</button><button id="howBtn">❓ How to play</button><button id="installBtn" class="hidden">📲 Install app</button></div>
     <button id="mpBack" style="display:none">BACK TO LOBBY</button>
     <div id="board"></div>
   </div>
@@ -488,8 +702,25 @@
     <li><b>J-turn</b>: while reversing, flick the stick a quarter turn to one side and straight back. The car whips round 180° that way. Keyboard: hold ↓ and double-tap ← or →.</li>
     <li><b>Shake your phone</b> to show how you feel.</li>
   </ul>
+  <p><b>💣 Bomb Run</b> (3v3, alone with bots or online): a bomb drops in an amber ring in the first 10 s. Carry it into the other team's base and stay still for 5 s to blow it up (+1 point, everyone respawns). Wreck the carrier to make them drop it.</p>
+  <p><b>🏁 Motor clubs</b>: tap the badge at the top of the menu to join one. Its badge goes on your car, every game earns club points, and clubs race in a new event each week.</p>
+  <p><b>Unlocked cars</b> are stronger and each has a perk: 🌀 Drifter, 🐂 Hauler, 🔥 Rocket, 🛡 Fortress, 👻 Phantom.</p>
   <p>Chain hits for combos, pin cars against walls for double damage, grab 🔧 repair, 🛡 armor and ⚡ nitro pickups. Arrows at the screen edge point to cars you can't see. Clearing a wave repairs 2 parts. A boss shows up every 5th wave.</p>
 </div></div>
+<div id="bombSheet" class="bigSheet hidden"><div class="bs">
+  <button class="shClose" data-close="bombSheet">✕</button>
+  <h2>💣 BOMB RUN <small style="font:700 13px system-ui;color:#8d97a8;letter-spacing:.08em">3v3 · YOU + 2 BOTS vs 3 BOTS · 3:00</small></h2>
+  <div class="bsGrid">
+    <div><h4 class="bsH4">YOUR CAR</h4><div id="bsCars"></div></div>
+    <div><h4 class="bsH4">BOTS</h4><div id="bsDiff"><button data-d="0">ROOKIE<small>slow, forgiving</small></button><button data-d="1">PRO<small>a fair fight</small></button><button data-d="2">LEGEND<small>fast and mean</small></button></div>
+      <button id="bsGo">START MATCH</button>
+      <h4 class="bsH4">HOW IT WORKS</h4>
+      <ol class="bsRules"><li>A bomb drops in the first 10 s, marked by an <b>amber ring</b>.</li><li>Drive over it to pick it up, then take it to the <b>other team's base</b>.</li><li>Stop inside their ring and <b>stay still for 5 s</b>. Getting shoved drains the timer; leaving the ring resets it. Base destroyed: <b>+1 point</b>, everyone respawns.</li><li>Wreck the carrier and the bomb drops. Your team-mates can't hurt you.</li><li>Most points after 3:00 wins.</li></ol>
+      </div>
+  </div>
+</div></div>
+<div id="clubSheet" class="bigSheet hidden"><div class="bs"><button class="shClose" data-close="clubSheet">✕</button><h2>🏁 MOTOR CLUBS</h2><div id="clubBody"></div></div></div>
+<div id="boardSheet" class="bigSheet hidden"><div class="bs" style="width:min(620px,100%)"><button class="shClose" data-close="boardSheet">✕</button><h2>🏆 LEADERBOARD</h2><div id="boardBody"></div></div></div>
 <div id="mpPanel" class="hidden"><div class="mp">
   <button id="mpClose" aria-label="Close">✕</button>
   <h2>🌐 PLAY ONLINE</h2>
@@ -725,9 +956,9 @@ const TYPE_INTRO = { 2: 'flanker', 3: 'rammer', 4: 'bomber', 6: 'tank' };
 const MAXP = 6, COOP_MAX = 2;
 // ---- team versus: blue vs red, 3:00 match, kill = 5, boss = 25, respawn after 3 s ----
 const TEAM_COL = ['#3a86ff', '#ff4d5a'], TEAM_NAME = ['BLUE', 'RED'], VS_LEN = 180, VS_BOSS_AT = 120, VS_RESPAWN = 3, VS_KILL = 5, VS_BOSS_PTS = 25;
-const VS = { matchT: VS_LEN, score: [0, 0], boss: 'none', bossState: 0, warned: false };
+const VS = { matchT: VS_LEN, score: [0, 0], boss: 'none', bossState: 0, warned: false, kind: 'derby' };
 let BLAST = false; // true while a barrel blast is dealing damage (team-mates can hurt each other that way)
-const NET = { vs: { slots: ['', '', '', '', '', ''], votes: {} }, role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [], away: {}, acc: 0, jpk: 0, lastSnapAt: 0 };
+const NET = { vs: { slots: ['', '', '', '', '', ''], votes: {}, kind: 'derby' }, clubs: {}, role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [], away: {}, acc: 0, jpk: 0, lastSnapAt: 0 };
 let RTC_ICE = [{ urls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'] }];
 const RTC = { peers: new Map(), me: null, lastRx: 0, rpT: 0 };
 const rtcOk = p => !!(p && p.u && p.u.readyState === 'open' && p.r && p.r.readyState === 'open');
@@ -736,6 +967,12 @@ const mpOn = () => !!NET.role && NET.started;
 const isHost = () => NET.role === 'host' && NET.started;
 const isGuest = () => NET.role === 'guest' && NET.started;
 const versusOn = () => mpOn() && NET.mode === 'versus';
+const BOMB_PLANT = 5, BOMB_R = 34, BOMB_IDLE = 45, BOMB_PICK = 30, BOMB_ST = ['off', 'wait', 'fall', 'ground', 'carried', 'boom'];
+const BOMB = { st: 'off', x: W / 2, y: H / 2, t: 0, fall: 0, carrier: 0, plant: 0, cool: 0, round: 0, resetT: 0, bases: [[250, H / 2], [W - 250, H / 2]], lastTeam: -1 };
+let LOCAL_TEAM = false; const SPB = { diff: 1, car: 'cruiser' };
+const teamOn = () => versusOn() || (LOCAL_TEAM && !NET.role);
+const teamHost = () => (versusOn() && NET.role === 'host') || (LOCAL_TEAM && !NET.role);
+const bombOn = () => teamOn() && VS.kind === 'bomb';
 window.__localPlayer = () => player;
 function nev(...a) { if (NET.role === 'host' && NET.started) NET.ev.push(a); }
 const TWIN_COLS = [['#c1121f', '#7a0b14', '#ff5a5f'], ['#1b1d22', '#0b0c0f', '#4a4f5a']];
@@ -791,6 +1028,197 @@ async function api(path, body) {
   try { const r = await fetch(API + path, body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: ctl.signal } : { signal: ctl.signal }); return await r.json(); }
   catch (e) { return null; } finally { clearTimeout(to); }
 }
+/* ---------- motor clubs: original badges drawn as SVG (used in menus, lobby and painted on the cars) ---------- */
+const CLUBS = [
+  { id: 'reapers', name: 'Rust Reapers', motto: 'Nothing leaves in one piece', c1: '#e5383b', c2: '#1b0b0d', c3: '#ffd6cc', shape: 'shield', icon: 'skull', vibe: 'Pure wreckers. If it moves, it loses a door.' },
+  { id: 'vipers', name: 'Neon Vipers', motto: 'Strike first, strike twice', c1: '#2ef28c', c2: '#071a12', c3: '#ff4fd8', shape: 'hex', icon: 'snake', vibe: 'Quick, slippery and always going sideways.' },
+  { id: 'bulls', name: 'Iron Bulls', motto: 'Head down, foot down', c1: '#ff8c1a', c2: '#191b20', c3: '#d8dde6', shape: 'gear', icon: 'bull', vibe: 'Heavy metal. They ram first and ask later.' },
+  { id: 'owls', name: 'Night Owls', motto: 'We own the dark', c1: '#9d6bff', c2: '#120b26', c3: '#f1e6ff', shape: 'diamond', icon: 'owl', vibe: 'Patient hunters. Never seen until the hit lands.' },
+  { id: 'kings', name: 'Desert Kings', motto: 'Sand in the gears, gold in the trunk', c1: '#f5c242', c2: '#2a1c06', c3: '#fff3cf', shape: 'sun', icon: 'crown', vibe: 'Showboats with the trophies to back it up.' },
+  { id: 'wolves', name: 'Frost Wolves', motto: 'Hunt as a pack', c1: '#5cc8ff', c2: '#06182a', c3: '#ffffff', shape: 'shield2', icon: 'wolf', vibe: 'Team players. Bomb Run is their kind of night.' }
+];
+const CLUB_BY = Object.fromEntries(CLUBS.map(c => [c.id, c]));
+function clubShape(k) {
+  const pts = (n, r1, r2, off) => Array.from({ length: n * 2 }, (_, i) => { const a = i / (n * 2) * 6.283 + (off || 0), r = i % 2 ? r2 : r1; return (50 + Math.cos(a) * r).toFixed(1) + ' ' + (50 + Math.sin(a) * r).toFixed(1); }).join(' L');
+  if (k === 'shield') return 'M50 4 L91 17 V48 C91 73 72 89 50 97 C28 89 9 73 9 48 V17 Z';
+  if (k === 'shield2') return 'M50 3 L88 12 L92 50 C90 74 70 90 50 98 C30 90 10 74 8 50 L12 12 Z';
+  if (k === 'hex') return 'M50 3 L91 26 V74 L50 97 L9 74 V26 Z';
+  if (k === 'diamond') return 'M50 2 Q56 2 60 6 L94 40 Q98 46 94 52 L60 94 Q50 102 40 94 L6 52 Q2 46 6 40 L40 6 Q44 2 50 2 Z';
+  if (k === 'gear') { let d = ''; for (let i = 0; i < 12; i++) { const a0 = i / 12 * 6.283, a1 = a0 + .18, a2 = a0 + .34, a3 = a0 + .52; const p = (a, r) => (50 + Math.cos(a) * r).toFixed(1) + ' ' + (50 + Math.sin(a) * r).toFixed(1); d += (i ? 'L' : 'M') + p(a0, 41) + ' L' + p(a1, 48) + ' L' + p(a2, 48) + ' L' + p(a3, 41) + ' '; } return d + 'Z'; }
+  if (k === 'sun') return 'M' + pts(16, 48, 39, -Math.PI / 2) + ' Z';
+  return 'M50 4 A46 46 0 1 1 49.9 4 Z';
+}
+function clubIcon(k, c1, c2, c3) {
+  if (k === 'skull') return '<g stroke="' + c3 + '" stroke-width="5" stroke-linecap="round"><path d="M24 74 L76 30"/><path d="M24 30 L76 74"/></g><circle cx="22" cy="76" r="5" fill="' + c3 + '"/><circle cx="78" cy="28" r="5" fill="' + c3 + '"/><circle cx="22" cy="28" r="5" fill="' + c3 + '"/><circle cx="78" cy="76" r="5" fill="' + c3 + '"/>' +
+    '<path d="M50 22 C66 22 74 33 74 45 C74 54 69 59 64 61 V69 Q64 73 60 73 H40 Q36 73 36 69 V61 C31 59 26 54 26 45 C26 33 34 22 50 22 Z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="2.5"/>' +
+    '<ellipse cx="40.5" cy="46" rx="7" ry="7.5" fill="' + c2 + '"/><ellipse cx="59.5" cy="46" rx="7" ry="7.5" fill="' + c2 + '"/><path d="M50 52 L46 59 H54 Z" fill="' + c2 + '"/><path d="M43 64 V72 M50 64 V72 M57 64 V72" stroke="' + c2 + '" stroke-width="2.4"/>';
+  if (k === 'snake') return '<path d="M30 78 C26 60 70 64 70 46 C70 32 54 26 44 32" fill="none" stroke="' + c2 + '" stroke-width="15" stroke-linecap="round"/><path d="M30 78 C26 60 70 64 70 46 C70 32 54 26 44 32" fill="none" stroke="' + c1 + '" stroke-width="10" stroke-linecap="round"/>' +
+    '<path d="M30 78 C26 60 70 64 70 46 C70 32 54 26 44 32" fill="none" stroke="' + c3 + '" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round"/>' +
+    '<path d="M46 22 C34 20 26 28 28 36 C30 43 40 44 48 38 C54 33 54 24 46 22 Z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="2.5"/><circle cx="36" cy="31" r="2.6" fill="' + c2 + '"/><path d="M27 35 L18 38 M18 38 L14 35 M18 38 L15 42" stroke="' + c3 + '" stroke-width="2.2" stroke-linecap="round"/>';
+  if (k === 'bull') return '<path d="M30 40 C18 38 12 28 12 18 C20 28 28 30 38 30 Z" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="2.5"/><path d="M70 40 C82 38 88 28 88 18 C80 28 72 30 62 30 Z" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="2.5"/>' +
+    '<path d="M32 30 H68 Q74 30 72 38 L64 70 Q60 82 50 82 Q40 82 36 70 L28 38 Q26 30 32 30 Z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="2.5"/><path d="M36 44 L45 48 M64 44 L55 48" stroke="' + c2 + '" stroke-width="4" stroke-linecap="round"/>' +
+    '<ellipse cx="50" cy="70" rx="11" ry="7" fill="' + c2 + '" opacity=".55"/><circle cx="45" cy="69" r="2" fill="' + c3 + '"/><circle cx="55" cy="69" r="2" fill="' + c3 + '"/><circle cx="50" cy="79" r="5.5" fill="none" stroke="' + c3 + '" stroke-width="2.4"/>';
+  if (k === 'owl') return '<path d="M26 30 L32 14 L42 28 Z M74 30 L68 14 L58 28 Z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="2.5" stroke-linejoin="round"/><path d="M50 24 C70 24 78 38 78 54 C78 72 64 84 50 84 C36 84 22 72 22 54 C22 38 30 24 50 24 Z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="2.5"/>' +
+    '<circle cx="38" cy="48" r="11" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="2.5"/><circle cx="62" cy="48" r="11" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="2.5"/><circle cx="39" cy="49" r="5" fill="' + c2 + '"/><circle cx="61" cy="49" r="5" fill="' + c2 + '"/><circle cx="41" cy="47" r="1.6" fill="' + c3 + '"/><circle cx="63" cy="47" r="1.6" fill="' + c3 + '"/>' +
+    '<path d="M28 36 L48 42 M72 36 L52 42" stroke="' + c2 + '" stroke-width="3.5" stroke-linecap="round"/><path d="M50 56 L45 64 L50 70 L55 64 Z" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="2"/><path d="M36 74 Q50 80 64 74" stroke="' + c2 + '" stroke-width="2" fill="none" opacity=".6"/>';
+  if (k === 'crown') return '<path d="M22 70 L17 34 L35 49 L50 24 L65 49 L83 34 L78 70 Z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="3" stroke-linejoin="round"/><rect x="21" y="68" width="58" height="11" rx="3" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="3"/>' +
+    '<circle cx="17" cy="32" r="4" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="2"/><circle cx="50" cy="21" r="4.5" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="2"/><circle cx="83" cy="32" r="4" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="2"/>' +
+    '<circle cx="35" cy="73.5" r="2.6" fill="' + c2 + '"/><circle cx="50" cy="73.5" r="3" fill="#e5383b"/><circle cx="65" cy="73.5" r="2.6" fill="' + c2 + '"/><path d="M33 60 L50 40 L67 60" fill="none" stroke="' + c3 + '" stroke-width="2.5" opacity=".7"/>';
+  if (k === 'wolf') return '<path d="M50 86 L33 66 L24 22 L41 38 L50 34 L59 38 L76 22 L67 66 Z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="3" stroke-linejoin="round"/><path d="M29 30 L38 40 L31 44 Z M71 30 L62 40 L69 44 Z" fill="' + c2 + '" opacity=".5"/>' +
+    '<path d="M35 52 L46 55 L37 58 Z M65 52 L54 55 L63 58 Z" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="1.5"/><path d="M42 64 L50 84 L58 64 Q50 60 42 64 Z" fill="' + c3 + '" stroke="' + c2 + '" stroke-width="2"/><path d="M46 71 L50 76 L54 71 Z" fill="' + c2 + '"/>' +
+    '<path d="M44 42 L50 50 L56 42" fill="none" stroke="' + c2 + '" stroke-width="2" opacity=".7"/>';
+  return '';
+}
+function clubBadgeSvg(id, opt) {
+  const c = CLUB_BY[id]; if (!c) return '';
+  const o = opt || {}, gold = o.champ ? '#ffd23f' : null, d = clubShape(c.shape);
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 -6 112 112">' +
+    '<defs><linearGradient id="g' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c.c2 + '"/><stop offset="1" stop-color="#000"/></linearGradient>' +
+    '<linearGradient id="s' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>' +
+    (gold ? '<path d="' + d + '" transform="translate(50 50) scale(1.1) translate(-50 -50)" fill="none" stroke="' + gold + '" stroke-width="5"/>' : '') +
+    '<path d="' + d + '" fill="url(#g' + id + ')" stroke="' + (o.chrome ? '#e8edf3' : c.c1) + '" stroke-width="6" stroke-linejoin="round"/>' +
+    '<path d="' + d + '" transform="translate(50 50) scale(.84) translate(-50 -50)" fill="none" stroke="' + c.c1 + '" stroke-opacity=".45" stroke-width="2"/>' +
+    '<g transform="translate(50 50) scale(.88) translate(-50 -50)">' + clubIcon(c.icon, c.c1, c.c2, c.c3) + '</g>' +
+    '<path d="' + d + '" fill="url(#s' + id + ')"/></svg>';
+}
+const CLUB_URL = {}, CLUB_IMG = {};
+function clubBadgeUrl(id, opt) { const k = id + (opt && opt.champ ? 'C' : '') + (opt && opt.chrome ? 'R' : ''); if (!CLUB_URL[k]) CLUB_URL[k] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(clubBadgeSvg(id, opt)); return CLUB_URL[k]; }
+function clubImg(id) { // canvas copy for painting onto cars
+  if (!CLUB_BY[id]) return null; if (CLUB_IMG[id]) return CLUB_IMG[id].ok ? CLUB_IMG[id].cv : null;
+  const im = new Image(), rec = CLUB_IMG[id] = { ok: false, cv: null };
+  im.onload = () => { const cv = document.createElement('canvas'); cv.width = cv.height = 64; cv.getContext('2d').drawImage(im, 0, 0, 64, 64); rec.cv = cv; rec.ok = true; };
+  im.src = clubBadgeUrl(id); return null;
+}
+/* club membership, ranks, weekly events and points (saved in this browser; standings shared through the server when it has them) */
+const CLUB_KEY = 'scrapArenaClub';
+const CLUB_RANKS = [['Prospect', 0], ['Member', 300], ['Road Captain', 1500], ['Enforcer', 5000], ['Vice President', 12000], ['President', 25000]];
+const CLUB_EVENTS = [
+  { id: 'bomb', icon: '💣', name: 'Bomb Squad', desc: 'Bases you blow up earn 3× club points', mult: { plants: 3 } },
+  { id: 'wreck', icon: '💥', name: 'Wrecking Week', desc: 'Every KO earns 2× club points', mult: { kos: 2 } },
+  { id: 'haul', icon: '🛣️', name: 'Long Haul', desc: 'Waves and Daily scores earn 2× club points', mult: { run: 2 } },
+  { id: 'clash', icon: '⚔️', name: 'Club Clash', desc: 'Team wins earn 3× club points', mult: { win: 3 } },
+  { id: 'boss', icon: '👑', name: 'Boss Hunt', desc: 'Each boss you wreck earns +150 club points', mult: { boss: 1 } }
+];
+const CLUB_GOAL = 25000; // weekly club target: hit it and every member's badge goes chrome for the week
+const WEEK0 = Date.UTC(2024, 0, 1, 5); // a Monday, midnight Toronto
+const clubWeek = (t = Date.now()) => Math.floor((t - WEEK0) / (7 * 864e5));
+const weekEndsIn = () => WEEK0 + (clubWeek() + 1) * 7 * 864e5 - Date.now();
+const clubEvent = (w = clubWeek()) => CLUB_EVENTS[((w % CLUB_EVENTS.length) + CLUB_EVENTS.length) % CLUB_EVENTS.length];
+let CLUB = lsGet(CLUB_KEY, null) || { id: '', since: 0, life: {}, week: { w: 0, pts: 0 }, pend: 0, hist: [] };
+if (!CLUB.life) CLUB.life = {}; if (!CLUB.week) CLUB.week = { w: 0, pts: 0 }; if (!CLUB.hist) CLUB.hist = [];
+const myClubId = () => (CLUB_BY[CLUB.id] ? CLUB.id : '');
+const myClubPts = () => CLUB.life[CLUB.id] || 0;
+function clubRank(p) { let r = 0; for (let i = 0; i < CLUB_RANKS.length; i++) if (p >= CLUB_RANKS[i][1]) r = i; const nx = CLUB_RANKS[r + 1]; return { i: r, name: CLUB_RANKS[r][0], next: nx ? nx[0] : null, need: nx ? nx[1] : null, from: CLUB_RANKS[r][1], k: nx ? (p - CLUB_RANKS[r][1]) / (nx[1] - CLUB_RANKS[r][1]) : 1 }; }
+function clubSave() { lsSet(CLUB_KEY, CLUB); }
+function weekPts() { return CLUB.week.w === clubWeek() ? CLUB.week.pts : 0; }
+function joinClub(id) {
+  if (!CLUB_BY[id] || id === CLUB.id) return;
+  CLUB.id = id; CLUB.since = Date.now(); if (CLUB.week.w !== clubWeek() || CLUB.week.club !== id) CLUB.week = { w: clubWeek(), pts: 0, club: id };
+  clubSave(); SFX.cheer && SFX.cheer(.8); clubPush(0); renderClubAll();
+  if (NET.role === 'guest') netSend({ club: id }); else if (NET.role === 'host') vsSync();
+  for (const c of cars) if (c === player) { c.club = id; c._key = ''; }
+}
+// points for a finished game. kind: waves | daily | bomb | versus | coop
+function clubPoints(kind, st) {
+  const ev = clubEvent(), m = ev.mult, br = {};
+  if (st.run) br.run = Math.round(st.run * (m.run || 1));
+  if (st.kos) br.kos = Math.round(st.kos * (kind === 'bomb' ? 8 : 10) * (m.kos || 1));
+  if (st.plants) br.plants = Math.round(st.plants * (kind === 'bomb' ? 60 : 80) * (m.plants || 1));
+  if (st.stops) br.stops = st.stops * 25;
+  if (st.win) br.win = Math.round((kind === 'bomb' ? 80 : 120) * (m.win || 1));
+  if (st.boss && m.boss) br.boss = st.boss * 150;
+  const pts = Math.min(3000, Object.values(br).reduce((a2, b2) => a2 + b2, 0));
+  return { pts, br, ev };
+}
+function clubAddPts(pts) {
+  if (!myClubId() || !(pts > 0)) return;
+  CLUB.life[CLUB.id] = (CLUB.life[CLUB.id] || 0) + pts;
+  if (CLUB.week.w !== clubWeek() || CLUB.week.club !== CLUB.id) CLUB.week = { w: clubWeek(), pts: 0, club: CLUB.id };
+  CLUB.week.pts += pts; CLUB.pend = (CLUB.pend || 0) + pts;
+  clubSave(); clubPush();
+}
+// award from a team results payload (online versus / co-op / single-player Bomb Run)
+function clubAward(r, sp) {
+  if (!myClubId() || devRun) return null;
+  const me = r.players.find(p => p[5] === PID); if (!me) return null;
+  let st;
+  if (r.mode === 'versus' && r.vs) st = { kos: me[3], plants: me[10] || 0, stops: me[11] || 0, win: r.vs.winner === me[6] ? 1 : 0 };
+  else st = { run: Math.floor((r.score || 0) / 15), kos: me[3] };
+  const res = clubPoints(r.vs && r.vs.kind === 'bomb' ? 'bomb' : r.mode, st);
+  if (sp && r.vs && r.vs.kind === 'bomb') res.pts = Math.round(res.pts * .6); // bots are easier than people
+  const before = myClubPts(); clubAddPts(res.pts); res.rankUp = clubRank(myClubPts()).i > clubRank(before).i ? clubRank(myClubPts()).name : null;
+  return res;
+}
+function clubAwardRun(kind, sc, kos, boss) { // single-player Waves / Daily
+  if (!myClubId() || devRun) return null;
+  const res = clubPoints(kind, { run: Math.floor(sc / 20), kos: 0, boss: boss || 0 });
+  const before = myClubPts(); clubAddPts(res.pts); res.rankUp = clubRank(myClubPts()).i > clubRank(before).i ? clubRank(myClubPts()).name : null;
+  return res;
+}
+function clubAwardHtml(res) {
+  if (!myClubId()) return '<div class="clubAward none" onclick="window.__openClub && window.__openClub()">🏁 <b>Join a motor club</b> to earn club points from every game</div>';
+  if (!res || !res.pts) return '';
+  const c = CLUB_BY[CLUB.id];
+  return '<div class="clubAward" style="--cc:' + c.c1 + '"><img src="' + clubBadgeUrl(c.id) + '" alt=""><div><b>+' + res.pts + ' club points</b> for ' + esc(c.name) + (res.ev && Object.keys(res.br).some(k => res.ev.mult[k]) ? ' <em>' + res.ev.icon + ' ' + res.ev.name + ' bonus</em>' : '') + (res.rankUp ? '<br><span class="up">⬆ Promoted to ' + res.rankUp + '!</span>' : '') + '</div></div>';
+}
+// ---- server: weekly standings (falls back to this browser's own numbers when offline) ----
+let CLUB_BOARD = null, clubBoardAt = 0;
+async function clubPush(extra) {
+  if (!myClubId() || !CLUB.pend) return;
+  const pts = CLUB.pend; CLUB.pend = 0; clubSave();
+  try {
+    const r = await fetch((API || location.origin) + '/api/club/add', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ pid: PID, club: CLUB.id, pts, name: pname, week: clubWeek() }) });
+    if (!r.ok) throw 0; const d = await r.json(); if (d && d.clubs) { CLUB_BOARD = d; clubBoardAt = Date.now(); renderClubAll(); }
+  } catch (e) { CLUB.pend = (CLUB.pend || 0) + pts; clubSave(); }
+}
+async function clubLoad(force) {
+  if (!force && Date.now() - clubBoardAt < 60000) return;
+  clubBoardAt = Date.now();
+  try {
+    const r = await fetch((API || location.origin) + '/api/club/board?week=' + clubWeek() + '&pid=' + PID + '&club=' + (CLUB.id || ''));
+    if (!r.ok) throw 0; const d = await r.json(); if (d && d.clubs) { CLUB_BOARD = d; if (CLUB.pend) clubPush(); renderClubAll(); }
+  } catch (e) { CLUB_BOARD = null; renderClubAll(); }
+}
+function clubStandings() { // [{id, pts, members}] sorted
+  const base = CLUBS.map(c => ({ id: c.id, pts: 0, members: 0 }));
+  if (CLUB_BOARD && CLUB_BOARD.clubs) for (const r of CLUB_BOARD.clubs) { const b = base.find(x => x.id === r.club); if (b) { b.pts = r.pts | 0; b.members = r.members | 0; } }
+  else { const me = base.find(x => x.id === CLUB.id); if (me) { me.pts = weekPts(); me.members = 1; } }
+  return base.sort((a2, b2) => b2.pts - a2.pts);
+}
+const champClub = () => (CLUB_BOARD && CLUB_BOARD.last) || '';
+function badgeFor(id, big) { return clubBadgeUrl(id, { champ: champClub() === id, chrome: big && clubStandings().find(x => x.id === id)?.pts >= CLUB_GOAL }); }
+// ---- the club sheet ----
+let clubView = '';
+function fmtLeft(ms) { const h = Math.floor(ms / 36e5), d = Math.floor(h / 24); return d ? d + 'd ' + (h % 24) + 'h' : h + 'h ' + Math.floor(ms / 6e4) % 60 + 'm'; }
+function renderClubSheet() {
+  const el = $('clubBody'); if (!el) return;
+  const id = myClubId(), ev = clubEvent(), st = clubStandings(), online = !!(CLUB_BOARD && CLUB_BOARD.clubs);
+  const top = Math.max(1, ...st.map(x => x.pts));
+  const evCard = '<div class="clEvent"><span class="ei">' + ev.icon + '</span><div><small>THIS WEEK\'S CLUB EVENT · ends in ' + fmtLeft(weekEndsIn()) + '</small><b>' + ev.name + '</b><p>' + ev.desc + '. Top club at the end of the week gets the 🏆 gold ring on its badge; any club that reaches ' + CLUB_GOAL.toLocaleString() + ' points goes chrome.</p></div></div>';
+  const stand = '<div class="clStand"><h4>WEEKLY STANDINGS ' + (online ? '' : '<small>· offline: only your points shown</small>') + '</h4>' + st.map((x, i) => { const c = CLUB_BY[x.id]; return '<div class="clRow' + (x.id === id ? ' mine' : '') + '"><span class="pos">' + (i + 1) + '</span><img src="' + badgeFor(x.id) + '" alt=""><span class="nm">' + c.name + (champClub() === x.id ? ' 🏆' : '') + '</span><div class="bar"><b style="width:' + Math.max(2, x.pts / top * 100) + '%;background:' + c.c1 + '"></b></div><span class="pt">' + x.pts.toLocaleString() + (x.members ? '<small>' + x.members + ' 👤</small>' : '') + '</span></div>'; }).join('') + '</div>';
+  if (!id || clubView === 'pick') {
+    el.innerHTML = '<p class="clIntro">' + (id ? 'Switching moves you to a new club. Your rank starts again there; points you already earned stay with ' + CLUB_BY[id].name + '.' : 'Pick a motor club. Its badge goes on your roof and hood, and every game you play earns points for your club. Clubs race each other in a new event every week.') + '</p>' +
+      '<div class="clPick">' + CLUBS.map(c => '<button class="clCard' + (c.id === id ? ' on' : '') + '" data-join="' + c.id + '" style="--cc:' + c.c1 + '"><img src="' + badgeFor(c.id, true) + '" alt=""><b>' + c.name + '</b><em>"' + c.motto + '"</em><small>' + c.vibe + '</small><span class="go">' + (c.id === id ? 'YOUR CLUB' : (CLUB.life[c.id] ? 'REJOIN · ' + clubRank(CLUB.life[c.id]).name : 'JOIN')) + '</span></button>').join('') + '</div>' + (id ? '<button class="clBack" data-cv="">← Back to ' + CLUB_BY[id].name + '</button>' : '') + evCard;
+    return;
+  }
+  const c = CLUB_BY[id], p = myClubPts(), rk = clubRank(p), mine = st.find(x => x.id === id) || { pts: 0 };
+  const topM = (CLUB_BOARD && CLUB_BOARD.top) || [];
+  el.innerHTML = '<div class="clHead" style="--cc:' + c.c1 + '"><img src="' + badgeFor(id, true) + '" alt=""><div class="txt"><small>YOUR MOTOR CLUB</small><h3>' + c.name + '</h3><em>"' + c.motto + '"</em>' +
+    '<div class="rank"><b>' + rk.name + '</b>' + (rk.next ? '<span>' + (rk.need - p).toLocaleString() + ' to ' + rk.next + '</span>' : '<span>top rank</span>') + '</div><div class="rbar"><b style="width:' + (rk.k * 100).toFixed(1) + '%"></b></div>' +
+    '<div class="nums"><span><b>' + p.toLocaleString() + '</b>lifetime pts</span><span><b>' + weekPts().toLocaleString() + '</b>this week</span><span><b>' + mine.pts.toLocaleString() + '</b>club this week</span></div></div></div>' +
+    '<div class="clGoal"><small>WEEKLY CLUB GOAL</small><div class="gbar"><b style="width:' + Math.min(100, mine.pts / CLUB_GOAL * 100).toFixed(1) + '%;background:' + c.c1 + '"></b><span>' + mine.pts.toLocaleString() + ' / ' + CLUB_GOAL.toLocaleString() + (mine.pts >= CLUB_GOAL ? ' · CHROME BADGE UNLOCKED ✨' : '') + '</span></div></div>' +
+    evCard + stand +
+    (topM.length ? '<div class="clTop"><h4>TOP ' + c.name.toUpperCase() + ' THIS WEEK</h4>' + topM.slice(0, 8).map((m2, i) => '<div class="tm' + (m2.me ? ' me' : '') + '"><span>' + (i + 1) + '. ' + esc(m2.name) + '</span><b>' + (m2.pts | 0).toLocaleString() + '</b></div>').join('') + '</div>' : '') +
+    '<div class="clHow"><h4>HOW TO EARN</h4><ul><li>💣 Blow up a base: 60 (Bomb Run) / 80 (online)</li><li>💥 KO a player: 8–10 · 🛑 stop a carrier: 25</li><li>🏆 Team win: 80–120</li><li>🛣️ Waves &amp; Daily: 1 per 20 score</li><li>' + ev.icon + ' ' + ev.name + ': ' + ev.desc.toLowerCase() + '</li></ul></div>' +
+    '<button class="clSwitch" data-cv="pick">Switch club</button>';
+}
+function renderClubAll() { try { renderClubSheet(); renderHubClub(); renderHubProfile(); } catch (e) {} }
+document.addEventListener('click', e => {
+  const j = e.target.closest('[data-join]'); if (j) { joinClub(j.dataset.join); clubView = ''; renderClubAll(); return; }
+  const v = e.target.closest('[data-cv]'); if (v) { clubView = v.dataset.cv; renderClubSheet(); }
+});
+function openClub() { $('clubSheet').classList.remove('hidden'); clubView = myClubId() ? '' : 'pick'; renderClubSheet(); clubLoad(); }
+window.__openClub = openClub;
 function todayDaily() { const day = (dailyMeta && dailyMeta.day) || torontoDay(); if (!daily || daily.day !== day) daily = makeDaily(day); return daily; }
 const dailyDone = () => { const r = lsGet('scrapArenaDaily', null); return r && r.day === todayDaily().day ? r : null; };
 
@@ -842,7 +1270,7 @@ function driveCar(c, dt) {
   const fx = Math.cos(c.a), fy = Math.sin(c.a), rx = -fy, ry = fx;
   let vf = c.vx * fx + c.vy * fy, vl = c.vx * rx + c.vy * ry;
   const bf = c.boost ? 1 : 0, thr = c.boost ? 1 : c.throttle;
-  const acc = c.accel * (1 + 1.4 * bf), ms = c.maxSpeed * (1 + .38 * bf);
+  const bk = c.boostK || 1, acc = c.accel * (1 + 1.4 * bf * bk), ms = c.maxSpeed * (1 + .38 * bf * bk) * (c.bombK || 1);
   if (thr > 0) vf += thr * acc * dt * (1 - clamp(vf / (Math.max(1, ms) * 1.12), 0, 1));
   else if (thr < 0) { vf += thr * (vf > 0 ? c.accel * 1.5 : c.accel * .6) * dt; vf = Math.max(vf, -c.maxSpeed * .45); }
   c.braking = (thr < 0 && vf > 20) || (c.handbrake && Math.abs(vf) > 20);
@@ -906,22 +1334,30 @@ const CARS = [
   { id: 'cruiser', name: 'Cruiser', role: 'Muscle sedan', unlock: 1, spd: 0, hnd: 0, str: 0, col: ['#e63946', '#a6212c', '#ff7b84'] },
   { id: 'dart', name: 'Dart', role: 'Hot hatch', unlock: 1, spd: 6, hnd: 0, str: -6, col: ['#2f6fed', '#1e47a3', '#7fa8ff'] },
   { id: 'bruiser', name: 'Bruiser', role: 'Pickup truck', unlock: 1, spd: -6, hnd: 0, str: 6, col: ['#4a4f5a', '#2c3038', '#7a8190'] },
-  { id: 'drifter', name: 'Drifter', role: 'Drift coupe', unlock: 3, spd: -3, hnd: 7, str: -4, col: ['#f2f4f7', '#b7bcc6', '#ffffff'] },
-  { id: 'hauler', name: 'Hauler', role: 'Off-roader', unlock: 3, spd: -7, hnd: 2, str: 5, col: ['#7a8b3a', '#55632a', '#a6b868'] },
-  { id: 'rocket', name: 'Rocket', role: 'Supercar', unlock: 5, spd: 7, hnd: -4, str: -3, col: ['#e8b50c', '#9c7a08', '#ffd75e'] },
-  { id: 'fortress', name: 'Fortress', role: 'Armored SUV', unlock: 5, spd: -4, hnd: -3, str: 7, col: ['#1d3557', '#12213a', '#4a6fa5'] },
-  { id: 'phantom', name: 'Phantom', role: 'Sports coupe', unlock: 7, spd: 3, hnd: 3, str: -6, col: ['#15171c', '#0a0b0e', '#3b3e46'] }
+  // unlocked cars are genuinely better: a bigger stat budget plus a signature perk
+  { id: 'drifter', name: 'Drifter', role: 'Drift coupe', unlock: 3, spd: 4, hnd: 15, str: 0, col: ['#f2f4f7', '#b7bcc6', '#ffffff'], perk: 'drift' },
+  { id: 'hauler', name: 'Hauler', role: 'Off-roader', unlock: 3, spd: -2, hnd: 4, str: 16, col: ['#7a8b3a', '#55632a', '#a6b868'], perk: 'bull' },
+  { id: 'rocket', name: 'Rocket', role: 'Supercar', unlock: 5, spd: 16, hnd: 3, str: -2, col: ['#e8b50c', '#9c7a08', '#ffd75e'], perk: 'burn' },
+  { id: 'fortress', name: 'Fortress', role: 'Armored SUV', unlock: 5, spd: 2, hnd: -2, str: 20, col: ['#1d3557', '#12213a', '#4a6fa5'], perk: 'plate' },
+  { id: 'phantom', name: 'Phantom', role: 'Sports coupe', unlock: 7, spd: 10, hnd: 10, str: 4, col: ['#15171c', '#0a0b0e', '#3b3e46'], perk: 'ghost' }
 ];
+const PERKS = {
+  drift: { icon: '🌀', name: 'Drift King', desc: 'Drifting fills nitro 2.5× faster and drift hits rip off 2 parts' },
+  bull: { icon: '🐂', name: 'Bull Bar', desc: 'The front shrugs off a hit every 3 s, and its rams shove 60% harder' },
+  burn: { icon: '🔥', name: 'Afterburner', desc: 'Nitro is 50% stronger and lasts 50% longer' },
+  plate: { icon: '🛡', name: 'Plated', desc: 'Starts armored, and the armor grows back 15 s after it breaks' },
+  ghost: { icon: '👻', name: 'Ghost', desc: '1 in 3 hits glance off, and longer recovery after a hit' }
+};
 const CAR_BY_ID = {}; CARS.forEach(c => { CAR_BY_ID[c.id] = c; });
 let selId = 'cruiser', pendingFresh = true, selWave = 1;
 const fmtPct = v => (v > 0 ? '+' : '') + v + '%';
 function applyCar(c, d) {
   c.col = d.col; c.carName = d.name; c.styleId = d.id;
-  if (c.isPlayer) { const p = PAINTS.find(q => q.id === paintId); if (p && p.col && paintOk(p)) c.col = p.col; }
+  if (c.isPlayer && !c.bot && (!c.pid || c.pid === PID)) { const p = PAINTS.find(q => q.id === paintId); if (p && p.col && paintOk(p)) c.col = p.col; }
   c.maxSpeed = PBASE.maxSpeed * (1 + d.spd / 100); c.accel = PBASE.accel * (1 + d.spd / 200);
   c.turnRate = PBASE.turnRate * (1 + d.hnd / 100);
   c.str = d.str; c.mass = 1 + d.str * 3 / 100; // strength also makes the car heavier (more shove)
-  c._key = '';
+  carPerk(c, d.perk); c._key = '';
 }
 
 /* body shapes: nose/mid/tail = width fractions, hs = hood start x, te = trunk end x (cabin lies between) */
@@ -1025,12 +1461,13 @@ function buildSelect() {
     const cn = document.createElement('img'); cn.className = 'shot'; cn.alt = d.name; cn.src = ASSET.show[d.id];
     const stats = document.createElement('div'); stats.className = 'stats';
     stats.innerHTML = [['Speed', d.spd], ['Handling', d.hnd], ['Strength', d.str]].map(([n, v]) => {
-      const w = Math.abs(v) * 4, left = v >= 0 ? 50 : 50 - w;
+      const w = Math.min(50, Math.abs(v) * 2.4), left = v >= 0 ? 50 : 50 - w;
       return '<div class="st"><span>' + n + '</span><div class="bar"><b style="left:' + left + '%;width:' + w + '%;background:' + (v > 0 ? '#3ddc84' : v < 0 ? '#ff9f1c' : '#5a6272') + '"></b></div><span class="v">' + (v ? fmtPct(v) : '0') + '</span></div>';
     }).join('');
     const note = document.createElement('div');
     note.className = 'note' + (locked ? ' lock' : isNew ? ' new' : '');
     note.textContent = isD ? (locked ? 'Not in today\'s daily' : 'TODAY\'S DAILY CAR') : locked ? 'Locked - unlocks at wave ' + d.unlock : isNew ? 'NEW - just unlocked' : '';
+    if (d.perk) { const pk = document.createElement('div'); pk.className = 'perk'; pk.innerHTML = '<b>' + PERKS[d.perk].icon + ' ' + PERKS[d.perk].name + '</b> ' + PERKS[d.perk].desc; stats.appendChild(pk); }
     card.appendChild(top); card.appendChild(cn); card.appendChild(stats); card.appendChild(note);
     card.addEventListener('click', () => { if (locked) return; selId = d.id; for (const k of grid.children) k.classList.toggle('sel', k.dataset.id === selId); updateGo(); });
     grid.appendChild(card);
@@ -1147,7 +1584,7 @@ let cars = [], player = null, debris = [], parts = [], texts = [], rings = [], p
 let wave = 0, score = 0, best = 0, introT = 0, waveMode = 'fight', clearT = 0, shake = 0, gameOverT = 0;
 let hitStop = 0, slowT = 0, flashA = 0, hurtA = 0, pickT = 0, seenTypes = new Set();
 const combo = { n: 0, t: 0 };
-let maxWave = 1, scores = [], pname = 'Player';
+let maxWave = 1, scores = [], pname = 'Player', bossKills = 0;
 try { best = parseInt(localStorage.getItem('scrapArenaBest') || '0', 10) || 0; } catch (e) {}
 try { maxWave = parseInt(localStorage.getItem('scrapArenaMaxWave') || '1', 10) || 1; } catch (e) {}
 try { scores = (JSON.parse(localStorage.getItem('scrapArenaScores') || '[]') || []).filter(r => r && typeof r.score === 'number'); } catch (e) { scores = []; }
@@ -1187,7 +1624,7 @@ function scorch(x, y, r) {
 /* ---------- HUD ---------- */
 let hudNos = -1, hudCombo = '', hudFull = null;
 function updateHud() {
-  $('hw').textContent = wave; $('hs').textContent = versusOn() && player ? (player.score || 0) : score; $('hb').textContent = Math.max(best, score);
+  $('hw').textContent = wave; $('hs').textContent = teamOn() && player ? (player.score || 0) : score; $('hb').textContent = Math.max(best, score);
   if (!player || !ATLAS[player.styleId]) return;
   if (player.carName) $('hc').textContent = player.carName;
   $('armorTag').classList.toggle('on', !!player.armor);
@@ -1213,7 +1650,7 @@ function frameHud() {
   if (txt !== hudCombo) { hudCombo = txt; if (txt) el.innerHTML = txt + '<i></i>'; el.classList.toggle('on', !!txt); }
   if (show && el.firstElementChild) el.firstElementChild.style.transform = 'scaleX(' + clamp(combo.t / 2.2, 0, 1).toFixed(3) + ')';
 }
-const comboMult = () => versusOn() ? 1 : Math.min(4, 1 + Math.floor(combo.n / 2));
+const comboMult = () => teamOn() ? 1 : Math.min(4, 1 + Math.floor(combo.n / 2));
 
 /* ---------- waves ---------- */
 function rosterFor(w, n) {
@@ -1261,7 +1698,7 @@ function spawnEnemy(i, type) {
   cars.push(c); return c;
 }
 function resetPlayerPos() {
-  if (mpOn()) { const hs = cars.filter(c => c.isPlayer); hs.forEach((h, i) => { const sp = versusOn() ? vsSpawnPos(h) : netSpawn(i, hs.length); h.x = sp[0]; h.y = sp[1]; h.a = sp[2]; h.vx = h.vy = h.spin = 0; h.wp = null; h.grip = 14; }); snapCamera(); return; }
+  if (mpOn() || teamOn()) { const hs = cars.filter(c => c.isPlayer); hs.forEach((h, i) => { const sp = teamOn() ? vsSpawnPos(h) : netSpawn(i, hs.length); h.x = sp[0]; h.y = sp[1]; h.a = sp[2]; h.vx = h.vy = h.spin = 0; h.wp = null; h.grip = 14; }); snapCamera(); return; }
   player.x = W / 2; player.y = H / 2 + 150; player.a = -Math.PI / 2; player.vx = player.vy = player.spin = 0; player.wp = null; player.grip = 14; snapCamera();
 }
 function startWave() {
@@ -1274,11 +1711,11 @@ function startWave() {
   cars = cars.filter(c => c.isPlayer);
   const ai = gameMode === 'daily' && !devRun ? daily.arena : Math.floor((wave - 1) / 2) % ARENAS.length;
   let sub = '';
-  if (versusOn()) { if (wave === 1) { setArena(NET.vsArena); debris = []; resetPlayerPos(); } }
+  if (teamOn()) { if (wave === 1) { setArena(NET.vsArena); debris = []; resetPlayerPos(); } }
   else if (ai !== arenaIdx) { setArena(ai); debris = []; resetPlayerPos(); }
   if (ai !== arenaIdx || wave % 2 === 1) sub = ARENAS[ai].name + '  /  ';
   if (gameMode === 'daily') sub = 'DAILY ' + wave + '/' + DAILY_WAVES + '  /  ' + (wave === 1 ? daily.mod.icon + ' ' + daily.mod.name.toUpperCase() + '  /  ' : '');
-  const nh = mpOn() ? cars.filter(c => c.isPlayer).length : 1, n0 = Math.min(2 + wave + (nh - 1), 9 + Math.max(0, nh - 4)), roster = versusOn() ? [] : rosterFor(wave, n0), n = roster.length;
+  const nh = mpOn() ? cars.filter(c => c.isPlayer).length : 1, n0 = Math.min(2 + wave + (nh - 1), 9 + Math.max(0, nh - 4)), roster = teamOn() ? [] : rosterFor(wave, n0), n = roster.length;
   resetHazards();
   roster.forEach((t, i) => spawnEnemy(i + wave, t));
   let fresh = null;
@@ -1286,7 +1723,8 @@ function startWave() {
   if (fresh) introT = 2.4;
   const hz = (ai !== arenaIdxPrev) ? HAZ_TXT[arena.id] : '';
   arenaIdxPrev = ai;
-  if (versusOn()) { introT = 2.6; banner('TEAM DERBY', 'Most points in 3:00 wins  /  kill +' + VS_KILL + (VS.boss !== 'none' ? '  /  boss +' + VS_BOSS_PTS : '') + '  /  ' + ARENAS[arenaIdx].name, 2800); beep(440, .1); updateHud(); return; }
+  if (teamOn() && VS.kind === 'bomb') { introT = 2.6; banner('💣 BOMB RUN', 'Grab the bomb, park it in the other base for 5 s  /  ' + ARENAS[arenaIdx].name, 2800); beep(440, .1); updateHud(); return; }
+  if (teamOn()) { introT = 2.6; banner('TEAM DERBY', 'Most points in 3:00 wins  /  kill +' + VS_KILL + (VS.boss !== 'none' ? '  /  boss +' + VS_BOSS_PTS : '') + '  /  ' + ARENAS[arenaIdx].name, 2800); beep(440, .1); updateHud(); return; }
   if (isBossWave(wave)) { const bi = BOSS_INFO[bossKind(wave)]; introT = 2.8; banner('BOSS WAVE', bi.name + '<br>' + bi.hint + (hz ? '<br>' + hz : ''), 3200); }
   else banner(gameMode === 'daily' ? 'DAILY ' + wave : 'WAVE ' + wave, sub + n + ' cars' + (fresh ? '<br>NEW: ' + TYPES[fresh].name.toUpperCase() + ' - ' + TYPES[fresh].desc : '') + (hz ? '<br>' + hz : ''), fresh || hz ? 2800 : 1600);
   beep(440, .1); setTimeout(() => beep(660, .16), 150);
@@ -1315,7 +1753,7 @@ function newGame() {
   cars = []; debris = []; parts = []; texts = []; rings = []; pickups = []; booms = [];
   wave = 0; score = 0; shake = 0; gameOverT = 0; paused = false; hitStop = 0; slowT = 0; flashA = 0; hurtA = 0; combo.n = 0; combo.t = 0;
   seenTypes = new Set(); scrap = 0; scrapItems = []; UP.armor = UP.nitro = UP.ram = 0; arenaIdxPrev = -1;
-  kills = 0; runT0 = performance.now(); srand = Math.random;
+  kills = 0; bossKills = 0; runT0 = performance.now(); srand = Math.random;
   if (gameMode === 'daily' && !devRun) { selId = daily.car; dailyPractice = !!dailyDone(); }
   if (devRun) { dailyPractice = true; if (DEV.scrap) scrap = 500; }
   mctx.clearRect(0, 0, W, H); clearSkids();
@@ -1325,7 +1763,7 @@ function newGame() {
     runT0 = performance.now() - (ck.ms || 0); seenTypes = new Set(ck.seen || []);
   }
   player = makeCar(W / 2, H / 2 + 150, -Math.PI / 2, PLAYER_COL, true, 1);
-  applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player);
+  applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player); player.club = myClubId();
   cars.push(player);
   state = 'play'; $('overlay').classList.add('hidden');
   snapCamera();
@@ -1344,7 +1782,11 @@ const UPG = [
   { id: 'repair', name: 'Repair 1 part', desc: 'Fix one missing part right now', cost: () => 25 },
   { id: 'shield', name: 'Armor shield', desc: 'Start the next wave with a shield that blocks one hit', cost: () => 40 }
 ];
-function applyUpgrades(c) { c.str += UP.armor * 5; c.mass = 1 + c.str * 3 / 100; c.nitroEff = 1 + UP.nitro * .3; c.ram = UP.ram; }
+function carPerk(c, k) { // signature perks of the unlockable cars (driving parts also run on guests for prediction)
+  c.perk = k || ''; c.boostK = k === 'burn' ? 1.5 : 1; c.driftK = k === 'drift' ? 2.5 : 1; c.perkEff = k === 'burn' ? 1.5 : 1;
+  if (k === 'plate') { c.armor = 1; c.plateT = 0; }
+}
+function applyUpgrades(c) { c.str += UP.armor * 5; c.mass = 1 + c.str * 3 / 100; c.nitroEff = (1 + UP.nitro * .3) * (c.perkEff || 1); c.ram = UP.ram; }
 function dropScrap(x, y, n) { if (mod('scrap')) n *= 2; for (let i = 0; i < n; i++) { const a = Math.random() * 6.283, s = rand(40, 170); scrapItems.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, t: 0, life: 14, rot: Math.random() * 6 }); } if (scrapItems.length > 160) scrapItems.splice(0, scrapItems.length - 160); }
 let scrapTick = 0;
 function updateScrap(dt) {
@@ -1663,7 +2105,7 @@ function partFx(v, pick, nx, ny, closing) {
 }
 function hitCar(v, cp, atk, closing, nx, ny, noKb) {
   if (v.inv > 0 || v.dead) return false;
-  if (v.isPlayer && atk && atk.isPlayer && atk !== v && mpOn() && (!versusOn() || (v.team === atk.team && !BLAST))) return false; // no friendly fire (co-op, or team-mates in versus unless it's a blast)
+  if (v.isPlayer && atk && atk.isPlayer && atk !== v && (mpOn() || teamOn()) && (!teamOn() || (v.team === atk.team && !BLAST))) return false; // no friendly fire (co-op, or team-mates in versus unless it's a blast)
   if (v.armor) {
     v.armor = 0; v.inv = .6;
     spark(cp[0], cp[1], 18, 240, '#8fe3ff'); ring(v.x, v.y, 44, '#4cc9f0', .35, 4); thud(.35, 220);
@@ -1672,6 +2114,11 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
     updateHud(); return false;
   }
   const region = regionOf(v, cp);
+  if (v.perk === 'bull' && region === 'front' && !(v.bullT > 0)) { // bull bar soaks the hit
+    v.bullT = 3; v.inv = .35; spark(cp[0], cp[1], 16, 240, '#e6ebf2'); thud(.4, 180); addText(v.x, v.y - 36, 'BULL BAR!', '#cfd6e2');
+    if (atk && !noKb) { atk.vx -= nx * 120; atk.vy -= ny * 120; } return false;
+  }
+  if (v.perk === 'ghost' && Math.random() < 1 / 3) { v.inv = .4; spark(cp[0], cp[1], 10, 200, '#b9c3ff'); addText(v.x, v.y - 36, 'GLANCED OFF', '#b9c3ff'); return false; }
   let force;
   if (v.boss) {
     if (region === 'front' && v.bossKind === 'dozer') {
@@ -1685,7 +2132,7 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
     if (--v.php[force] > 0) {
       v.inv = .45; spark(cp[0], cp[1], 22, 300, '#ffd166'); crunch(.5); thud(.5, 90); shake = Math.min(18, shake + 7);
       dropScrap(cp[0], cp[1], 2);
-      if (atk && atk.isPlayer && versusOn()) { v.lastTeam = atk.team; atk.dmg = (atk.dmg || 0) + 15; atk.bossDmg = (atk.bossDmg || 0) + 15; atk.score = (atk.score || 0) + 15; addText(v.x, v.y - 60, 'CRACKED!', '#ffd166'); }
+      if (atk && atk.isPlayer && teamOn()) { v.lastTeam = atk.team; atk.dmg = (atk.dmg || 0) + 15; atk.bossDmg = (atk.bossDmg || 0) + 15; atk.score = (atk.score || 0) + 15; addText(v.x, v.y - 60, 'CRACKED!', '#ffd166'); }
       else if (atk && atk.isPlayer) { combo.n = combo.t > 0 ? combo.n + 1 : 1; combo.t = 2.2; const pts = 15 * comboMult(); score += pts; addText(v.x, v.y - 60, 'CRACKED!  +' + pts, '#ffd166'); hitStop = Math.max(hitStop, .07); SFX.clang(1); SFX.gasp(); }
       addDent(v, cp, 1.4);
       updateHud(); return true;
@@ -1693,20 +2140,22 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
   }
   const pick = losePart(v, region, nx, ny, closing, force);
   addDent(v, cp, 1);
+  if (atk && atk.perk === 'drift' && atk.slip > 110 && !noKb && !v.boss && v.lost < (v.maxLost || 5)) losePart(v, region, nx, ny, closing); // Drift King: drift hits rip off 2
   if (mod('glass') && !v.boss && v.lost < (v.maxLost || 5)) losePart(v, region, nx, ny, closing);
-  v.inv = .7;
+  v.inv = v.perk === 'ghost' ? 1.1 : .7;
   // knockback: heavier attackers shove harder; side hits spin the victim
   if (!noKb) {
-    const kb = Math.min(230, 70 * (atk ? atk.mass : 1) / v.mass * (1 + .15 * (atk && atk.ram || 0)));
+    const kb = Math.min(atk && atk.perk === 'bull' ? 300 : 230, 70 * (atk ? atk.mass : 1) / v.mass * (1 + .15 * (atk && atk.ram || 0)) * (atk && atk.perk === 'bull' && regionOf(atk, cp) === 'front' ? 1.6 : 1));
     v.vx += nx * kb; v.vy += ny * kb;
     const rx = cp[0] - v.x, ry = cp[1] - v.y;
     v.spin = clamp(v.spin + clamp((rx * ny - ry * nx) * .09, -3, 3) * (region === 'left' || region === 'right' ? 1.4 : .6), -7, 7);
   }
   hitFx(cp[0], cp[1], closing); nev('h', cp[0] | 0, cp[1] | 0, closing | 0);
   let txt = PNAME[pick].toUpperCase() + ' GONE!', col = v.isPlayer ? '#ff6b75' : '#ffd166';
-  if (atk && atk.isPlayer && atk !== v && versusOn() && v.boss) v.lastTeam = atk.team;
-  if (atk && atk.isPlayer && atk !== v && (!v.isPlayer || versusOn()) && !(versusOn() && v.isPlayer && v.team === atk.team)) {
-    combo.n = combo.t > 0 ? combo.n + 1 : 1; combo.t = 2.2;
+  if (atk && atk.isPlayer && atk !== v && teamOn() && v.boss) v.lastTeam = atk.team;
+  if (atk && atk.isPlayer && atk !== v && (!v.isPlayer || teamOn()) && !(teamOn() && v.isPlayer && v.team === atk.team)) {
+    const mineHit = !teamOn() || atk === player; // bots don't drive the local combo / hit-stop
+    if (mineHit) { combo.n = combo.t > 0 ? combo.n + 1 : 1; combo.t = 2.2; }
     const mult = comboMult();
     let pts = 10 * mult, bonus = [];
     if (atk.slip > 110 && !noKb) { pts += 25; bonus.push('DRIFT HIT +25'); }
@@ -1714,13 +2163,13 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
     const px = v.x + nx * 34, py = v.y + ny * 34;
     const pinned = !noKb && (px < M || px > W - M || py < M || py > H - M || OBST_C.some(o => Math.hypot(o.x - px, o.y - py) < o.r + 6));
     if (pinned && !v.boss && v.lost < 5) { losePart(v, region, nx, ny, closing); pts += 30; bonus.push('PINNED! +30'); }
-    if (versusOn()) { atk.score = (atk.score || 0) + pts; atk.dmg = (atk.dmg || 0) + pts; if (v.boss) atk.bossDmg = (atk.bossDmg || 0) + pts; } else score += pts; atk.nitro = Math.min(1, atk.nitro + .2 * (atk.nitroEff || 1) * nitroK());
-    if (combo.n >= 3) SFX.combo(Math.min(combo.n, 8)); if (pinned || combo.n === 4) SFX.cheer(.6);
+    if (teamOn()) { atk.score = (atk.score || 0) + pts; atk.dmg = (atk.dmg || 0) + pts; if (v.boss) atk.bossDmg = (atk.bossDmg || 0) + pts; } else score += pts; atk.nitro = Math.min(1, atk.nitro + .2 * (atk.nitroEff || 1) * nitroK());
+    if (mineHit) { if (combo.n >= 3) SFX.combo(Math.min(combo.n, 8)); if (pinned || combo.n === 4) SFX.cheer(.6); }
     txt += '  +' + pts;
     bonus.forEach((b, i) => addText(v.x, v.y - 54 - i * 16, b, '#7dffb0'));
-    hitStop = Math.max(hitStop, .05 + Math.min(closing, 500) / 10000);
+    if (mineHit || v === player) hitStop = Math.max(hitStop, .05 + Math.min(closing, 500) / 10000);
   }
-  if (v.isPlayer) { v.lastHitT = performance.now() / 1000; if (v === player) { hitStop = Math.max(hitStop, .07); hurtA = .55; lastPlayerHitT = v.lastHitT; } if (!versusOn()) { combo.n = 0; combo.t = 0; } if (v.lost >= 3) SFX.ooh(); if (atk && !atk.isPlayer) { if (atk.ai) atk.ai.landed = true; enemyEmote(atk, 'taunt', .55); } }
+  if (v.isPlayer) { v.lastHitT = performance.now() / 1000; if (v === player) { hitStop = Math.max(hitStop, .07); hurtA = .55; lastPlayerHitT = v.lastHitT; } if (!teamOn()) { combo.n = 0; combo.t = 0; } if (v.lost >= 3) SFX.ooh(); if (atk && !atk.isPlayer) { if (atk.ai) atk.ai.landed = true; enemyEmote(atk, 'taunt', .55); } }
   else if (atk && atk.isPlayer && v.ai && !v.boss) enemyEmote(v, 'dizzy', .18);
   addText(v.x, v.y - 36, txt, col);
   if (v.lost >= (v.maxLost || 5)) killCar(v, atk);
@@ -1734,26 +2183,31 @@ function killCar(c, atk) {
   c.dead = true; c.deadT = 0; c.throttle = 0; c.steer = 0; c.boost = false; c._key = '';
   killFx(c); nev('k', c.id);
   if (c.isPlayer) {
-    if (!mpOn()) { gameOverT = 1.8; slowT = .9; }
-    addText(c.x, c.y - 40, mpOn() ? (c.pname || 'PLAYER').toUpperCase() + ' WRECKED!' : 'WRECKED!', '#ff6b75', true); SFX.wreck();
-    if (versusOn()) {
+    if (!mpOn() && !teamOn()) { gameOverT = 1.8; slowT = .9; }
+    c._hadBomb = !!c.bomb; if (c.bomb && teamHost()) bombLoose(c);
+    addText(c.x, c.y - 40, mpOn() || teamOn() ? (c.pname || 'PLAYER').toUpperCase() + ' WRECKED!' : 'WRECKED!', '#ff6b75', true); SFX.wreck();
+    if (teamOn()) {
       c.deaths = (c.deaths || 0) + 1; c.respawnT = VS_RESPAWN; c._deadAt = performance.now();
-      if (atk && atk.isPlayer && atk !== c && atk.team !== c.team) { atk.kos = (atk.kos || 0) + 1; atk.score = (atk.score || 0) + 100; VS.score[atk.team] += VS_KILL; addText(atk.x, atk.y - 50, TEAM_NAME[atk.team] + ' +' + VS_KILL, TEAM_COL[atk.team], true); }
+      if (atk && atk.isPlayer && atk !== c && atk.team !== c.team) {
+        atk.kos = (atk.kos || 0) + 1;
+        if (VS.kind === 'bomb') { atk.score = (atk.score || 0) + (c._hadBomb ? 150 : 50); if (c._hadBomb) { atk.stops = (atk.stops || 0) + 1; addText(atk.x, atk.y - 50, 'CARRIER STOPPED!', TEAM_COL[atk.team], true); } }
+        else { atk.score = (atk.score || 0) + 100; VS.score[atk.team] += VS_KILL; addText(atk.x, atk.y - 50, TEAM_NAME[atk.team] + ' +' + VS_KILL, TEAM_COL[atk.team], true); }
+      }
     }
   }
   else {
     dropScrap(c.x, c.y, c.boss ? 30 : 5);
     if (c.boss && c.partner && !c.partner.dead) {
       const o = c.partner; o.rage = true; o.maxSpeed *= 1.35; o.accel *= 1.45; o.turnRate *= 1.2; o.mass *= 1.2; o.ai.cool = 0;
-      const pts = versusOn() ? 0 : 300 * Math.max(1, wave / 5); score += pts; SFX.cheer(1.2); SFX.gasp();
-      ring(c.x, c.y, 120, '#ff5a4e', .5, 8); shake = 24; scorch(c.x, c.y, 60); addText(c.x, c.y - 60, versusOn() ? 'TWIN DOWN!' : 'TWIN DOWN!  +' + pts, '#ffd23f', true);
+      const pts = teamOn() ? 0 : 300 * Math.max(1, wave / 5); score += pts; SFX.cheer(1.2); SFX.gasp();
+      ring(c.x, c.y, 120, '#ff5a4e', .5, 8); shake = 24; scorch(c.x, c.y, 60); addText(c.x, c.y - 60, teamOn() ? 'TWIN DOWN!' : 'TWIN DOWN!  +' + pts, '#ffd23f', true);
       banner('RAGE!', 'the other twin is out for revenge', 1800);
-    } else if (c.boss && versusOn()) {
+    } else if (c.boss && teamOn()) {
       SFX.cheer(1.8); SFX.horn(); bossDownFx(c); nev('bd', c.id); VS.bossState = 2;
       const tm = atk && atk.isPlayer ? atk.team : c.lastTeam;
       if (tm === 0 || tm === 1) { VS.score[tm] += VS_BOSS_PTS; if (atk && atk.isPlayer) atk.score = (atk.score || 0) + 250; addText(c.x, c.y - 60, 'BOSS DOWN!  ' + TEAM_NAME[tm] + ' +' + VS_BOSS_PTS, TEAM_COL[tm], true); banner('BOSS DOWN!', TEAM_NAME[tm] + ' TEAM +' + VS_BOSS_PTS + ' points', 2200); }
       else banner('BOSS DOWN!', 'nobody gets the points', 1800);
-    } else if (c.boss) { SFX.cheer(1.8); SFX.horn(); const pts = 500 * Math.max(1, wave / 5); score += pts; bossDownFx(c); nev('bd', c.id); addText(c.x, c.y - 60, 'BOSS DOWN!  +' + pts, '#ffd23f', true); banner('BOSS DOWN!', '+' + pts + ' points  /  +30 scrap', 2000); }
+    } else if (c.boss) { bossKills++; SFX.cheer(1.8); SFX.horn(); const pts = 500 * Math.max(1, wave / 5); score += pts; bossDownFx(c); nev('bd', c.id); addText(c.x, c.y - 60, 'BOSS DOWN!  +' + pts, '#ffd23f', true); banner('BOSS DOWN!', '+' + pts + ' points  /  +30 scrap', 2000); }
     else if (atk && atk.isPlayer) {
       const mult = comboMult(), pts = 100 * mult;
       score += pts; kills++; lastKOT = performance.now() / 1000; atk.nitro = Math.min(1, atk.nitro + .35 * (atk.nitroEff || 1) * nitroK()); hitStop = Math.max(hitStop, .1);
@@ -1989,11 +2443,11 @@ function step(dt) {
     if (player.boost) { player.nitro = Math.max(0, player.nitro - .85 * dt / (player.nitroEff || 1)); if (!wasBoost) whoosh(); }
     wasBoost = player.boost;
     const sp = Math.hypot(player.vx, player.vy);
-    if (player.slip > 110 && sp > 140 && introT <= 0) player.nitro = Math.min(1, player.nitro + .2 * dt * (player.nitroEff || 1) * nitroK());
+    if (player.slip > 110 && sp > 140 && introT <= 0) player.nitro = Math.min(1, player.nitro + .2 * dt * (player.nitroEff || 1) * (player.driftK || 1) * nitroK());
   } else if (player) player.boost = false;
-  if (isHost()) for (const c of cars) if (c.isPlayer && c !== player && !c.dead) netDriveRemote(c, dt);
+  if (isHost()) for (const c of cars) if (c.isPlayer && c !== player && !c.dead && !c.bot) netDriveRemote(c, dt);
   for (const c of cars) {
-    if (!c.isPlayer && !c.dead) ai(c, dt);
+    if (!c.isPlayer && !c.dead) ai(c, dt); else if (c.bot && !c.dead) botAI(c, dt);
     if (!c.dead && c.boss && introT <= 0 && state === 'play') bossUpdate(c, dt);
     if (c === cars[0]) { updatePuddles(dt); updateEmotes(dt); }
     // damage effects: light smoke at 2 lost parts, dark smoke at 3, fire + sparks at 4
@@ -2011,6 +2465,8 @@ function step(dt) {
   }
   for (const c of cars) {
     if (c.inv > 0) c.inv -= dt;
+    if (c.bullT > 0) c.bullT -= dt;
+    if (c.perk === 'plate' && !c.dead && !c.armor) { c.plateT = (c.plateT || 0) + dt; if (c.plateT >= 15) { c.plateT = 0; c.armor = 1; ring(c.x, c.y, 44, '#4cc9f0', .4, 4); addText(c.x, c.y - 36, 'PLATING BACK', '#8fe3ff'); } }
     if (!c.dead) {
       driveCar(c, dt);
       if (c.boost && Math.random() < .9) {
@@ -2084,13 +2540,13 @@ function step(dt) {
 
   // wave logic
   if (state === 'play') {
-    if (versusOn() && NET.role === 'host') vsTick(dt);
-    const over = mpOn() ? netRoundOver() : player.dead;
+    if (teamHost()) vsTick(dt);
+    const over = LOCAL_TEAM && !NET.role ? VS.matchT <= 0 : mpOn() ? netRoundOver() : player.dead;
     if (over) {
-      if (mpOn() && !NET.overArmed) { NET.overArmed = true; gameOverT = versusOn() ? 2.6 : 2.2; }
+      if ((mpOn() || teamOn()) && !NET.overArmed) { NET.overArmed = true; gameOverT = teamOn() ? 2.6 : 2.2; }
       gameOverT -= dt;
       if (gameOverT <= 0) endGame();
-    } else if (!versusOn() && waveMode === 'fight' && introT <= 0 && !booms.length && cars.filter(c => !c.isPlayer && !c.dead).length === 0) {
+    } else if (!teamOn() && waveMode === 'fight' && introT <= 0 && !booms.length && cars.filter(c => !c.isPlayer && !c.dead).length === 0) {
       waveMode = 'clear'; clearT = 2.6; pickups = [];
       let fixed = 0;
       for (const h of cars.filter(c => c.isPlayer)) {
@@ -2166,6 +2622,7 @@ function renderDailyBox() {
 setInterval(() => { const c = $('dailyCd'); if (c && state !== 'play') { if (todayDaily().day !== torontoDay() && !dailyMeta) daily = null; c.textContent = 'New daily in ' + fmtDur(msToReset()); } }, 30000);
 function endGame(won, quit) {
   if (NET.role && (NET.started || state === 'play')) { netShowResults({ hostLeft: false }); return; }
+  if (LOCAL_TEAM && !NET.role) { bombSpOver(quit); return; }
   state = 'over'; paused = false; $('pauseMenu').classList.add('hidden');
   const isD = gameMode === 'daily';
   let idx = -1, kept = null, msg;
@@ -2199,8 +2656,10 @@ function endGame(won, quit) {
   }
   best = Math.max(best, scores.length ? scores[0].score : 0);
   updateHud();
-  { const ck = !isD && !quit ? getCheckpoint() : null; $('final').textContent = msg + (ck ? '  •  Checkpoint saved at wave ' + (ck.wave + 1) + ': tap CONTINUE' : ''); }
+  { const ck = !isD && !quit ? getCheckpoint() : null; $('final').textContent = msg + (ck ? '  •  Checkpoint saved at wave ' + (ck.wave + 1) + ': tap CONTINUE' : '');
+    const cp = !quit || score > 0 ? clubAwardRun(isD ? 'daily' : 'waves', score, kills, bossKills) : null; $('clubAwardBox').innerHTML = cp || !myClubId() ? clubAwardHtml(cp) : ''; }
   renderBoard(idx); renderDailyBox(); renderContinue();
+  $('card').classList.remove('teamRes', 'spBomb'); $('goBomb').innerHTML = 'BOMB RUN<small>3v3 vs bots · plant the bomb</small>';
   $('card').classList.add('over'); $('banner').classList.remove('show');
   $('overlay').querySelector('#card h1').innerHTML = won ? 'DAILY <span>DONE</span>' : quit ? 'RUN <span>ENDED</span>' : 'YOU’RE <span>SCRAP</span>';
   $('overlay').classList.remove('hidden');
@@ -2227,7 +2686,7 @@ const BEAM = (() => { const cv = document.createElement('canvas'); cv.width = 12
 function drawCar(c) {
   const fade = carFade(c), now = performance.now();
   ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.a);
-  if (versusOn() && c.isPlayer && c.team != null && !c.dead) { ctx.globalAlpha = fade * .85; ctx.strokeStyle = TEAM_COL[c.team]; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(0, 0, (c.cL || L) * .62, (c.cW || WD) * .85, 0, 0, 6.283); ctx.stroke(); ctx.globalAlpha = 1; }
+  if (teamOn() && c.isPlayer && c.team != null && !c.dead) { ctx.globalAlpha = fade * .85; ctx.strokeStyle = TEAM_COL[c.team]; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(0, 0, (c.cL || L) * .62, (c.cW || WD) * .85, 0, 0, 6.283); ctx.stroke(); ctx.globalAlpha = 1; }
   if (!c.dead && !c.boss) { // beams under the body + a steady red glow at the rear
     const fx = (c.cL || L) / 2 - 3, lz = (c.cW || WD) / 2 * .6, rx = -(c.cL || L) / 2;
     ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = fade * .32;
@@ -2239,6 +2698,7 @@ function drawCar(c) {
   ctx.globalAlpha = a;
   const D = SD(c.styleId); ctx.drawImage(getCarImage(c), -D.fwu / 2, -D.fhu / 2, D.fwu, D.fhu);
   ctx.globalAlpha = fade;
+  if (c.club && !c.boss) { const bi = clubImg(c.club); if (bi) { ctx.save(); ctx.globalAlpha = fade * (c.dead ? .5 : .95); ctx.rotate(Math.PI / 2); ctx.drawImage(bi, -6, -3, 12, 12); if (c.parts.hood !== false) { ctx.globalAlpha = fade * .8; ctx.drawImage(bi, -4.5, -(c.cL || L) * .33 - 4.5, 9, 9); } ctx.restore(); } }
   if (!c.dead) {
     if (c.type === 'rammer' && c.parts.bumper) { ctx.fillStyle = '#3a3e45'; ctx.fillRect(25, -13, 4, 26); ctx.fillStyle = '#d0d5dc'; for (const y of [-9, -3, 3, 9]) { ctx.beginPath(); ctx.moveTo(29, y - 2.2); ctx.lineTo(34, y); ctx.lineTo(29, y + 2.2); ctx.fill(); } }
     if (c.type === 'bomber') { const near = player && Math.hypot(player.x - c.x, player.y - c.y) < 160, on = Math.floor(now / (near ? 90 : 260)) % 2; ctx.fillStyle = '#f2c31b'; ctx.beginPath(); ctx.arc(-4, 0, 5.5, 0, 6.283); ctx.fill(); ctx.fillStyle = '#151515'; ctx.beginPath(); ctx.arc(-4, 0, 3.6, 0, 6.283); ctx.fill(); ctx.fillStyle = on ? '#ff2b2b' : '#5a1010'; ctx.beginPath(); ctx.arc(-4, 0, 2.2, 0, 6.283); ctx.fill(); if (on) { ctx.globalCompositeOperation = 'lighter'; ctx.drawImage(PUFF.red, -16, -12, 24, 24); ctx.globalCompositeOperation = 'source-over'; } }
@@ -2292,12 +2752,12 @@ function drawParticles(additive) {
 function drawArrows() {
   const m = 30, cx = innerWidth / 2, cy = innerHeight / 2;
   for (const c of cars) {
-    if (c.isPlayer || c.dead) continue;
+    if (c.dead || (c.isPlayer && !(teamOn() && player && c.team !== player.team))) continue;
     const [sx, sy] = w2s(c.x, c.y);
     if (sx > -12 && sx < innerWidth + 12 && sy > -12 && sy < innerHeight + 12) continue;
     const ang = Math.atan2(sy - cy, sx - cx), ca = Math.cos(ang), sa = Math.sin(ang);
     const t = Math.min((innerWidth / 2 - m) / Math.max(.001, Math.abs(ca)), (innerHeight / 2 - m) / Math.max(.001, Math.abs(sa)));
-    const ex = cx + ca * t, ey = cy + sa * t, T = TYPES[c.type], col = (T && T.tagCol) || '#ff5a4e';
+    const ex = cx + ca * t, ey = cy + sa * t, T = TYPES[c.type], col = c.isPlayer ? TEAM_COL[c.team | 0] : (T && T.tagCol) || '#ff5a4e';
     ctx.save(); ctx.translate(ex, ey); ctx.rotate(ang);
     ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-9, -11); ctx.lineTo(-9, 11); ctx.closePath(); ctx.fill();
     ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(11, 0); ctx.lineTo(-6, -8); ctx.lineTo(-6, 8); ctx.closePath(); ctx.fill();
@@ -2305,7 +2765,8 @@ function drawArrows() {
   }
 }
 function vsHud() {
-  if (!versusOn() || state !== 'play') { if ($('respawnMsg').style.display !== 'none') $('respawnMsg').style.display = 'none'; return; }
+  bombHud();
+  if (!teamOn() || state !== 'play') { if ($('respawnMsg').style.display !== 'none') $('respawnMsg').style.display = 'none'; return; }
   const t = Math.ceil(VS.matchT), txt = Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'), bar = $('vsBar');
   if (bar._t !== txt) { bar._t = txt; bar.querySelector('.t').textContent = txt; bar.querySelector('.t').classList.toggle('low', t <= 30); }
   if (bar._s !== VS.score.join()) { bar._s = VS.score.join(); bar.querySelector('.b').textContent = VS.score[0]; bar.querySelector('.r').textContent = VS.score[1]; }
@@ -2322,12 +2783,12 @@ function render() {
   const bg = BG_IMG[arena.id];
   if (bg && bg.complete && bg.naturalWidth) ctx.drawImage(bg, AR.BX0, AR.BY0, AR.BX1 - AR.BX0, AR.BY1 - AR.BY0);
   ctx.drawImage(marks, 0, 0, W, H); drawSkids();
-  drawPuddles(); drawOil(); drawCrusherBase(); drawObjs();
+  drawPuddles(); drawOil(); drawCrusherBase(); drawBombGround(); drawObjs();
   for (const d of debris) if (d.z < 6) drawDebris(d);
   drawScrap(); drawPickups(); drawBarrels();
   const sorted = cars.slice().sort((a, b) => (b.dead ? 1 : 0) - (a.dead ? 1 : 0));
   if (Object.keys(ATLAS).length) { for (const c of sorted) drawCarShadow(c); for (const c of sorted) drawCar(c); }
-  drawCrusherHead();
+  drawCrusherHead(); drawBombTop();
   drawBossFx();
   for (const d of debris) if (d.z >= 6) drawDebris(d);
   drawParticles(false);
@@ -2361,9 +2822,9 @@ function render() {
     ctx.strokeText(t.text, sx, sy); ctx.fillStyle = t.color; ctx.fillText(t.text, sx, sy);
   }
   ctx.globalAlpha = 1;
-  if (state === 'play') { drawArrows(); drawBossBar(); }
+  if (state === 'play') { drawArrows(); bombArrows(); drawBossBar(); }
   if (state === 'play' || state === 'over') drawEmotes();
-  if (mpOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = versusOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
+  if (mpOn() || teamOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = versusOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
   if (flashA > .01) { ctx.fillStyle = 'rgba(255,240,220,' + flashA.toFixed(3) + ')'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
   if (hurtA > .02) {
     const R = Math.max(innerWidth, innerHeight), g = ctx.createRadialGradient(innerWidth / 2, innerHeight / 2, R * .3, innerWidth / 2, innerHeight / 2, R * .75);
@@ -2418,7 +2879,7 @@ addEventListener('keydown', e => {
     if (e.code === 'ArrowLeft') moveSel(-1); else if (e.code === 'ArrowRight') moveSel(1); else if (e.code === 'Enter') confirmSel();
     return;
   }
-  if (e.code === 'KeyR' && (state === 'play' || state === 'over')) begin();
+  if (e.code === 'KeyR' && (state === 'play' || state === 'over') && !NET.role) { if (gameMode === 'bomb') startBombSP(); else begin(); }
   if (e.code === 'Enter' && (state === 'menu' || state === 'over')) begin();
 });
 addEventListener('keyup', e => { keys[e.code] = false; });
@@ -2466,13 +2927,13 @@ function vsSpawnPos(c) { // blue starts on the left, red on the right, spread do
   const ys = [H / 2, H / 2 - 160, H / 2 + 160];
   return [team ? W - 150 : 150, ys[k], team ? Math.PI : 0];
 }
-function vsRespawn(c) {
+function vsRespawn(c, quiet) {
   const sp = vsSpawnPos(c), y = sp[1] + rand(-40, 40);
-  Object.assign(c, { dead: false, deadT: 0, x: sp[0], y, a: sp[2], vx: 0, vy: 0, spin: 0, lost: 0, inv: 2, nitro: Math.max(c.nitro, .5), armor: 0, slam: null, _key: '', grip: 14 });
+  Object.assign(c, { dead: false, deadT: 0, x: sp[0], y, a: sp[2], vx: 0, vy: 0, spin: 0, lost: 0, inv: 2, nitro: Math.max(c.nitro, .5), armor: c.perk === 'plate' ? 1 : 0, plateT: 0, slam: null, _key: '', grip: 14 });
   for (const p of PARTS) c.parts[p] = true;
   if (c.dents) c.dents = [];
   ring(c.x, c.y, 60, TEAM_COL[c.team | 0], .5, 5);
-  addText(c.x, c.y - 44, (c.pname || '').toUpperCase() + ' IS BACK', TEAM_COL[c.team | 0]);
+  if (!quiet) addText(c.x, c.y - 44, (c.pname || '').toUpperCase() + ' IS BACK', TEAM_COL[c.team | 0]);
 }
 function spawnVsBoss() {
   const k = VS.boss, list = k === 'twin' ? ['twin', 'twin'] : [k === 'crane' ? 'crane' : 'boss'];
@@ -2493,14 +2954,306 @@ function spawnVsBoss() {
   VS.bossState = 1; shake = 22; flashA = .25; SFX.horn(); boomSnd();
   banner('BOSS INCOMING!', BOSS_INFO[k].name + '<br>wreck it for +' + VS_BOSS_PTS + ' team points', 2600);
 }
-function vsTick(dt) { // host only: match clock, boss arrival, respawns
+/* ---------- BOMB RUN: 3v3. Grab the bomb, carry it into the other team's base, sit still for 5 s. ---------- */
+const BOT_NAMES = ['Rusty', 'Bolt', 'Diesel', 'Sprocket', 'Gears', 'Torque', 'Piston', 'Chrome', 'Axle', 'Clutch', 'Nitro', 'Lugnut'];
+function clearSpot(x0, y0, rad, xr, yr) { // nearest spot to (x0,y0) with no obstacle within rad
+  for (let r = 0; r < 320; r += 10) for (let k = 0; k < 18; k++) {
+    const a = k / 18 * 6.283 + r * .01, x = x0 + Math.cos(a) * r * (xr || 1), y = y0 + Math.sin(a) * r * (yr || 1);
+    if (x < 110 || x > W - 110 || y < 100 || y > H - 100) continue;
+    if (!OBST_C.some(o => Math.hypot(o.x - x, o.y - y) < o.r + rad) && !oilCv.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 10)) return [Math.round(x), Math.round(y)];
+  }
+  return [x0, y0];
+}
+function bombBases() { BOMB.bases = [clearSpot(255, H / 2, BOMB_R + 24, .5, 1), clearSpot(W - 255, H / 2, BOMB_R + 24, .5, 1)]; }
+function bombRound(first) {
+  const B = BOMB; B.round++; B.st = 'wait'; B.t = first ? rand(2, 6) : rand(2, 7); B.carrier = 0; B.plant = 0; B.cool = 0; B.resetT = 0;
+  for (const c of cars) if (c.isPlayer) { c.bomb = false; c.bombK = 1; if (!first && !c.gone) vsRespawn(c, true); }
+  if (!first) { introT = 1.4; banner('ROUND ' + B.round, TEAM_NAME[0] + ' ' + VS.score[0] + '  –  ' + VS.score[1] + ' ' + TEAM_NAME[1] + '  /  bomb drops in a few seconds', 1600); }
+}
+function bombDropSpot() {
+  const B = BOMB; let p = null;
+  for (let i = 0; i < 40 && !p; i++) { const q = clearSpot(rand(W * .38, W * .62), rand(H * .22, H * .78), 46); if (!cars.some(c => !c.dead && Math.hypot(c.x - q[0], c.y - q[1]) < 70)) p = q; }
+  p = p || clearSpot(W / 2, H / 2, 46);
+  B.x = p[0]; B.y = p[1]; B.st = 'fall'; B.fall = 1.3; bombFx('incoming', B.x, B.y);
+}
+function bombPick(c) {
+  const B = BOMB; B.st = 'carried'; B.carrier = c.id; B.plant = 0; c.bomb = true; c.bombK = .92; c.carries = (c.carries || 0) + 1; B.lastTeam = c.team;
+  bombFx('pick', c.x, c.y, c.team, c.id);
+  addText(c.x, c.y - 50, (c.pname || '').toUpperCase() + ' HAS THE BOMB', TEAM_COL[c.team | 0], true);
+}
+function bombLoose(c) {
+  const B = BOMB; if (c) { B.x = clamp(c.x, 60, W - 60); B.y = clamp(c.y, 60, H - 60); c.bomb = false; c.bombK = 1; }
+  B.st = 'ground'; B.carrier = 0; B.plant = 0; B.cool = .8; bombFx('drop', B.x, B.y);
+  addText(B.x, B.y - 40, 'BOMB DROPPED!', '#ffb020', true);
+}
+function bombBoom(c) {
+  const B = BOMB, t = c.team | 0, base = B.bases[1 - t];
+  VS.score[t]++; c.plants = (c.plants || 0) + 1; c.score = (c.score || 0) + 300; c.bomb = false; c.bombK = 1;
+  B.st = 'boom'; B.resetT = 3.4; B.carrier = 0; B.plant = 0; B.x = base[0]; B.y = base[1];
+  for (const o of cars) if (!o.dead) { const dx = o.x - base[0], dy = o.y - base[1], d = Math.hypot(dx, dy); if (d < 220 && d > 1) { const k = (1 - d / 220) * 520; o.vx += dx / d * k; o.vy += dy / d * k; o.spin += rand(-4, 4); } }
+  bombFx('boom', base[0], base[1], t);
+  banner(TEAM_NAME[t] + ' SCORES!', esc(c.pname || '') + ' blew up the ' + TEAM_NAME[1 - t].toLowerCase() + ' base  /  ' + TEAM_NAME[0] + ' ' + VS.score[0] + ' – ' + VS.score[1] + ' ' + TEAM_NAME[1], 2600);
+}
+function bombFx(k, x, y, team, id) { // effects only (host and guests)
+  nev('bf', k, x | 0, y | 0, team == null ? -1 : team, id || 0);
+  if (k === 'incoming') { beep(1180, .12); setTimeout(() => beep(880, .14), 160); setTimeout(() => beep(620, .2), 340); }
+  else if (k === 'land') { thud(.7, 70); shake = Math.max(shake, 9); ring(x, y, 80, '#ffb020', .6, 6); spark(x, y, 24, 240, '#ffb020'); for (let i = 0; i < 8; i++) smoke(x + rand(-14, 14), y + rand(-8, 8), false, false); }
+  else if (k === 'pick') { ring(x, y, 60, '#ffb020', .45, 5); spark(x, y, 16, 200, '#ffd166'); beep(660, .08); setTimeout(() => beep(990, .12), 90); }
+  else if (k === 'drop') { ring(x, y, 50, '#ffb020', .4, 4); thud(.4, 120); }
+  else if (k === 'boom') {
+    boomFx(x, y, 170); ring(x, y, 230, team >= 0 ? TEAM_COL[team] : '#ffb020', .8, 14); ring(x, y, 140, '#fff', .45, 7); flashA = Math.max(flashA, .6); shake = 34;
+    for (let i = 0; i < 80; i++) smoke(x + rand(-60, 60), y + rand(-40, 40), Math.random() < .5, Math.random() < .7); scorch(x, y, 120); boomSnd(); SFX.cheer(1.8); SFX.horn();
+  }
+}
+function bombTick(dt) { // host / single player
+  const B = BOMB;
+  if (B.cool > 0) B.cool -= dt;
+  if (B.st === 'boom') { B.resetT -= dt; if (B.resetT <= 0 && VS.matchT > 0) bombRound(false); return; }
+  if (introT > 0) return;
+  if (B.st === 'wait') { B.t -= dt; if (B.t <= 0) bombDropSpot(); return; }
+  if (B.st === 'fall') { B.fall -= dt; if (B.fall <= 0) { B.st = 'ground'; B.cool = 0; bombFx('land', B.x, B.y); } return; }
+  if (B.st === 'ground') {
+    if (B.cool > 0) return;
+    let best = null, bd = BOMB_PICK;
+    for (const c of cars) if (c.isPlayer && !c.dead && !c.gone) { const d = Math.hypot(c.x - B.x, c.y - B.y); if (d < bd) { bd = d; best = c; } }
+    if (best) bombPick(best);
+    return;
+  }
+  if (B.st === 'carried') {
+    const c = cars.find(o => o.id === B.carrier);
+    if (!c || c.dead || c.gone) { bombLoose(c); return; }
+    B.x = c.x; B.y = c.y;
+    const eb = B.bases[1 - (c.team | 0)], inBase = Math.hypot(c.x - eb[0], c.y - eb[1]) < BOMB_R, idle = Math.hypot(c.vx, c.vy) < BOMB_IDLE;
+    if (inBase && idle) {
+      const was = Math.floor(B.plant); B.plant += dt;
+      if (Math.floor(B.plant) > was) { beep(520 + 160 * Math.floor(B.plant), .09); nev('s', 'tick'); }
+      if (B.plant >= BOMB_PLANT) bombBoom(c);
+    } else if (inBase) { // shoved around inside the ring: progress drains instead of vanishing
+      if (B.plant > .4 && !(B.holdT > 0)) { addText(c.x, c.y - 44, 'HOLD STILL!', '#ffb020'); B.holdT = 1.2; }
+      B.plant = Math.max(0, B.plant - dt * .8);
+    } else B.plant = 0;
+    if (B.holdT > 0) B.holdT -= dt;
+  }
+}
+function bombState() { const B = BOMB; return [BOMB_ST.indexOf(B.st), B.x | 0, B.y | 0, B.carrier || 0, +B.plant.toFixed(2), +Math.max(0, B.fall).toFixed(2), B.round, B.bases[0][0], B.bases[0][1], B.bases[1][0], B.bases[1][1], +Math.max(0, B.t).toFixed(1)]; }
+function bombApply(a) { // guests
+  const B = BOMB; B.st = BOMB_ST[a[0]] || 'off'; B.x = a[1]; B.y = a[2]; B.carrier = a[3]; B.plant = a[4]; B.fall = a[5]; B.round = a[6]; B.bases = [[a[7], a[8]], [a[9], a[10]]]; B.t = a[11];
+  for (const c of cars) { c.bomb = c.id === B.carrier && B.st === 'carried'; c.bombK = c.bomb ? .92 : 1; }
+}
+/* bots: simple roles that read the bomb state (used in single player and to fill empty online seats) */
+function makeBot(team, slot, i, diff) {
+  const dv = diff == null ? SPB.diff : diff;
+  const pool = dv >= 2 ? CARS : CARS.filter(d => d.unlock <= 5), d = pool[(Math.random() * pool.length) | 0];
+  const c = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); c.bot = true; c.pid = 'bot' + i + Math.random().toString(36).slice(2, 6); c.pname = BOT_NAMES[i % BOT_NAMES.length];
+  applyCar(c, d); c.team = team; c.slot = slot; c.score = 0; c.kos = 0; c.deaths = 0; c.dmg = 0; c.bossDmg = 0; c.plants = 0; c.stops = 0; c.carries = 0;
+  const sk = [.9, 1, 1.05][dv | 0] || 1; c.diff = dv; c.maxSpeed *= sk; c.accel *= sk; c.club = CLUBS[(Math.random() * CLUBS.length) | 0].id;
+  return c;
+}
+function botSteer(c, tx, ty, opt) { // drive at a point; opt.stop = arrive and halt, opt.ram = full send
+  const b = c.brain, sp = Math.hypot(c.vx, c.vy), d = Math.hypot(tx - c.x, ty - c.y);
+  if (b.rev > 0) { b.rev -= opt.dt; c.throttle = -1; c.steer = b.rs; return; }
+  if (sp < 30 && !(opt.stop && d < 50)) b.stuck += opt.dt; else b.stuck = 0;
+  if (b.stuck > .8) { b.stuck = 0; b.rev = .7; b.rs = Math.random() < .5 ? -1 : 1; return; }
+  let des = Math.atan2(ty - c.y, tx - c.x);
+  for (const o of OBST_C) { // steer round obstacles in the way
+    const ox = o.x - c.x, oy = o.y - c.y, dd = Math.hypot(ox, oy);
+    if (dd < o.r + 70 && dd < d && (ox * Math.cos(c.a) + oy * Math.sin(c.a)) / dd > .35) { des = c.a - (Math.cos(c.a) * oy - Math.sin(c.a) * ox >= 0 ? 1 : -1) * 1.05; break; }
+  }
+  const diff = wrap(des - c.a);
+  if (opt.stop && d < 190) { // arrive: bleed off speed early and come to a standstill on the spot
+    const vf = c.vx * Math.cos(c.a) + c.vy * Math.sin(c.a);
+    if (d < 15 || (d < 24 && sp < 26)) { c.steer = 0; c.throttle = Math.abs(vf) > 6 ? -Math.sign(vf) * clamp(Math.abs(vf) / 45, .25, 1) : 0; return; }
+    if (Math.abs(diff) > 1.9 && d < 70) { c.steer = 0; c.throttle = vf > 12 ? -1 : -.45; return; } // just past it: back up
+    const want = clamp((d - 6) * 1.35, 22, 230);
+    c.steer = clamp(diff * 2.4, -1, 1); c.throttle = vf > want ? -1 : vf < want * .75 ? (Math.abs(diff) > 1.2 ? .35 : .7) : 0; return;
+  }
+  if (Math.abs(diff) > 2.3 && d < 260 && sp < 190) { c.throttle = -1; c.steer = -clamp(diff * 2, -1, 1); return; }
+  c.throttle = Math.abs(diff) > 1.3 ? .5 : 1; c.steer = clamp(diff * 2.5, -1, 1);
+  if (opt.ram && c.diff > 0 && c.nitro > .3 && Math.abs(diff) < .25 && d > 160 && d < 520) c.boost = true;
+}
+function botAI(c, dt) {
+  const b = c.brain || (c.brain = { t: 0, stuck: 0, rev: 0, rs: 1, gx: c.x, gy: c.y, tgt: null, stop: false, ram: false });
+  c.handbrake = false; c.boost = false;
+  const B = BOMB;
+  if (introT > 0 || state !== 'play' || B.st === 'boom') { c.throttle = 0; c.steer = 0; c.handbrake = true; return; }
+  b.t -= dt;
+  if (b.t <= 0) { b.t = [.45, .28, .18][c.diff | 0] + Math.random() * .12; botPlan(c, b); }
+  if (b.tgt && !b.tgt.dead) { const lead = Math.min(.5, Math.hypot(b.tgt.x - c.x, b.tgt.y - c.y) / 480) * (c.diff ? 1 : .5); b.gx = b.tgt.x + b.tgt.vx * lead; b.gy = b.tgt.y + b.tgt.vy * lead; }
+  botSteer(c, b.gx, b.gy, { dt, stop: b.stop, ram: b.ram });
+  if (c.boost) c.nitro = Math.max(0, c.nitro - .85 * dt / (c.nitroEff || 1));
+}
+function botPlan(c, b) {
+  const B = BOMB, t = c.team | 0, mine = B.bases[t], theirs = B.bases[1 - t];
+  const mates = cars.filter(o => o.isPlayer && !o.dead && o.team === t), foes = cars.filter(o => o.isPlayer && !o.dead && o.team !== t);
+  const dist = (o, x, y) => Math.hypot(o.x - x, o.y - y), carrier = B.st === 'carried' ? cars.find(o => o.id === B.carrier) : null;
+  b.tgt = null; b.stop = false; b.ram = false;
+  // opportunist: a foe right in front of us gets rammed
+  const close = foes.find(o => dist(o, c.x, c.y) < 140 && Math.abs(wrap(Math.atan2(o.y - c.y, o.x - c.x) - c.a)) < .5);
+  if (carrier === c) { b.gx = theirs[0]; b.gy = theirs[1]; b.stop = dist(c, theirs[0], theirs[1]) < 220; b.ram = !b.stop; return; }
+  if (B.st === 'ground' || B.st === 'fall') {
+    const rank = mates.slice().sort((p, q) => dist(p, B.x, B.y) - dist(q, B.x, B.y)).indexOf(c);
+    if (rank <= 1) { b.gx = B.x; b.gy = B.y; b.ram = true; return; }
+    const near = foes.filter(o => dist(o, B.x, B.y) < 260).sort((p, q) => dist(p, B.x, B.y) - dist(q, B.x, B.y))[0];
+    if (near || close) { b.tgt = near || close; b.ram = true; return; }
+    b.gx = (B.x + mine[0]) / 2; b.gy = (B.y + mine[1]) / 2; return;
+  }
+  if (carrier && carrier.team === t) { // escort: hit whoever is closing on our carrier
+    const thr = foes.filter(o => dist(o, carrier.x, carrier.y) < 420).sort((p, q) => dist(p, carrier.x, carrier.y) - dist(q, carrier.x, carrier.y))[0];
+    if (thr || close) { b.tgt = thr || close; b.ram = true; return; }
+    b.gx = carrier.x + (theirs[0] - carrier.x) * .35; b.gy = carrier.y + (theirs[1] - carrier.y) * .35 + (c.slot % 2 ? 70 : -70); return;
+  }
+  if (carrier) { // they have it: one keeper sits on our base, everyone else hunts the carrier
+    const keeper = mates.slice().sort((p, q) => dist(p, mine[0], mine[1]) - dist(q, mine[0], mine[1]))[0];
+    if (keeper === c && mates.length > 1 && dist(carrier, mine[0], mine[1]) > 240) { const a = Math.atan2(carrier.y - mine[1], carrier.x - mine[0]); b.gx = mine[0] + Math.cos(a) * 80; b.gy = mine[1] + Math.sin(a) * 80; b.stop = true; return; }
+    b.tgt = carrier; b.ram = true; return;
+  }
+  b.gx = W / 2 + (t ? 120 : -120); b.gy = H / 2 + (c.slot - 1) * 120; // waiting for the drop: take up a spot near the middle
+  if (close) { b.tgt = close; b.ram = true; }
+}
+/* drawing (world space). Ground: bases + bomb marker under the cars; top: bomb on the carrier + plant progress */
+function drawBombGround() {
+  if (!bombOn()) return;
+  const B = BOMB, now = performance.now() / 1000, carrier = B.st === 'carried' ? cars.find(o => o.id === B.carrier) : null;
+  for (let t = 0; t < 2; t++) {
+    const [x, y] = B.bases[t], col = TEAM_COL[t], threat = carrier && carrier.team !== t && Math.hypot(carrier.x - x, carrier.y - y) < 260;
+    ctx.save(); ctx.translate(x, y);
+    const R = BOMB_R + 6;
+    ctx.globalAlpha = threat ? .3 + .15 * Math.sin(now * 10) : .18; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(0, 0, R, 0, 6.283); ctx.fill();
+    ctx.globalAlpha = .9; ctx.lineWidth = 4; ctx.strokeStyle = col; ctx.beginPath(); ctx.arc(0, 0, R, 0, 6.283); ctx.stroke();
+    ctx.globalAlpha = .55; ctx.lineWidth = 2; ctx.setLineDash([7, 6]); ctx.lineDashOffset = -now * 18; ctx.beginPath(); ctx.arc(0, 0, R + 9, 0, 6.283); ctx.stroke(); ctx.setLineDash([]);
+    ctx.globalAlpha = .7; ctx.lineWidth = 2.5; for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2; ctx.beginPath(); ctx.moveTo(Math.cos(a) * (R - 12), Math.sin(a) * (R - 12)); ctx.lineTo(Math.cos(a) * (R - 3), Math.sin(a) * (R - 3)); ctx.stroke(); }
+    ctx.beginPath(); ctx.arc(0, 0, 7, 0, 6.283); ctx.stroke();
+    ctx.globalAlpha = .85; ctx.fillStyle = col; ctx.font = '900 13px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(TEAM_NAME[t] + ' BASE', 0, R + 22);
+    if (carrier && carrier.team !== t && B.plant > 0) { // plant progress round the target base
+      ctx.globalAlpha = 1; ctx.strokeStyle = '#ffb020'; ctx.lineWidth = 7; ctx.beginPath(); ctx.arc(0, 0, R + 2, -Math.PI / 2, -Math.PI / 2 + 6.283 * Math.min(1, B.plant / BOMB_PLANT)); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  if (B.st === 'fall' || B.st === 'ground') { // translucent amber ring where the bomb is
+    const R = 40 + 4 * Math.sin(now * 5);
+    ctx.save(); ctx.translate(B.x, B.y);
+    ctx.globalAlpha = .16; ctx.fillStyle = '#ffb020'; ctx.beginPath(); ctx.arc(0, 0, R, 0, 6.283); ctx.fill();
+    ctx.globalAlpha = .75; ctx.strokeStyle = '#ffb020'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, R, 0, 6.283); ctx.stroke();
+    if (B.st === 'fall') { const k = clamp(1 - B.fall / 1.3, 0, 1); ctx.globalAlpha = .25 + .4 * k; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(0, 0, 5 + 9 * k, 0, 6.283); ctx.fill(); }
+    ctx.restore();
+    if (B.st === 'ground') drawBombSprite(B.x, B.y, 1, now);
+  }
+  if (carrier && !carrier.dead) { ctx.save(); ctx.globalAlpha = .35 + .2 * Math.sin(now * 8); ctx.strokeStyle = '#ffb020'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(carrier.x, carrier.y, 36, 0, 6.283); ctx.stroke(); ctx.restore(); }
+  ctx.globalAlpha = 1;
+}
+function drawBombSprite(x, y, s, now, lift) { // an upright bomb: drawn un-squashed against the camera tilt
+  ctx.save(); ctx.translate(x, y - (lift || 0)); ctx.scale(s, s / TK);
+  const r = 10;
+  ctx.globalAlpha = .35; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, (lift || 0) * TK + 6, r, r * .45, 0, 0, 6.283); ctx.fill(); ctx.globalAlpha = 1;
+  const g = ctx.createRadialGradient(-3, -4, 1, 0, 0, r); g.addColorStop(0, '#5b6270'); g.addColorStop(.5, '#22262d'); g.addColorStop(1, '#0b0c0f');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.283); ctx.fill();
+  ctx.fillStyle = '#ffb020'; ctx.fillRect(-r, -2, r * 2, 4);
+  ctx.fillStyle = '#3b3f47'; ctx.fillRect(-3.5, -r - 4, 7, 5);
+  const on = Math.floor(now * (BOMB.plant > 0 ? 9 : 3)) % 2;
+  ctx.fillStyle = on ? '#ff3b30' : '#7a1a14'; ctx.beginPath(); ctx.arc(0, -r - 5, 2.6, 0, 6.283); ctx.fill();
+  if (on) { ctx.globalCompositeOperation = 'lighter'; ctx.drawImage(PUFF.red, -9, -r - 14, 18, 18); ctx.globalCompositeOperation = 'source-over'; }
+  ctx.restore();
+}
+function drawBombTop() {
+  if (!bombOn()) return;
+  const B = BOMB, now = performance.now() / 1000;
+  if (B.st === 'carried') { const c = cars.find(o => o.id === B.carrier); if (c && !c.dead) drawBombSprite(c.x, c.y, .9, now, 14 + 2 * Math.sin(now * 6)); }
+  if (B.st === 'fall') { const k = clamp(B.fall / 1.3, 0, 1); drawBombSprite(B.x, B.y, 1 + k * .5, now, k * k * 420); }
+}
+function bombHud() {
+  const el = $('bombMsg'); if (!el) return;
+  let t = '', cls = '';
+  if (bombOn() && state === 'play') {
+    const B = BOMB, me = player, carrier = B.st === 'carried' ? cars.find(o => o.id === B.carrier) : null;
+    if (B.st === 'wait') t = '💣 Bomb drops in ' + Math.max(1, Math.ceil(B.t)) + '...';
+    else if (B.st === 'fall') t = '💣 Bomb incoming!';
+    else if (B.st === 'ground') { t = '💣 The bomb is loose - grab it!'; cls = 'hot'; }
+    else if (carrier) {
+      const tc = carrier.team | 0;
+      if (carrier === me) { t = B.plant > 0 ? '💣 PLANTING... ' + Math.max(0, BOMB_PLANT - B.plant).toFixed(1) + 's - hold still!' : '💣 YOU HAVE THE BOMB - park in the ' + TEAM_NAME[1 - tc] + ' base'; cls = 'me'; }
+      else if (B.plant > 0) { t = '💣 ' + TEAM_NAME[tc] + ' IS PLANTING ' + Math.max(0, BOMB_PLANT - B.plant).toFixed(1) + 's'; cls = me && me.team !== tc ? 'alarm' : 'hot'; }
+      else { t = '💣 ' + esc(carrier.pname || TEAM_NAME[tc]) + ' (' + TEAM_NAME[tc] + ') has the bomb'; cls = me && me.team !== tc ? 'alarm' : ''; }
+      el.style.setProperty('--tc', TEAM_COL[tc]);
+    } else if (B.st === 'boom') t = '💥 Base destroyed! Next round...';
+  }
+  if (el._t !== t) { el._t = t; el.innerHTML = t; el.style.display = t ? 'block' : 'none'; }
+  if (el._c !== cls) { el._c = cls; el.className = cls; }
+}
+function bombArrows() { // off-screen pointers: the bomb (amber) and, when carrying, the target base
+  if (!bombOn() || state !== 'play') return;
+  const B = BOMB, list = [];
+  if (B.st === 'ground' || B.st === 'fall' || (B.st === 'carried' && B.carrier !== (player && player.id))) list.push([B.x, B.y, '#ffb020', '💣']);
+  if (player && player.bomb) { const eb = B.bases[1 - (player.team | 0)]; list.push([eb[0], eb[1], TEAM_COL[1 - (player.team | 0)], '◎']); }
+  const m = 34, cx = innerWidth / 2, cy = innerHeight / 2;
+  for (const [x, y, col, ic] of list) {
+    const [sx, sy] = w2s(x, y); if (sx > 0 && sx < innerWidth && sy > 0 && sy < innerHeight) continue;
+    const ang = Math.atan2(sy - cy, sx - cx), ca = Math.cos(ang), sa = Math.sin(ang);
+    const t = Math.min((innerWidth / 2 - m) / Math.max(.001, Math.abs(ca)), (innerHeight / 2 - m) / Math.max(.001, Math.abs(sa)));
+    const ex = cx + ca * t, ey = cy + sa * t;
+    ctx.save(); ctx.translate(ex, ey);
+    ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.beginPath(); ctx.arc(0, 0, 15, 0, 6.283); ctx.fill(); ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.rotate(ang); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(23, 0); ctx.lineTo(15, -6); ctx.lineTo(15, 6); ctx.closePath(); ctx.fill(); ctx.rotate(-ang);
+    ctx.font = '14px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(ic, 0, 1);
+    ctx.restore();
+  }
+}
+/* ---------- single-player Bomb Run: you + 2 bots vs 3 bots ---------- */
+function renderBombSheet() {
+  const lim = Math.max(maxWave, 1), cars0 = CARS.filter(d => d.unlock <= lim);
+  if (!cars0.some(d => d.id === SPB.car)) SPB.car = cars0[0].id;
+  $('bsCars').innerHTML = CARS.map(d => { const lk = d.unlock > lim; return '<button class="bsCar' + (d.id === SPB.car ? ' on' : '') + (lk ? ' lk' : '') + '" data-bcar="' + d.id + '"' + (lk ? ' disabled' : '') + '><img src="' + tileUrl(d.id) + '" alt=""><b>' + d.name + '</b><small>' + (lk ? '🔒 wave ' + d.unlock : d.perk ? PERKS[d.perk].icon + ' ' + PERKS[d.perk].name : d.role) + '</small></button>'; }).join('');
+  document.querySelectorAll('#bsDiff button').forEach(b => b.classList.toggle('on', +b.dataset.d === SPB.diff));
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-bcar]'); if (b && !b.disabled) { SPB.car = b.dataset.bcar; lsSet('scrapArenaBombCar', SPB.car); renderBombSheet(); }
+  const d = e.target.closest('#bsDiff [data-d]'); if (d) { SPB.diff = +d.dataset.d; lsSet('scrapArenaBombDiff', SPB.diff); renderBombSheet(); }
+});
+SPB.car = lsGet('scrapArenaBombCar', 'cruiser'); SPB.diff = lsGet('scrapArenaBombDiff', 1);
+function openBomb() { $('bombSheet').classList.remove('hidden'); renderBombSheet(); }
+function startBombSP() {
+  if (NET.role) netLeave(true);
+  if (devRun) { devRun = false; document.body.classList.remove('dev'); }
+  $('bombSheet').classList.add('hidden');
+  gameMode = 'bomb'; LOCAL_TEAM = true; daily = null; $('card').classList.remove('over'); $('clubAwardBox').innerHTML = '';
+  pname = ($('pname').value || '').trim().slice(0, 14) || 'Player'; lsSet('scrapArenaName', pname);
+  const a = audio(); if (a && a.resume) a.resume(); startEngine();
+  if (isTouch && fsOK && !fsEl()) setFullscreen(true);
+  Object.assign(VS, { kind: 'bomb', matchT: VS_LEN, score: [0, 0], boss: 'none', bossState: 0, warned: false });
+  BOMB.round = 0; BOMB.st = 'off';
+  cars = []; debris = []; parts = []; texts = []; rings = []; pickups = []; booms = []; emotes = [];
+  wave = 0; score = 0; shake = 0; gameOverT = 0; paused = false; hitStop = 0; slowT = 0; flashA = 0; hurtA = 0; combo.n = 0; combo.t = 0;
+  seenTypes = new Set(); scrap = 0; scrapItems = []; UP.armor = UP.nitro = UP.ram = 0; arenaIdxPrev = -1; arenaIdx = -1; kills = 0; runT0 = performance.now(); srand = Math.random;
+  NET.overArmed = false; NET.vsArena = (Math.random() * 3) | 0;
+  mctx.clearRect(0, 0, W, H); clearSkids();
+  player = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); player.pid = PID; player.pname = pname;
+  applyCar(player, CAR_BY_ID[SPB.car] || CAR_BY_ID.cruiser);
+  Object.assign(player, { team: 0, slot: 0, score: 0, kos: 0, deaths: 0, dmg: 0, bossDmg: 0, plants: 0, stops: 0, carries: 0, club: myClubId() });
+  cars.push(player);
+  let bi = (Math.random() * 12) | 0;
+  for (const [t, s] of [[0, 1], [0, 2], [1, 0], [1, 1], [1, 2]]) cars.push(makeBot(t, s, bi++));
+  state = 'play'; $('overlay').classList.add('hidden'); document.body.classList.add('vs');
+  startWave(); bombBases(); bombRound(true); snapCamera(); updateHud();
+}
+function bombSpOver(quit) {
+  state = 'over'; paused = false; $('pauseMenu').classList.add('hidden'); document.body.classList.remove('vs');
+  const r = teamPayload('versus'), w = r.vs.winner, me = r.players.find(p => p[5] === PID), myT = me ? me[6] : 0;
+  const h1 = $('overlay').querySelector('#card h1');
+  h1.innerHTML = quit ? 'MATCH <span>ABANDONED</span>' : w < 0 ? "IT'S A <span>DRAW</span>" : w === myT ? 'YOUR TEAM <span style="color:' + TEAM_COL[w] + '">WINS!</span>' : '<span style="color:' + TEAM_COL[w] + '">' + TEAM_NAME[w] + '</span> TEAM WINS';
+  const award = quit ? null : clubAward(r, true);
+  $('final').innerHTML = bombResultsHtml(r); $('clubAwardBox').innerHTML = quit ? '' : clubAwardHtml(award);
+  if (!quit && w === myT) { SFX.win && SFX.win(); }
+  $('card').classList.add('over', 'teamRes', 'spBomb'); $('goBomb').innerHTML = 'PLAY AGAIN<small>💣 Bomb Run · same car and bots</small>'; $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
+  $('overlay').classList.remove('hidden'); renderHub();
+}
+function vsTick(dt) { // host / single player: match clock, boss arrival, respawns
+  if (bombOn()) bombTick(dt);
   if (introT > 0) return;
   VS.matchT = Math.max(0, VS.matchT - dt);
   if (VS.boss !== 'none' && VS.bossState === 0) {
     if (!VS.warned && VS.matchT <= VS_BOSS_AT + 5) { VS.warned = true; banner('BOSS IN 5', BOSS_INFO[VS.boss].name + ' is coming', 1600); }
     if (VS.matchT <= VS_BOSS_AT) spawnVsBoss();
   }
-  for (const c of cars) if (c.isPlayer && c.dead && !c.gone && VS.matchT > 0) { c.respawnT = (c.respawnT ?? VS_RESPAWN) - dt; if (c.respawnT <= 0) vsRespawn(c); }
+  for (const c of cars) if (c.isPlayer && c.dead && !c.gone && VS.matchT > 0 && !(bombOn() && BOMB.st === 'boom')) { c.respawnT = (c.respawnT ?? VS_RESPAWN) - dt; if (c.respawnT <= 0) vsRespawn(c); }
 }
 function netRoundOver() {
   const hs = cars.filter(c => c.isPlayer), alive = hs.filter(c => !c.dead);
@@ -2517,7 +3270,7 @@ function netDriveRemote(c, dt) {
   c.boost = want && c.nitro > 0 && c.throttle >= 0;
   if (c.boost) c.nitro = Math.max(0, c.nitro - .85 * dt / (c.nitroEff || 1));
   const sp = Math.hypot(c.vx, c.vy);
-  if (c.slip > 110 && sp > 140 && introT <= 0) c.nitro = Math.min(1, c.nitro + .2 * dt * (c.nitroEff || 1) * nitroK());
+  if (c.slip > 110 && sp > 140 && introT <= 0) c.nitro = Math.min(1, c.nitro + .2 * dt * (c.nitroEff || 1) * (c.driftK || 1) * nitroK());
   if ((inp[4] | 0) !== (NET.emoSeen[c.pid] | 0)) { NET.emoSeen[c.pid] = inp[4] | 0; emote(c, playerEmotion(c)); }
 }
 
@@ -2594,7 +3347,7 @@ function netBroadcast(snap, ev) {
 function netSend(o) { try { if (NET.ws && NET.ws.readyState === 1) NET.ws.send(typeof o === 'string' ? o : JSON.stringify(o)); } catch (e) {} }
 const FLAG = { dead: 1, braking: 2, reversing: 4, boost: 8, rage: 16, slam: 32, windup: 64, armor: 128, hb: 256 };
 const P4 = ['hood', 'trunk', 'doorL', 'doorR'];
-function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '', Math.round(c.accel || 0), Math.round(c.maxSpeed || 0), +(c.turnRate || 0).toFixed(3), +(c.nitroEff || 1).toFixed(2), c.team == null ? -1 : c.team]; }
+function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '', Math.round(c.accel || 0), Math.round(c.maxSpeed || 0), +(c.turnRate || 0).toFixed(3), +(c.nitroEff || 1).toFixed(2), c.team == null ? -1 : c.team, c.bot ? 1 : 0, c.club || '']; }
 function netSnapshot() {
   NET.metaT -= 1; if (NET.metaT <= 0) { NET.metaT = 30; NET.metaSent.clear(); }
   const metas = [], cs = [];
@@ -2605,7 +3358,7 @@ function netSnapshot() {
     cs.push([c.id, Math.round(c.x), Math.round(c.y), +c.a.toFixed(3), Math.round(c.vx), Math.round(c.vy), f, pm, c.lost, Math.round(c.nitro * 100), Math.round(c.slip), c.php ? P4.map(p => c.php[p]) : 0, c.arm ? +c.arm.ang.toFixed(3) : 0, c.score || 0, c.kos || 0, c.isPlayer && NET.inT[c.pid] ? [NET.inT[c.pid][0], Math.round(performance.now() - NET.inT[c.pid][1])] : 0]);
   }
   netBroadcast({ t: Math.round(performance.now()), w: wave, wm: waveMode, it: +Math.max(0, introT).toFixed(2), sc: score, cb: [combo.n, +Math.max(0, combo.t).toFixed(2)], ar: arenaIdx, st: state, cars: cs, m: metas,
-    pk: pickups.map(p => [p.x | 0, p.y | 0, p.k, +(p.life - p.t).toFixed(1)]), br: barrels.map(b => b.alive ? 1 : 0), cr: crusher ? [crusher.phase, +crusher.e.toFixed(2)] : 0, vs: versusOn() ? [+VS.matchT.toFixed(1), VS.score[0], VS.score[1], VS.bossState] : 0 }, NET.ev);
+    pk: pickups.map(p => [p.x | 0, p.y | 0, p.k, +(p.life - p.t).toFixed(1)]), br: barrels.map(b => b.alive ? 1 : 0), cr: crusher ? [crusher.phase, +crusher.e.toFixed(2)] : 0, vs: versusOn() ? [+VS.matchT.toFixed(1), VS.score[0], VS.score[1], VS.bossState, VS.kind === 'bomb' ? bombState() : 0] : 0 }, NET.ev);
   NET.ev = [];
 }
 function netLayoutMsg() { return ['ar', arenaIdx, { g: LAY.groups.map(g => [g.k, g.x | 0, g.y | 0]), b: LAY.barrels.map(b => [b[0] | 0, b[1] | 0]), o: LAY.oil.map(o => [o[0] | 0, o[1] | 0, o[2]]), p: LAY.puddles.map(p => [p.x | 0, p.y | 0, p.rx | 0, p.ry | 0, +p.rot.toFixed(2), p.seed]) }]; }
@@ -2622,14 +3375,15 @@ function netApplyLayout(ai, L2) {
   const hz = HAZ[arena.id] || {}; crusher = hz.crusher ? Object.assign({ phase: 'idle', t: 4.5, e: 1, bt: 0 }, hz.crusher) : null;
 }
 function netGuestCar(m) {
-  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName, acc, ms, tr, ne, tm] = m;
+  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName, acc, ms, tr, ne, tm, bot, club] = m;
   let c = NET.byId.get(id);
   if (!c) { c = makeCar(0, 0, 0, col, !!isP, 1); c.id = id; c.init = false; NET.byId.set(id, c); }
   Object.assign(c, { type, styleId, col, isPlayer: !!isP, pid, pname, boss: !!boss, bossKind, cL: cL || undefined, cW: cW || undefined, phpMax, twinIdx, maxLost, carName });
   if (boss && !c.php) c.php = { hood: 2, trunk: 2, doorL: 2, doorR: 2 };
   if (bossKind === 'crane' && !c.arm) c.arm = { ang: 0, w: 1, len: 150, r: 19, cd: new Map() };
   if (acc) { c.accel = acc; c.maxSpeed = ms; c.turnRate = tr; c.nitroEff = ne; }
-  c.team = tm >= 0 ? tm : undefined;
+  if (isP) { const d = CAR_BY_ID[styleId]; c.perk = (d && d.perk) || ''; c.boostK = c.perk === 'burn' ? 1.5 : 1; c.driftK = c.perk === 'drift' ? 2.5 : 1; }
+  c.team = tm >= 0 ? tm : undefined; c.bot = !!bot; c.club = club || '';
   if (isP && pid === PID) player = c;
   return c;
 }
@@ -2671,7 +3425,7 @@ function netApplySnap(s) {
   pickups = s.pk.map(([x, y, k, rem]) => ({ x, y, k, t: 0, life: rem }));
   s.br.forEach((a, i) => { if (barrels[i]) barrels[i].alive = !!a; });
   if (crusher && s.cr) { crusher.phase = s.cr[0]; crusher.e = s.cr[1]; }
-  if (s.vs) { VS.matchT = s.vs[0]; VS.score = [s.vs[1], s.vs[2]]; VS.bossState = s.vs[3]; }
+  if (s.vs) { VS.matchT = s.vs[0]; VS.score = [s.vs[1], s.vs[2]]; VS.bossState = s.vs[3]; VS.kind = s.vs[4] ? 'bomb' : 'derby'; if (s.vs[4]) bombApply(s.vs[4]); }
   if ($('hw').textContent != wave || NET.hudT-- <= 0) { NET.hudT = 8; updateHud(); }
 }
 // my own car: predicted locally, nudged toward what the host says
@@ -2756,6 +3510,7 @@ function netEvents(evs) {
     else if (k === 'h') { const lh = NET.localHit; if (!(lh && performance.now() - lh.t < 650 && Math.hypot(e[1] - lh.x, e[2] - lh.y) < 90)) hitFx(e[1], e[2], e[3]); }
     else if (k === 'k' && c) { c.dead = true; c.deadT = 0; c._key = ''; killFx(c); }
     else if (k === 'bd' && c) bossDownFx(c);
+    else if (k === 'bf') bombFx(e[1], e[2], e[3], e[4] < 0 ? null : e[4], e[5]);
     else if (k === 'x') boomFx(e[1], e[2], e[3]);
     else if (k === 't') texts.push({ x: e[1], y: e[2], text: e[3], color: e[4], t: 0, big: !!e[5] });
     else if (k === 'b') banner(e[1], e[2], e[3]);
@@ -2848,7 +3603,7 @@ function netTick(rdt, raw) {
 }
 function netOnMessage(raw) {
   let m; try { m = JSON.parse(raw); } catch (e) { return; }
-  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
+  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.role === 'guest' && NET.clubSent !== myClubId() + NET.room) { NET.clubSent = myClubId() + NET.room; netSend({ club: myClubId() }); } if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
   if (m.c === 'denied' && NET.recon) { netGiveUp(m.why === 'started' || m.why === 'gone' ? 'Lost connection to the room.' : null); return; }
   if (m.c === 'denied') { mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full.', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
   if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
@@ -2859,18 +3614,19 @@ function netOnMessage(raw) {
   if (m.c === 'hostback') { NET.hostAway = false; return; }
   if (m.c === 'pong') { if (rtcDirect()) return; const r = performance.now() - m.t; NET.ping = Math.round(r); NET.rtt += (r / 1000 - NET.rtt) * (NET.rtt > .5 ? 1 : .3); return; }
   if (NET.role === 'host' && m.f) { if (m.d) { if (m.d.rtc) rtcHostSignal(m.f, m.d.rtc); else netHostFrom(m.f, m.d); } return; }
-  if (m.vs) { if (NET.role === 'guest') { NET.vs = m.vs; renderMpLobby(); } return; }
+  if (m.vs) { if (NET.role === 'guest') { NET.vs = m.vs; NET.clubs = m.vs.clubs || {}; renderMpLobby(); } return; }
   if (m.rtcTo) { if (m.rtcTo === PID && NET.role === 'guest') rtcGuestSignal(m.rtc); return; }
   if (m.c === 'hostleft') return;
   if (NET.role === 'guest' && !rtcDirect()) netGuestData(m); // when the direct link is flowing, ignore the relay copy
 }
-function netHostFrom(pid, d) { if (d.vq) { vsRequest(pid, d.vq); return; } if (d.i) { NET.inputs[pid] = d.i; NET.inT[pid] = [+d.i[5] || 0, performance.now()]; } }
+function netHostFrom(pid, d) { if (d.vq) { vsRequest(pid, d.vq); return; } if (d.club != null) { NET.clubs[pid] = CLUB_BY[d.club] ? d.club : ''; vsSync(); return; } if (d.i) { NET.inputs[pid] = d.i; NET.inT[pid] = [+d.i[5] || 0, performance.now()]; } }
 function netGuestData(m) {
   if (m.s && NET.started) netApplySnap(m.s);
   const t = (m.s && m.s.t) || m.t;
   if (m.e && m.e.length) { if (t && NET.started) { const mine = m.e.filter(netMine), rest = m.e.filter(e => !netMine(e)); if (mine.length) netEvents(mine); if (rest.length) { NET.evq.push([t, rest]); NET.evq.sort((a, b) => a[0] - b[0]); } } else netEvents(m.e); }
 }
 function netConnect(code, create, mode, resume) {
+  if (!resume) LOCAL_TEAM = false;
   if (!resume) {
     netLeave(true);
     pname = ($('pname').value || '').trim().slice(0, 12) || 'Player'; try { localStorage.setItem('scrapArenaName', pname); } catch (e) {}
@@ -2939,13 +3695,14 @@ function netStartGame() {
   NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null; NET.evq = []; NET.inHist = []; NET.inT = {}; NET.off = null; NET.rt = null; NET.localHit = null; NET.lastT = 0; NET.jit = 0; NET.jpk = 0; NET.acc = 0; NET.lastSnapAt = 0; NET.list = null;
   $('mpPanel').classList.add('hidden'); $('overlay').classList.add('hidden'); $('card').classList.remove('over');
   document.body.classList.add('mp'); document.body.classList.toggle('vs', NET.lobby.mode === 'versus');
-  if (NET.lobby.mode === 'versus') Object.assign(VS, { matchT: VS_LEN, score: [0, 0], bossState: 0 });
+  LOCAL_TEAM = false; BOMB.round = 0; BOMB.st = 'off'; $('clubAwardBox').innerHTML = '';
+  if (NET.lobby.mode === 'versus') Object.assign(VS, { matchT: VS_LEN, score: [0, 0], bossState: 0, kind: NET.vs.kind === 'bomb' ? 'bomb' : 'derby' });
   gameMode = 'waves'; devRun = false; daily = null;
   const a = audio(); if (a && a.resume) a.resume(); startEngine();
   if (isTouch && fsOK && !fsEl()) setFullscreen(true);
   if (NET.role === 'host') {
     NET.mode = NET.lobby.mode; NET.vsArena = (Math.random() * 3) | 0;
-    if (NET.mode === 'versus') { vsSync(true); Object.assign(VS, { matchT: VS_LEN, score: [0, 0], boss: vsVoteResult(), bossState: 0, warned: false }); }
+    if (NET.mode === 'versus') { vsSync(true); const bk = NET.vs.kind === 'bomb'; Object.assign(VS, { matchT: VS_LEN, score: [0, 0], boss: bk ? 'none' : vsVoteResult(), bossState: 0, warned: false, kind: bk ? 'bomb' : 'derby' }); }
     cars = []; debris = []; parts = []; texts = []; rings = []; pickups = []; booms = []; emotes = [];
     wave = 0; score = 0; shake = 0; gameOverT = 0; paused = false; hitStop = 0; slowT = 0; flashA = 0; hurtA = 0; combo.n = 0; combo.t = 0;
     seenTypes = new Set(); scrap = 0; scrapItems = []; UP.armor = UP.nitro = UP.ram = 0; arenaIdxPrev = -1; arenaIdx = -1; kills = 0; runT0 = performance.now(); srand = Math.random;
@@ -2953,14 +3710,15 @@ function netStartGame() {
     const ps = NET.lobby.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
     ps.forEach((p, i) => {
       const c = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); c.pid = p.pid; c.pname = p.name;
-      applyCar(c, CAR_BY_ID[p.car] || CAR_BY_ID.cruiser); c.score = 0; c.kos = 0; c.deaths = 0; c.dmg = 0; c.bossDmg = 0;
+      applyCar(c, CAR_BY_ID[p.car] || CAR_BY_ID.cruiser); c.score = 0; c.kos = 0; c.deaths = 0; c.dmg = 0; c.bossDmg = 0; c.plants = 0; c.stops = 0; c.carries = 0; c.club = p.pid === PID ? myClubId() : (NET.clubs[p.pid] || '');
       if (NET.lobby.mode === 'versus') { const si = NET.vs.slots.indexOf(p.pid); c.slot = si < 0 ? 0 : si % 3; c.team = si >= 3 ? 1 : 0; }
       cars.push(c);
       if (p.pid === PID) player = c;
     });
+    if (NET.mode === 'versus' && VS.kind === 'bomb') { let bi = (Math.random() * 12) | 0; for (let i = 0; i < 6; i++) if (!NET.vs.slots[i] || !ps.some(p => p.pid === NET.vs.slots[i])) cars.push(makeBot(i >= 3 ? 1 : 0, i % 3, bi++, 1)); }
     state = 'play'; NET.metaSent.clear(); NET.metaT = 0;
     const realSet = setArena; // broadcast the arena layout whenever it changes
-    startWave(); nev(...netLayoutMsg()); resetPlayerPos(); netSnapshot();
+    startWave(); if (VS.kind === 'bomb' && NET.mode === 'versus') { bombBases(); bombRound(true); } nev(...netLayoutMsg()); resetPlayerPos(); netSnapshot();
   } else {
     cars = []; player = null; debris = []; parts = []; texts = []; rings = []; pickups = []; emotes = []; NET.byId.clear();
     wave = 0; score = 0; shake = 0; paused = false; hurtA = 0; flashA = 0;
@@ -2968,7 +3726,14 @@ function netStartGame() {
   }
   updateHud();
 }
+function teamPayload(mode) {
+  const hs = cars.filter(c => c.isPlayer);
+  const r = { mode, wave, score, players: hs.map(c => [c.pname, c.carName, c.score || 0, c.kos || 0, c.dead ? 1 : 0, c.pid, c.team | 0, c.deaths || 0, Math.round(c.dmg || 0), Math.round(c.bossDmg || 0), c.plants || 0, c.stops || 0, c.bot ? 1 : 0, c.club || '']) };
+  if (mode === 'versus') r.vs = { score: VS.score.slice(), winner: VS.score[0] > VS.score[1] ? 0 : VS.score[1] > VS.score[0] ? 1 : -1, boss: VS.boss, bossState: VS.bossState, kind: VS.kind };
+  return r;
+}
 function vsResultsHtml(r) {
+  if (r.vs && r.vs.kind === 'bomb') return bombResultsHtml(r);
   const P = r.players.map(p => ({ name: p[0], car: p[1], pts: p[2], k: p[3], pid: p[5], team: p[6], d: p[7], dmg: p[8], boss: p[9] }));
   const tot = P.reduce((a2, p) => a2 + p.dmg, 0) || 1, mvp = P.slice().sort((a2, b2) => b2.pts - a2.pts)[0];
   const row = p => '<tr class="' + (p.pid === PID ? 'me' : '') + '"><td><i style="background:' + TEAM_COL[p.team] + '"></i>' + esc(p.name) + (mvp && p === mvp ? ' ⭐' : '') + '<small>' + esc(p.car) + '</small></td><td>' + p.k + '</td><td>' + p.d + '</td><td>' + (p.k / Math.max(1, p.d)).toFixed(1) + '</td><td>' + Math.round(p.dmg / tot * 100) + '%</td><td>' + (p.boss || '-') + '</td><td>' + p.pts + '</td></tr>';
@@ -2977,11 +3742,18 @@ function vsResultsHtml(r) {
   return '<div class="vsRes"><div class="sc"><b style="color:' + TEAM_COL[0] + '">BLUE ' + r.vs.score[0] + '</b><span>–</span><b style="color:' + TEAM_COL[1] + '">' + r.vs.score[1] + ' RED</b></div><div class="sub">3:00 Team Derby · kill +' + VS_KILL + ' · ' + bossTxt + '</div>' +
     '<table><tr><th>Player</th><th>K</th><th>D</th><th>K/D</th><th>DMG</th><th>Boss</th><th>Pts</th></tr>' + body + '</table></div>';
 }
+function bombResultsHtml(r) {
+  const P = r.players.map(p => ({ name: p[0], car: p[1], pts: p[2], k: p[3], pid: p[5], team: p[6], d: p[7], plants: p[10] || 0, stops: p[11] || 0, bot: p[12], club: p[13] }));
+  const mvp = P.slice().sort((a2, b2) => b2.pts - a2.pts)[0];
+  const row = p => '<tr class="' + (p.pid === PID ? 'me' : '') + '"><td><i style="background:' + TEAM_COL[p.team] + '"></i>' + (p.club && CLUB_BY[p.club] ? '<img class="cb" src="' + clubBadgeUrl(p.club) + '" alt="">' : '') + esc(p.name) + (p.bot ? ' <em class="bot">BOT</em>' : '') + (mvp && p === mvp ? ' ⭐' : '') + '<small>' + esc(p.car) + '</small></td><td>' + p.plants + '</td><td>' + p.stops + '</td><td>' + p.k + '</td><td>' + p.d + '</td><td>' + p.pts + '</td></tr>';
+  const body = [0, 1].map(t => P.filter(p => p.team === t).sort((a2, b2) => b2.pts - a2.pts).map(row).join('')).join('');
+  return '<div class="vsRes"><div class="sc"><b style="color:' + TEAM_COL[0] + '">BLUE ' + r.vs.score[0] + '</b><span>–</span><b style="color:' + TEAM_COL[1] + '">' + r.vs.score[1] + ' RED</b></div><div class="sub">💣 Bomb Run · 3:00 · each destroyed base = 1 point</div>' +
+    '<table><tr><th>Player</th><th>💣</th><th>🛑</th><th>K</th><th>D</th><th>Pts</th></tr>' + body + '</table><div class="sub" style="margin-top:4px">💣 bases blown up · 🛑 bomb carriers stopped</div></div>';
+}
 function netShowResults(r) {
   if (NET.role === 'host' && NET.started && !r.hostLeft) {
     const hs = cars.filter(c => c.isPlayer);
-    r = { mode: NET.mode, wave, score, players: hs.map(c => [c.pname, c.carName, c.score || 0, c.kos || 0, c.dead ? 1 : 0, c.pid, c.team | 0, c.deaths || 0, Math.round(c.dmg || 0), Math.round(c.bossDmg || 0)]) };
-    if (NET.mode === 'versus') r.vs = { score: VS.score.slice(), winner: VS.score[0] > VS.score[1] ? 0 : VS.score[1] > VS.score[0] ? 1 : -1, boss: VS.boss, bossState: VS.bossState };
+    r = teamPayload(NET.mode);
     nev('over', r); netSnapshot(); NET.started = false; netSend({ c: 'reset' });
   } else if (NET.role === 'guest') NET.started = false;
   state = 'over'; paused = false; $('pauseMenu').classList.add('hidden'); document.body.classList.remove('mp', 'vs');
@@ -2990,8 +3762,8 @@ function netShowResults(r) {
   else {
     if (r.mode === 'versus' && r.vs) {
       const w = r.vs.winner; h1.innerHTML = w < 0 ? "IT'S A <span>DRAW</span>" : '<span style="color:' + TEAM_COL[w] + '">' + TEAM_NAME[w] + '</span> TEAM WINS!';
-      $('final').innerHTML = vsResultsHtml(r);
-      $('card').classList.add('over'); $('overlay').classList.remove('hidden');
+      $('final').innerHTML = vsResultsHtml(r); $('clubAwardBox').innerHTML = clubAwardHtml(clubAward(r));
+      $('card').classList.add('over', 'teamRes'); $('card').classList.remove('spBomb'); $('overlay').classList.remove('hidden');
       if (NET.ws) { $('mpBack').style.display = ''; } else $('mpBack').style.display = 'none';
       return;
     }
@@ -3013,12 +3785,13 @@ function vsSync(quiet) {
     const nb = V.slots.slice(0, 3).filter(Boolean).length, nr = V.slots.slice(3).filter(Boolean).length;
     const order = nb <= nr ? [0, 1, 2, 3, 4, 5] : [3, 4, 5, 0, 1, 2], i = order.find(j => !V.slots[j]); if (i != null) V.slots[i] = p.pid;
   }
-  netSend({ vs: V }); if (!quiet) renderMpLobby();
+  NET.clubs[PID] = myClubId(); V.clubs = NET.clubs; netSend({ vs: V }); if (!quiet) renderMpLobby();
 }
 function vsRequest(pid, q) {
   const V = NET.vs; if (NET.started) return;
   if (q.slot != null && q.slot >= 0 && q.slot < 6 && !V.slots[q.slot]) { V.slots = V.slots.map(p => p === pid ? '' : p); V.slots[q.slot] = pid; }
   if (q.vote && ['dozer', 'crane', 'twin', 'none'].includes(q.vote)) V.votes[pid] = q.vote;
+  if (q.kind && pid === PID && ['derby', 'bomb'].includes(q.kind)) V.kind = q.kind;
   vsSync();
 }
 function vsAct(q) { if (NET.role === 'host') vsRequest(PID, q); else netSend({ vq: q }); }
@@ -3037,15 +3810,18 @@ function bossPic(k) { if (BTHURL[k] == null) { if (ASSET.boss && ASSET.boss[k]) 
 function vsLobbyHtml(L2) {
   const V = NET.vs, byPid = Object.fromEntries(L2.players.map(p => [p.pid, p]));
   const box = i => { const pid = V.slots[i], p = pid && byPid[pid];
-    if (!p) return '<button class="vsBox empty" data-slot="' + i + '"><span>＋ Join</span></button>';
-    return '<div class="vsBox' + (pid === PID ? ' me' : '') + '"><img src="' + tileUrl(p.car) + '" alt=""><div class="cap"><span>' + esc(p.name) + (pid === PID ? ' (you)' : '') + '</span><small>' + (p.away ? 'RECONNECTING · ' : p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div></div>'; };
+    if (!p) return '<button class="vsBox empty" data-slot="' + i + '"><span>＋ Join</span>' + (V.kind === 'bomb' ? '<small class="botSeat">🤖 bot drives here</small>' : '') + '</button>';
+    const cl = pid === PID ? myClubId() : (NET.clubs[pid] || '');
+    return '<div class="vsBox' + (pid === PID ? ' me' : '') + '"><img src="' + tileUrl(p.car) + '" alt="">' + (cl && CLUB_BY[cl] ? '<img class="cb" src="' + clubBadgeUrl(cl) + '" alt="">' : '') + '<div class="cap"><span>' + esc(p.name) + (pid === PID ? ' (you)' : '') + '</span><small>' + (p.away ? 'RECONNECTING · ' : p.host ? 'HOST · ' : '') + esc((CAR_BY_ID[p.car] || {}).name || '') + '</small></div></div>'; };
   const row = t => '<div class="vsRow t' + t + '"><b>' + TEAM_NAME[t] + '</b>' + [0, 1, 2].map(j => box(t * 3 + j)).join('') + '</div>';
   const n = { dozer: 0, crane: 0, twin: 0, none: 0 }; for (const v of Object.values(V.votes)) n[v]++;
   const mine = V.votes[PID];
   const opt = (k, label) => '<button class="vsVote' + (mine === k ? ' on' : '') + '" data-vote="' + k + '">' + (k !== 'none' && bossPic(k) ? '<img src="' + bossPic(k) + '" alt="">' : '<i>🚫</i>') + '<div class="cap"><span>' + label + '</span><em>' + n[k] + ' vote' + (n[k] === 1 ? '' : 's') + '</em></div></button>';
-  return '<div class="vsTeams">' + row(0) + row(1) + '</div><div class="vsBossCol"><h4>BOSS VOTE <small>arrives at 1:00 · +' + VS_BOSS_PTS + '</small></h4><div class="vsVotes">' + opt('dozer', 'The Dozer') + opt('crane', 'The Crane') + opt('twin', 'The Twins') + opt('none', 'No boss') + '</div></div>';
+  const kinds = '<div class="vsKinds">' + [['derby', '💥 TEAM DERBY', 'Most points in 3:00'], ['bomb', '💣 BOMB RUN', 'Plant the bomb · bots fill seats']].map(([k, t, d]) => '<button class="vsKind' + ((V.kind || 'derby') === k ? ' on' : '') + '" data-kind="' + k + '"' + (NET.role === 'host' ? '' : ' disabled') + '><b>' + t + '</b><small>' + d + '</small></button>').join('') + '</div>';
+  if (V.kind === 'bomb') return kinds + '<div class="vsTeams">' + row(0) + row(1) + '</div><div class="vsBossCol bombCol"><h4>💣 BOMB RUN <small>3v3 · 3:00</small></h4><ol><li>A bomb drops in the first 10 s inside an <b style="color:#ffb020">amber ring</b>.</li><li>Grab it and drive it into the other team\'s base.</li><li>Sit still in their ring for <b>5 s</b>: base destroyed = <b>1 point</b>, then everyone respawns.</li><li>Wreck the carrier and the bomb drops.</li></ol><p>Empty seats are filled with bots 🤖</p></div>';
+  return kinds + '<div class="vsTeams">' + row(0) + row(1) + '</div><div class="vsBossCol"><h4>BOSS VOTE <small>arrives at 1:00 · +' + VS_BOSS_PTS + '</small></h4><div class="vsVotes">' + opt('dozer', 'The Dozer') + opt('crane', 'The Crane') + opt('twin', 'The Twins') + opt('none', 'No boss') + '</div></div>';
 }
-document.addEventListener('click', e => { const t = e.target.closest('#mpPlayers [data-slot], #mpPlayers [data-vote]'); if (!t) return; if (t.dataset.slot != null) vsAct({ slot: +t.dataset.slot }); else vsAct({ vote: t.dataset.vote }); });
+document.addEventListener('click', e => { const t = e.target.closest('#mpPlayers [data-slot], #mpPlayers [data-vote], #mpPlayers [data-kind]'); if (!t) return; if (t.dataset.slot != null) vsAct({ slot: +t.dataset.slot }); else if (t.dataset.kind) vsAct({ kind: t.dataset.kind }); else vsAct({ vote: t.dataset.vote }); });
 // ---- lobby UI ----
 let mpCar = lsGet('scrapArenaMpCar', 'cruiser');
 function mpMsg(t) { const a = $('mpMsg'), b = $('mpMsg2'); if (a) a.textContent = t; if (b) b.textContent = t; }
@@ -3060,7 +3836,7 @@ function renderMpLobby() {
   if (!inRoom) return;
   const L2 = NET.lobby, amHost = NET.role === 'host';
   $('mpRoom').textContent = NET.room;
-  $('mpModeTxt').innerHTML = L2.mode === 'versus' ? '<b>TEAM DERBY</b> - blue vs red, 3:00, kill +' + VS_KILL + ', boss +' + VS_BOSS_PTS + '. Tap an empty box to switch team.' : '<b>CO-OP WAVES</b> - team up against the waves and bosses';
+  $('mpModeTxt').innerHTML = L2.mode === 'versus' ? (NET.vs.kind === 'bomb' ? '<b>💣 BOMB RUN</b> - 3v3, plant the bomb in their base. Bots fill empty seats. Tap a box to switch team.' : '<b>TEAM DERBY</b> - blue vs red, 3:00, kill +' + VS_KILL + ', boss +' + VS_BOSS_PTS + '. Tap an empty box to switch team.') : '<b>CO-OP WAVES</b> - team up against the waves and bosses';
   $('mpModeSw').style.display = amHost ? '' : 'none'; $('mpModeSw').textContent = L2.mode === 'versus' ? (L2.players.length > COOP_MAX ? 'Co-op is 2 players max' : 'Switch to Co-op') : 'Switch to Versus'; $('mpModeSw').disabled = L2.mode === 'versus' && L2.players.length > COOP_MAX;
   const ps = L2.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
   $('mpPlayers').classList.toggle('vsMode', L2.mode === 'versus');
@@ -3068,9 +3844,9 @@ function renderMpLobby() {
     (L2.mode === 'versus' ? '' : Array.from({ length: Math.max(0, COOP_MAX - ps.length) }, () => '<div class="pl empty"><span>Waiting for a friend...</span></div>').join(''));
   if ($('mpPlayers')._h !== html) { $('mpPlayers').innerHTML = html; $('mpPlayers')._h = html; }
   const nb = NET.vs.slots.slice(0, 3).filter(Boolean).length, nr = NET.vs.slots.slice(3).filter(Boolean).length;
-  const ok = L2.mode === 'versus' ? nb > 0 && nr > 0 : ps.length >= 1;
+  const bombK = L2.mode === 'versus' && NET.vs.kind === 'bomb', ok = L2.mode === 'versus' ? (bombK ? ps.length >= 1 : nb > 0 && nr > 0) : ps.length >= 1;
   $('mpStart').style.display = amHost ? '' : 'none'; $('mpStart').disabled = !ok;
-  $('mpStart').textContent = ok ? 'START MATCH' : 'NEED 1 PLAYER PER TEAM';
+  $('mpStart').textContent = ok ? (bombK ? 'START BOMB RUN' : 'START MATCH') : 'NEED 1 PLAYER PER TEAM';
   $('mpWait').style.display = amHost ? 'none' : ''; 
 }
 function mpOpen(code) {
@@ -3080,7 +3856,7 @@ function mpOpen(code) {
 const randCode = () => Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ'[(Math.random() * 23) | 0]).join('');
 $('goOnline').addEventListener('click', () => mpOpen());
 $('mpClose').addEventListener('click', () => { $('mpPanel').classList.add('hidden'); });
-const MP_TAB = { coop: 'Team up with 1 friend (2 players) against the waves and bosses. No friendly fire; a wrecked partner comes back when the wave is cleared.', versus: 'Up to 6 players, no AI cars. Smash each other: last car standing wins the round.' };
+const MP_TAB = { coop: 'Team up with 1 friend (2 players) against the waves and bosses. No friendly fire; a wrecked partner comes back when the wave is cleared.', versus: 'Up to 6 players, blue vs red. Pick 💥 Team Derby (most points in 3:00) or 💣 Bomb Run (3v3, bots fill empty seats) in the lobby.' };
 function mpTab(m) { document.querySelectorAll('#mpPanel .mpTabs button').forEach(b => b.classList.toggle('on', b.dataset.m === m)); $('mpTabSub').textContent = MP_TAB[m]; $('mpCreateCoop').classList.toggle('hidden', m !== 'coop'); $('mpCreateVs').classList.toggle('hidden', m !== 'versus'); }
 document.querySelectorAll('#mpPanel .mpTabs button').forEach(b => b.addEventListener('click', () => mpTab(b.dataset.m))); mpTab('coop');
 $('mpCreateCoop').addEventListener('click', () => netConnect(randCode(), true, 'coop'));
@@ -3247,7 +4023,7 @@ portraitMQ.addEventListener ? portraitMQ.addEventListener('change', onOrient) : 
 setInterval(() => document.body.classList.toggle('inselect', state === 'select'), 300);
 
 // ---- pause menu + back to main menu ----
-const runActive = () => !!player && !player.dead && (state === 'play' || (state === 'select' && !pendingFresh));
+const runActive = () => !!player && (LOCAL_TEAM && !NET.role ? state === 'play' : !player.dead && (state === 'play' || (state === 'select' && !pendingFresh)));
 function setPause(on) {
   if (state !== 'play') on = false;
   paused = on; $('pauseMenu').classList.toggle('hidden', !on);
@@ -3270,6 +4046,7 @@ $('pmMenu').addEventListener('click', goMenu);
 setInterval(() => document.body.classList.toggle('playing', state === 'play'), 250);
 addEventListener('visibilitychange', () => { if (document.hidden && state === 'play' && !paused) setPause(true); });
 function begin(mode, fromWave) {
+  $('clubAwardBox').innerHTML = ''; LOCAL_TEAM = false; document.body.classList.remove('vs');
   if (devRun) { devRun = false; document.body.classList.remove('dev'); daily = null; }
   if (mode) gameMode = mode;
   if (gameMode === 'daily') { todayDaily(); dailyPractice = !!dailyDone(); }
@@ -3284,6 +4061,8 @@ function begin(mode, fromWave) {
 $('go').addEventListener('click', () => begin('waves'));
 $('goCont').addEventListener('click', continueRun); renderContinue();
 $('goDaily').addEventListener('click', () => begin('daily'));
+$('goBomb').addEventListener('click', () => startBombSP());
+$('goHome').addEventListener('click', () => goMenu());
 if (matchMedia('(pointer:coarse)').matches) { $('touch').classList.add('on'); document.body.classList.add('touch'); $('mute').style.display = 'none'; }
 document.querySelectorAll('#touch button').forEach(b => {
   const k = b.dataset.k;
@@ -3325,10 +4104,104 @@ renderBoard(-1); renderDailyBox(); loadBoard();
 api('/api/daily').then(r => { if (r && r.day) { dailyMeta = r; daily = null; todayDaily(); renderDailyBox(); if (boardTab === 'daily') loadBoard(); } });
 updateHud();
 // test hook (harmless in normal play)
+/* ---------- main menu hub ---------- */
+const HUB = { car: lsGet('scrapArenaHubCar', 'cruiser') };
+const carLocked = d => d.unlock > Math.max(maxWave, 1);
+function hubSetCar(id) {
+  HUB.car = id; lsSet('scrapArenaHubCar', id); const d = CAR_BY_ID[id];
+  if (!carLocked(d)) { selId = id; mpCar = id; lsSet('scrapArenaMpCar', id); SPB.car = id; lsSet('scrapArenaBombCar', id); }
+  renderHubCar(true);
+}
+function renderHubCar(anim) {
+  const d = CAR_BY_ID[HUB.car] || CARS[0], lk = carLocked(d), img = $('hubCar');
+  const put = () => { img.src = showUrl(d.id); img.style.filter = lk ? 'brightness(.08) drop-shadow(0 0 1px rgba(255,255,255,.6))' : ''; img.classList.remove('swap'); };
+  if (anim) { img.classList.add('swap'); setTimeout(put, 160); } else put();
+  $('hubCarName').textContent = d.name.toUpperCase(); $('hubCarRole').textContent = d.role;
+  const bar = (n, v) => '<div>' + n + '<i><b style="width:' + clamp((v + 12) / 34 * 100, 4, 100).toFixed(0) + '%"></b></i></div>';
+  $('hubStats').innerHTML = bar('SPEED', d.spd) + bar('HANDLING', d.hnd) + bar('STRENGTH', d.str);
+  const pk = $('hubPerk'); pk.classList.toggle('lock', lk);
+  pk.innerHTML = lk ? '🔒 Reach wave ' + d.unlock + ' in Waves to unlock' + (d.perk ? ' · ' + PERKS[d.perk].icon + ' ' + PERKS[d.perk].name : '') : d.perk ? '<b>' + PERKS[d.perk].icon + ' ' + PERKS[d.perk].name + '</b> · ' + PERKS[d.perk].desc : 'Base model · balanced and honest';
+  $('hubDots').innerHTML = CARS.map(c => '<i class="' + (c.id === d.id ? 'on' : carLocked(c) ? 'lk' : '') + '"></i>').join('');
+  const cl = myClubId(), st = $('hubBadge'); st.src = cl && !lk ? badgeFor(cl, true) : '';
+  $('hubStage').style.setProperty('--cc', cl ? CLUB_BY[cl].c1 : '#e63946');
+}
+function renderHubProfile() {
+  const cl = myClubId(), b = $('hubPBadge'); if (!b) return;
+  b.style.backgroundImage = cl ? 'url("' + badgeFor(cl) + '")' : ''; b.textContent = cl ? '' : '＋';
+  const bestTxt = (best ? 'Best ' + best.toLocaleString() : 'No runs yet') + (maxWave > 1 ? ' · wave ' + maxWave : '');
+  $('hubRank').innerHTML = cl ? '<b style="--cc:' + CLUB_BY[cl].c1 + ';color:' + CLUB_BY[cl].c1 + '">' + clubRank(myClubPts()).name.toUpperCase() + '</b> · ' + CLUB_BY[cl].name + ' · ' + bestTxt : 'No club yet · ' + bestTxt;
+}
+function renderHubClub() {
+  const el = $('hubClub'); if (!el) return;
+  const cl = myClubId(), ev = clubEvent();
+  if (!cl) {
+    el.style.setProperty('--cc', '#ffbe0b'); el.style.setProperty('--cg', 'rgba(255,190,11,.18)');
+    el.innerHTML = '<div class="cc1"><div><small>NEW</small><h3>MOTOR CLUBS</h3><em>Pick a crew. Wear the badge.</em></div></div><div class="ccJoin">' + CLUBS.map(c => '<img src="' + badgeFor(c.id) + '" alt="">').join('') + '</div><div class="ccNo"><p>Every game you play earns points for your club. Six clubs, a new event every week, gold for the winners.</p></div>' +
+      '<div class="ccList">' + CLUBS.map(c => '<button data-join-peek="' + c.id + '" style="--k:' + c.c1 + '"><img src="' + badgeFor(c.id) + '" alt=""><span><b>' + c.name + '</b><small>' + c.motto + '</small></span></button>').join('') + '</div>' +
+      '<div class="ccEv"><span class="ei">' + ev.icon + '</span><div><small>THIS WEEK · ' + fmtLeft(weekEndsIn()) + ' LEFT</small><b>' + ev.name + '</b></div></div><button class="ccGo" id="hubClubGo">JOIN A CLUB</button>';
+  } else {
+    const c = CLUB_BY[cl], p = myClubPts(), rk = clubRank(p), st = clubStandings(), top = Math.max(1, ...st.map(x => x.pts));
+    el.style.setProperty('--cc', c.c1); el.style.setProperty('--cg', c.c1 + '33');
+    el.innerHTML = '<div class="cc1"><img src="' + badgeFor(cl, true) + '" alt=""><div><small>YOUR CLUB</small><h3>' + c.name + '</h3><em>' + rk.name + ' · ' + p.toLocaleString() + ' pts</em></div></div>' +
+      '<div class="ccRank"><b>' + rk.name + '</b><span>' + (rk.next ? (rk.need - p).toLocaleString() + ' to ' + rk.next : 'top rank') + '</span></div><div class="ccBar"><b style="width:' + (rk.k * 100).toFixed(1) + '%"></b></div>' +
+      '<div class="ccEv"><span class="ei">' + ev.icon + '</span><div><small>CLUB EVENT · ' + fmtLeft(weekEndsIn()) + ' LEFT</small><b>' + ev.name + '</b></div></div>' +
+      '<div class="ccStand">' + st.map((x, i) => '<div class="' + (x.id === cl ? 'me' : '') + '"><span>' + (i + 1) + '</span><img src="' + badgeFor(x.id) + '" alt=""><i><b style="width:' + Math.max(3, x.pts / top * 100) + '%;background:' + CLUB_BY[x.id].c1 + '"></b></i><span>' + (x.pts >= 1000 ? (x.pts / 1000).toFixed(1) + 'k' : x.pts) + '</span></div>').join('') + '</div>' +
+      '<button class="ccGo" id="hubClubGo">CLUB HQ</button>';
+  }
+}
+function renderHubTiles() {
+  const ck = getCheckpoint(), t = $('tCont'); t.textContent = ck ? '▶ CONTINUE W' + (ck.wave + 1) : ''; t.style.cursor = 'pointer';
+  $('tWavesSub').textContent = maxWave > 1 ? 'Best wave ' + maxWave + ' · unlock cars + perks' : 'Endless waves · unlock cars';
+  const D = todayDaily(), done = dailyDone(), sk = streakNow();
+  $('tDailyIco').textContent = D.mod.icon; $('tDailySub').textContent = done ? 'Done today: ' + done.score + ' · practice' : D.mod.name + ' · ' + CAR_BY_ID[D.car].name + ' · 5 waves';
+  $('tStreak').textContent = sk ? '🔥 ' + sk : '';
+  $('hubInstall').classList.toggle('hidden', $('installBtn').classList.contains('hidden'));
+}
+function renderHubTicker() {
+  const ev = clubEvent(), D = todayDaily(), cl = myClubId(), yt = dailyMeta && dailyMeta.yesterday, i = '<i>◆</i>';
+  const bits = ['<b>NEW</b> 💣 Bomb Run: 3v3, plant the bomb in their base', '🏁 Club event: <b>' + ev.icon + ' ' + ev.name + '</b> · ' + ev.desc.toLowerCase() + ' · ends in ' + fmtLeft(weekEndsIn()),
+    '📅 Today: <b>' + D.mod.icon + ' ' + D.mod.name + '</b> in the ' + CAR_BY_ID[D.car].name, '🚗 Unlocked cars now come with <b>signature perks</b>',
+    cl ? CLUB_BY[cl].name + ': <b>' + weekPts().toLocaleString() + '</b> pts from you this week' : 'Join a <b>motor club</b>: tap the ＋ badge up top',
+    yt && yt.name ? 'Yesterday\'s daily winner: <b>' + esc(yt.name) + '</b> (' + yt.score + ')' : '', best ? 'Your best: <b>' + best.toLocaleString() + '</b>' : ''].filter(Boolean);
+  const h = bits.join(i) + i; if ($('hubTicker')._h !== h) { $('hubTicker')._h = h; $('hubTicker').innerHTML = h; }
+}
+function renderHub() { if (!$('hub')) return; try { renderHubCar(false); renderHubProfile(); renderHubClub(); renderHubTiles(); renderHubTicker(); } catch (e) { console.error(e); } }
+function syncHub() {
+  const at = !$('overlay').classList.contains('hidden') && !$('card').classList.contains('over');
+  const was = document.body.classList.contains('atHub'); document.body.classList.toggle('atHub', at);
+  if (at) $('card').classList.remove('teamRes', 'spBomb');
+  if (at && !was) { if ($('pname').parentNode !== $('pnameSlot')) $('pnameSlot').appendChild($('pname')); renderHub(); clubLoad(); }
+  if ($('boardSheet').classList.contains('hidden') && $('board').parentNode === $('boardBody')) BOARD_HOME[0].insertBefore($('board'), BOARD_HOME[1]);
+}
+const BOARD_HOME = [$('board').parentNode, $('board').nextSibling];
+new MutationObserver(syncHub).observe($('overlay'), { attributes: true, attributeFilter: ['class'] });
+new MutationObserver(syncHub).observe($('card'), { attributes: true, attributeFilter: ['class'] });
+new MutationObserver(syncHub).observe($('boardSheet'), { attributes: true, attributeFilter: ['class'] });
+$('tWaves').addEventListener('click', e => { if (e.target.closest('#tCont') && getCheckpoint()) { continueRun(); return; } begin('waves'); });
+$('tBomb').addEventListener('click', openBomb);
+$('tDaily').addEventListener('click', () => begin('daily'));
+$('tOnline').addEventListener('click', () => mpOpen());
+$('bsGo').addEventListener('click', startBombSP);
+$('hubPrev').addEventListener('click', () => { const i = CARS.findIndex(c => c.id === HUB.car); hubSetCar(CARS[(i + CARS.length - 1) % CARS.length].id); });
+$('hubNext').addEventListener('click', () => { const i = CARS.findIndex(c => c.id === HUB.car); hubSetCar(CARS[(i + 1) % CARS.length].id); });
+{ let sx = null; $('hubStage').addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true }); $('hubStage').addEventListener('touchend', e => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) $(dx < 0 ? 'hubNext' : 'hubPrev').click(); }); }
+$('hubBadge').addEventListener('click', openClub); $('hubPBadge').addEventListener('click', openClub);
+document.addEventListener('click', e => { if (e.target.closest('#hubClubGo') || e.target.closest('[data-join-peek]')) openClub(); const sh = e.target.classList && e.target.classList.contains('bigSheet') ? e.target : null; if (sh) sh.classList.add('hidden'); });
+$('hubBoard').addEventListener('click', () => { $('boardBody').appendChild($('board')); $('boardSheet').classList.remove('hidden'); loadBoard(); });
+$('hubHow').addEventListener('click', () => $('howBtn').click());
+$('hubInstall').addEventListener('click', () => $('installBtn').click());
+$('hubFs').addEventListener('click', () => $('fsMenu').click());
+$('hubDev').addEventListener('click', () => $('devBtn').click());
+document.addEventListener('keydown', e => { if (!document.body.classList.contains('atHub') || e.target.tagName === 'INPUT') return; if (e.code === 'ArrowLeft') $('hubPrev').click(); if (e.code === 'ArrowRight') $('hubNext').click(); });
+setInterval(() => { if (document.body.classList.contains('atHub')) { renderHubClub(); renderHubTicker(); } }, 30000);
+if (!CARS.some(c => c.id === HUB.car)) HUB.car = 'cruiser';
+syncHub(); renderHub();
+
 window.__sa = { get state() { return state; }, get wave() { return wave; }, get score() { return score; }, get cars() { return cars; }, get player() { return player; },
   get pickups() { return pickups; }, get arena() { return arena.id; }, combo, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { if (c.boss) { killCar(c, player); continue; } c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x + 26 * Math.cos(c.a), c.y + 26 * Math.sin(c.a)], player, 300, Math.cos(c.a), Math.sin(c.a)); } },
   spawnPickup() { spawnPickup(); }, get scrap() { return scrap; }, hitRegion(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; c.armor = 0; return hitCar(c, cp, a === undefined ? player : a, 300, Math.cos(c.a), Math.sin(c.a)); }, get introT() { return introT; }, get joy() { return joy; }, setScrap(n) { scrap = n; }, get UP() { return UP; }, get barrels() { return barrels; }, get crusher() { return crusher; },
-  get mode() { return gameMode; }, setWaveNow(n) { wave = n; }, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { c.dead = true; c.deadT = 0; } }, get checkpoint() { return getCheckpoint(); }, get wave() { return wave; }, get net() { return NET }, get netView() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, get skids() { const n = performance.now(); return SKID.slices.filter(x => x.used && n - x.t0 < SKID.LIFE).length; }, skidAlpha() { const n = performance.now(); return SKID.slices.filter(x => x.used).map(x => +clamp((SKID.LIFE - (n - x.t0)) / SKID.FADE, 0, 1).toFixed(2)); }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
+  perkHit(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; return hitCar(c, cp, a, 300, Math.cos(c.a), Math.sin(c.a)); }, hubSetCar,
+  get mode() { return gameMode; }, get bomb() { return BOMB; }, get VS() { return VS; }, get cars() { return cars; }, teamOn, bombOn, startBombSP, openBomb, openClub, joinClub, get club() { return CLUB; }, clubWeek, clubEvent, renderHub, get hubCar() { return HUB.car; }, get player() { return player; }, bombState, setWaveNow(n) { wave = n; }, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { c.dead = true; c.deadT = 0; } }, get checkpoint() { return getCheckpoint(); }, get wave() { return wave; }, get net() { return NET }, get netView() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, get skids() { const n = performance.now(); return SKID.slices.filter(x => x.used && n - x.t0 < SKID.LIFE).length; }, skidAlpha() { const n = performance.now(); return SKID.slices.filter(x => x.used).map(x => +clamp((SKID.LIFE - (n - x.t0)) / SKID.FADE, 0, 1).toFixed(2)); }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
 })();
 </script>
 </body>

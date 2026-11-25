@@ -55,6 +55,39 @@ async function top(env, mode, period, day, pid) {
   return { rows, total, mine };
 }
 
+// ---------- motor clubs: weekly club points (week = Monday midnight Toronto, same formula as the game) ----------
+const CLUB_IDS = ['reapers', 'vipers', 'bulls', 'owls', 'kings', 'wolves'];
+const clubWeekNow = () => Math.floor((Date.now() - Date.UTC(2024, 0, 1, 5)) / 6048e5);
+let CLUB_READY = false;
+async function clubInit(env) {
+  if (CLUB_READY) return;
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS club_pts (pid TEXT NOT NULL, club TEXT NOT NULL, week INTEGER NOT NULL, name TEXT, pts INTEGER NOT NULL DEFAULT 0, ts INTEGER, PRIMARY KEY (pid, club, week))').run();
+  CLUB_READY = true;
+}
+async function clubBoard(env, week, club, pid) {
+  const clubs = (await env.DB.prepare('SELECT club, SUM(pts) AS pts, COUNT(*) AS members FROM club_pts WHERE week = ?1 GROUP BY club').bind(week).all()).results;
+  const top = CLUB_IDS.includes(club) ? (await env.DB.prepare('SELECT name, pts, pid FROM club_pts WHERE week = ?1 AND club = ?2 ORDER BY pts DESC LIMIT 10').bind(week, club).all()).results.map(r => ({ name: r.name, pts: r.pts, me: r.pid === pid || undefined })) : [];
+  const lw = await env.DB.prepare('SELECT club, SUM(pts) AS s FROM club_pts WHERE week = ?1 GROUP BY club ORDER BY s DESC LIMIT 1').bind(week - 1).first();
+  return { week, clubs, top, last: lw ? lw.club : '' };
+}
+async function club(req, env, url, p) {
+  await clubInit(env);
+  const week = clubWeekNow();
+  if (p === '/api/club/board') {
+    const pid = (url.searchParams.get('pid') || '').slice(0, 40), cl = url.searchParams.get('club') || '';
+    return json(await clubBoard(env, week, cl, pid));
+  }
+  if (p === '/api/club/add' && req.method === 'POST') {
+    let b; try { b = await req.json(); } catch { return json({ error: 'bad json' }, 400); }
+    const pid = String(b.pid || '').replace(/[^a-z0-9]/gi, '').slice(0, 40), cl = String(b.club || ''), pts = Math.floor(+b.pts || 0), name = cleanName(b.name) || 'Driver';
+    if (pid.length < 8 || !CLUB_IDS.includes(cl)) return json({ error: 'bad' }, 400);
+    if (!(pts > 0 && pts <= 6000)) return json({ error: 'range' }, 400);
+    await env.DB.prepare('INSERT INTO club_pts (pid, club, week, name, pts, ts) VALUES (?1, ?2, ?3, ?4, ?5, ?6) ON CONFLICT(pid, club, week) DO UPDATE SET pts = MIN(80000, pts + excluded.pts), name = excluded.name, ts = excluded.ts')
+      .bind(pid, cl, week, name, pts, Date.now()).run();
+    return json(Object.assign({ ok: true }, await clubBoard(env, week, cl, pid)));
+  }
+  return json({ error: 'not found' }, 404);
+}
 let ICE_CACHE = null;
 async function api(req, env, url) {
   const p = url.pathname;
@@ -71,6 +104,7 @@ async function api(req, env, url) {
       ICE_CACHE = { v, exp: Date.now() + 6 * 3600e3 }; return json({ iceServers: v });
     } catch (e) { return json({ iceServers: stun }); }
   }
+  if (p.startsWith('/api/club/')) return club(req, env, url, p);
   if (p === '/api/daily') {
     const day = dayStr(), y = dayStr(Date.now() - 864e5);
     const yt = (await env.DB.prepare('SELECT name, MAX(score) AS score FROM scores WHERE mode=\'daily\' AND day=?1 GROUP BY pid ORDER BY score DESC LIMIT 1').bind(y).first()) || null;
