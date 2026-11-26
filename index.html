@@ -468,7 +468,7 @@
   .stage .floor{position:absolute;left:50%;bottom:27%;width:86%;height:22%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(255,200,140,.28),rgba(230,57,70,.12) 55%,transparent 72%)}
   .stage .floor i{position:absolute;inset:8% 10%;border-radius:50%;border:2px solid rgba(255,190,90,.35);border-top-color:transparent;border-bottom-color:rgba(255,120,60,.6);animation:spin 6s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  #hubCar{position:relative;width:150%;max-width:none;margin-left:-25%;margin-right:-25%;max-height:68%;object-fit:contain;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);filter:drop-shadow(0 18px 18px rgba(0,0,0,.6));animation:float 4s ease-in-out infinite;margin-bottom:auto;margin-top:auto;transition:opacity .25s,transform .25s}
+  #hubCar{position:relative;width:150%;max-width:none;margin-left:-25%;margin-right:-25%;max-height:68%;object-fit:contain;cursor:pointer;-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);filter:drop-shadow(0 18px 18px rgba(0,0,0,.6));animation:float 4s ease-in-out infinite;margin-bottom:auto;margin-top:auto;transition:opacity .25s,transform .25s}
   #hubCar.swap{opacity:0;transform:translateX(30px) scale(.95)}
   #hubCar.lockedCar{filter:grayscale(1) brightness(.62) drop-shadow(0 18px 18px rgba(0,0,0,.6));opacity:.85}
   .lockOv{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:1;animation:lockIn .35s cubic-bezier(.2,1.5,.4,1) both}
@@ -537,6 +537,45 @@
     .hubTop{flex-wrap:wrap} .logo{font-size:34px} .profile{margin-left:0;order:3;width:100%;box-sizing:border-box} .topBtns{margin-left:auto}
     .hubMain{grid-template-columns:1fr;gap:12px} .stage{order:-1;height:42vh} .tile{min-height:64px;max-height:none} .tile b{font-size:22px} .tile small{font-size:12px}
   }
+
+  /* garage */
+  .garBtn em{font-style:normal;font-size:11px;color:#ffd166;background:rgba(255,190,11,.12);border:1px solid rgba(255,190,11,.3);border-radius:999px;padding:1px 7px;margin-left:2px}
+  @media (max-height:500px){ .garBtn em{font-size:10px;padding:0 5px} }
+  .modChip{margin-top:5px;border:1px dashed rgba(255,190,11,.5);background:rgba(255,190,11,.08);color:#ffd166;border-radius:999px;padding:3px 10px;font:800 11px system-ui,sans-serif;cursor:pointer} .modChip.none{color:#8d97a8;border-color:rgba(255,255,255,.2);background:none}
+  @media (max-height:500px){ .modChip{font-size:9.5px;padding:2px 8px;margin-top:3px} }
+  .garBs{width:min(1000px,100%)} .garHead{display:flex;align-items:center;gap:12px;margin-bottom:8px} .garHead h2{margin:0}
+  .gpChip{margin-left:auto;margin-right:40px;font:900 15px system-ui,sans-serif;color:#ffd166;background:rgba(255,190,11,.1);border:1px solid rgba(255,190,11,.35);border-radius:999px;padding:5px 14px}
+  #garTabs{display:flex;gap:6px;margin-bottom:12px} #garTabs button{flex:1;border:1px solid #2d3340;background:#12151b;color:#aab3c2;border-radius:10px;padding:8px;font:900 12.5px system-ui,sans-serif;letter-spacing:.08em;cursor:pointer} #garTabs button.on{border-color:#ff4d5a;color:#fff;background:linear-gradient(180deg,rgba(230,57,70,.22),#12151b)}
+  .gCars{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+  .gShow{position:relative;border-radius:16px;overflow:hidden;background:radial-gradient(70% 70% at 50% 45%,rgba(255,220,180,.18),rgba(10,12,16,0) 70%),linear-gradient(180deg,#1a1d25,#0e1015);border:1px solid #2d3340;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
+  .gShow img{width:130%;max-width:none;-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%)} .gShow img.lockedCar{filter:grayscale(1) brightness(.62);opacity:.85}
+  .gShow .gName{position:absolute;left:14px;bottom:10px} .gShow .gName b{display:block;font:900 italic 24px system-ui,sans-serif} .gShow .gName small{color:#8d97a8;font-weight:700}
+  .gShow .lockOv{top:42%} .gInfo .pstats div{font-size:10px} .gPerk{font-size:13px;line-height:1.45;color:#cfd6e2;margin:10px 0} .gPerk b{color:#ffd166}
+  .gMod{display:flex;align-items:center;gap:10px;border:1px solid rgba(255,190,11,.35);background:rgba(255,190,11,.07);border-radius:12px;padding:8px 12px;cursor:pointer} .gMod .mi{font-size:26px} .gMod small{display:block;font:800 10px system-ui,sans-serif;letter-spacing:.16em;color:#d9b45a} .gMod b{font:900 15px system-ui,sans-serif}
+  .gList{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:12px} .gCar{border:1px solid #2d3340;background:#12151b;border-radius:10px;padding:4px;color:#dfe5ee;cursor:pointer;text-align:center} .gCar img{width:100%;aspect-ratio:2/1;object-fit:contain} .gCar b{font:900 italic 11px system-ui,sans-serif} .gCar.on{border-color:#ff4d5a;box-shadow:0 0 0 2px rgba(255,77,90,.3)} .gCar.lk img{filter:grayscale(1) brightness(.6)}
+  .gNote{margin:0 0 10px;font-size:13px;color:#aab3c2;line-height:1.45} .gNote b{color:#fff}
+  .gMods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .gModC{border:1px solid #2d3340;border-radius:14px;background:linear-gradient(170deg,#161a22,#0e1015);padding:10px;display:flex;flex-direction:column;gap:6px} .gModC.own{border-color:#3a4150} .gModC.on{border-color:#ffae00;box-shadow:0 0 0 2px rgba(255,174,0,.3);background:linear-gradient(170deg,rgba(255,174,0,.14),#0e1015)}
+  .mTop{display:flex;gap:9px;align-items:center} .mTop .mi{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:22px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 2px rgba(255,255,255,.08)} .mTop b{display:block;font:900 italic 15px system-ui,sans-serif} .mTop small{font-size:10.5px;color:#8d97a8;font-weight:700}
+  .mTop em{font-style:normal;font-weight:900;letter-spacing:.08em} .mTop em.active{color:#ff8a5c} .mTop em.passive{color:#7dd3fc}
+  .gModC p{margin:0;font-size:12px;line-height:1.4;color:#cfd6e2;flex:1}
+  .mBtn{border:0;border-radius:10px;padding:8px;font:900 12px system-ui,sans-serif;letter-spacing:.06em;cursor:pointer;background:#2d3340;color:#dfe5ee} .mBtn.buy{background:linear-gradient(180deg,#ffc94a,#ff9800);color:#2a1600} .mBtn.buy:disabled{background:#1c2029;color:#6d7686;cursor:not-allowed} .mBtn.eq{background:#ffae00;color:#2a1600}
+  .gH{margin:12px 0 6px;font:800 11px system-ui,sans-serif;letter-spacing:.18em;color:#8d97a8} .gAch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .gA{display:flex;align-items:center;gap:10px;border:1px solid #232833;background:#11141a;border-radius:10px;padding:7px 10px} .gA .ai{font-size:22px;width:30px;text-align:center;opacity:.55} .gA .at{flex:1;min-width:0} .gA b{display:block;font:900 13px system-ui,sans-serif;color:#aab3c2} .gA small{display:block;font-size:11px;color:#7d8696}
+  .gA em{font-style:normal;font:900 12px system-ui,sans-serif;color:#8d97a8;white-space:nowrap} .gA.done{border-color:rgba(125,255,176,.35);background:linear-gradient(90deg,rgba(125,255,176,.08),#11141a)} .gA.done .ai{opacity:1} .gA.done b{color:#fff} .gA.done em{color:#7dffb0} .gA.rep em{color:#ffd166} .gA.rep .ai{opacity:1}
+  .gA .ap{display:block;height:4px;border-radius:3px;background:rgba(255,255,255,.07);margin-top:4px;overflow:hidden} .gA .ap b{display:block;height:100%;background:#ffbe0b} .gA .pn{font-size:10px}
+  @media (max-width:760px),(max-height:500px){ .gCars{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px} .gMods{grid-template-columns:repeat(2,minmax(0,1fr))} .gModC p{font-size:11px} .gList{grid-template-columns:repeat(4,minmax(0,1fr))} .gShow .gName b{font-size:18px} }
+  @media (max-height:500px){ .garBs{padding:10px 12px} #garTabs{margin-bottom:8px} #garTabs button{padding:6px;font-size:11px} .gPerk{font-size:11.5px;margin:6px 0} .gMods{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px} .gModC{padding:7px;gap:4px} .mTop .mi{width:32px;height:32px;font-size:17px} .mTop b{font-size:12.5px} .mTop small{font-size:9px} .gModC p{font-size:10px} .mBtn{padding:6px;font-size:10.5px} .gAch{gap:4px} .gA{padding:5px 8px} .gA b{font-size:12px} }
+.gpEarn{margin-top:8px;padding:6px 12px;border-radius:10px;background:rgba(255,190,11,.1);border:1px solid rgba(255,190,11,.35);font-size:13px;color:#e8dcc0} .gpEarn b{color:#ffd166}
+  .clSoon{display:flex;gap:12px;align-items:center;margin:10px 0;padding:10px 12px;border-radius:14px;border:1px dashed rgba(157,107,255,.55);background:linear-gradient(90deg,rgba(157,107,255,.14),rgba(157,107,255,.03))} .clSoon .si{font-size:28px} .clSoon small{font:800 10.5px system-ui,sans-serif;letter-spacing:.16em;color:#c4a8ff} .clSoon b{display:block;font:900 italic 17px system-ui,sans-serif} .clSoon p{margin:2px 0 0;font-size:12.5px;color:#cfd6e2;line-height:1.4}
+  /* achievement toast + mod controls */
+  #achToast{position:fixed;left:50%;bottom:max(16px,calc(env(safe-area-inset-bottom) + 10px));transform:translate(-50%,30px);z-index:45;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:14px;background:linear-gradient(90deg,rgba(40,30,8,.95),rgba(16,18,24,.95));border:1px solid rgba(255,209,102,.6);box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;color:#fff}
+  #achToast.show{opacity:1;transform:translate(-50%,0)} #achToast .ai{font-size:26px} #achToast small{display:block;font:800 9.5px system-ui,sans-serif;letter-spacing:.18em;color:#ffd166} #achToast b{font:900 15px system-ui,sans-serif} #achToast em{font-style:normal;font:900 15px system-ui,sans-serif;color:#7dffb0;margin-left:6px}
+  #modHud{display:none;position:fixed;left:max(12px,env(safe-area-inset-left));top:max(86px,calc(env(safe-area-inset-top) + 82px));z-index:6;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(10,12,16,.75);border:1px solid #3a3f4b;font:800 12px system-ui,sans-serif;color:#aab3c2;pointer-events:none} #modHud.ready{color:#ffd166;border-color:rgba(255,209,102,.6)}
+  body.touch #modHud{display:none!important}
+  #bMod{display:none;position:relative;width:64px;height:64px;font-size:11px;margin-bottom:6px;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;border-color:rgba(255,138,92,.9)!important;color:#ffd0b8!important;background:conic-gradient(rgba(0,0,0,.55) var(--cd,0deg),rgba(120,50,20,.55) 0)!important}
+  #bMod i{font-style:normal;font-size:22px} #bMod small{font-size:9px;font-weight:900;letter-spacing:.06em} #bMod.cool{opacity:.7}
+  body.touch.hasMod #bMod{display:flex}
   /* sheets for leaderboard, clubs and bomb run setup */
   .bigSheet{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(4,5,8,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));box-sizing:border-box}
   .bigSheet.hidden{display:none}
@@ -593,7 +632,7 @@
 <canvas id="c"></canvas>
 <div id="netInfo" style="display:none"></div><div id="netStatus" style="display:none"></div>
 <div id="vsBar"><b class="b">0</b><span class="t">3:00</span><b class="r">0</b></div>
-<div id="respawnMsg"></div><div id="bombMsg"></div>
+<div id="respawnMsg"></div><div id="bombMsg"></div><div id="achToast"></div><div id="modHud"></div>
 <div id="hud">
   <div class="stats"><span>WAVE <b id="hw">1</b></span><span>SCORE <b id="hs">0</b></span><span>BEST <b id="hb">0</b></span><span>SCRAP <b id="hsc" style="color:#ffd166">0</b></span><span>CAR <b id="hc" style="font-size:14px">-</b></span></div>
   <div id="status">
@@ -610,7 +649,7 @@
 <div id="touch">
   <div id="joyZone"></div>
   <div id="joy"><div id="joyKnob"></div></div>
-  <div id="tbtns"><button id="bPass">PASS<small>💣</small></button><button id="bNos" data-k="nos">NOS</button><button id="bDrift" data-k="hand">DRIFT</button></div>
+  <div id="tbtns"><button id="bMod"></button><button id="bPass">PASS<small>💣</small></button><button id="bNos" data-k="nos">NOS</button><button id="bDrift" data-k="hand">DRIFT</button></div>
 </div>
 <div id="mute">Shift = nitro &middot; M = mute &middot; R = restart</div>
 <div id="select" class="hidden">
@@ -649,7 +688,7 @@
       <header class="hubTop">
         <div class="logo"><span class="l1">SCRAP</span><span class="l2">ARENA</span><small>DEMOLITION DERBY</small></div>
         <div class="profile" id="hubProfile"><button class="pBadge" id="hubPBadge" title="Motor club"></button><div class="pTxt"><span class="pNameSlot" id="pnameSlot"></span><small id="hubRank"></small></div></div>
-        <div class="topBtns"><button id="hubBoard" title="Leaderboard">🏆<span>RANKS</span></button><button id="hubHow" title="How to play">❓<span>HOW</span></button><button id="hubInstall" class="hidden" title="Install">📲<span>APP</span></button><button id="hubFs" title="Fullscreen">⛶</button><button id="hubDev" title="Dev">🛠</button></div>
+        <div class="topBtns"><button id="hubGarage" class="garBtn" title="Garage">🔧<span>GARAGE</span><em>🔩 <b id="hubGp">0</b></em></button><button id="hubBoard" title="Leaderboard">🏆<span>RANKS</span></button><button id="hubHow" title="How to play">❓<span>HOW</span></button><button id="hubInstall" class="hidden" title="Install">📲<span>APP</span></button><button id="hubFs" title="Fullscreen">⛶</button><button id="hubDev" title="Dev">🛠</button></div>
       </header>
       <div class="hubMain">
         <nav class="modes">
@@ -664,7 +703,7 @@
           <div class="lockOv hidden" id="hubLock"><i></i><b id="hubLockTxt"></b></div>
           <img id="hubBadge" class="sticker" alt="">
           <button class="nav prev" id="hubPrev" aria-label="Previous car">‹</button><button class="nav next" id="hubNext" aria-label="Next car">›</button>
-          <div class="plate"><div class="pl1"><b id="hubCarName"></b><small id="hubCarRole"></small></div><div class="pstats" id="hubStats"></div><div class="perkline" id="hubPerk"></div></div>
+          <div class="plate"><div class="pl1"><b id="hubCarName"></b><small id="hubCarRole"></small></div><div class="pstats" id="hubStats"></div><div class="perkline" id="hubPerk"></div><button class="modChip" id="hubMod"></button></div>
           <div class="dots" id="hubDots"></div>
         </section>
         <aside class="clubCard" id="hubClub"></aside>
@@ -731,6 +770,10 @@
       </div>
   </div>
 </div></div>
+<div id="garageSheet" class="bigSheet hidden"><div class="bs garBs"><button class="shClose" data-close="garageSheet">✕</button>
+  <div class="garHead"><h2>🔧 GARAGE</h2><span class="gpChip">🔩 <b id="garGp">0</b> GP</span></div>
+  <div id="garTabs"><button data-gt="cars">🚗 CARS</button><button data-gt="mods">⚙️ MODS</button><button data-gt="ach">🏆 ACHIEVEMENTS</button></div>
+  <div id="garBody"></div></div></div>
 <div id="clubSheet" class="bigSheet hidden"><div class="bs"><button class="shClose" data-close="clubSheet">✕</button><h2>🏁 MOTOR CLUBS</h2><div id="clubBody"></div></div></div>
 <div id="boardSheet" class="bigSheet hidden"><div class="bs" style="width:min(620px,100%)"><button class="shClose" data-close="boardSheet">✕</button><h2>🏆 LEADERBOARD</h2><div id="boardBody"></div></div></div>
 <div id="mpPanel" class="hidden"><div class="mp">
@@ -861,7 +904,7 @@ function genLayout(id, R2) {
   return { groups, fixed, barrels, oil, puddles };
 }
 function setArena(i) {
-  arenaIdx = i; arena = ARENA_ALL[i] || ARENAS[0]; OBST_C = []; setWorld(arena);
+  arenaIdx = i; arena = ARENA_ALL[i] || ARENAS[0]; OBST_C = []; setWorld(arena); SPIKES = [];
   const R2 = gameMode === 'daily' && daily && !devRun ? rng(daily.seed + i * 101 + 7) : Math.random;
   LAY = arena === DEPOT ? depotLayout() : genLayout(arena.id, R2); wetMarks = [];
   if (NET.role === 'host' && NET.started) setTimeout(() => nev(...netLayoutMsg()), 0);
@@ -988,7 +1031,7 @@ const MAXP = 6, COOP_MAX = 2;
 const TEAM_COL = ['#3a86ff', '#ff4d5a'], TEAM_NAME = ['BLUE', 'RED'], VS_LEN = 180, VS_BOSS_AT = 120, VS_RESPAWN = 3, VS_KILL = 5, VS_BOSS_PTS = 25;
 const VS = { matchT: VS_LEN, score: [0, 0], boss: 'none', bossState: 0, warned: false, kind: 'derby' };
 let BLAST = false; // true while a barrel blast is dealing damage (team-mates can hurt each other that way)
-const NET = { vs: { slots: ['', '', '', '', '', ''], votes: {}, kind: 'derby' }, clubs: {}, role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [], away: {}, acc: 0, jpk: 0, lastSnapAt: 0 };
+const NET = { vs: { slots: ['', '', '', '', '', ''], votes: {}, kind: 'derby' }, clubs: {}, mods: {}, role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [], away: {}, acc: 0, jpk: 0, lastSnapAt: 0 };
 let RTC_ICE = [{ urls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'] }];
 const RTC = { peers: new Map(), me: null, lastRx: 0, rpT: 0 };
 const rtcOk = p => !!(p && p.u && p.u.readyState === 'open' && p.r && p.r.readyState === 'open');
@@ -1226,9 +1269,10 @@ function renderClubSheet() {
   const top = Math.max(1, ...st.map(x => x.pts));
   const evCard = '<div class="clEvent"><span class="ei">' + ev.icon + '</span><div><small>THIS WEEK\'S CLUB EVENT · ends in ' + fmtLeft(weekEndsIn()) + '</small><b>' + ev.name + '</b><p>' + ev.desc + '. Top club at the end of the week gets the 🏆 gold ring on its badge; any club that reaches ' + CLUB_GOAL.toLocaleString() + ' points goes chrome.</p></div></div>';
   const stand = '<div class="clStand"><h4>WEEKLY STANDINGS ' + (online ? '' : '<small>· offline: only your points shown</small>') + '</h4>' + st.map((x, i) => { const c = CLUB_BY[x.id]; return '<div class="clRow' + (x.id === id ? ' mine' : '') + '"><span class="pos">' + (i + 1) + '</span><img src="' + badgeFor(x.id) + '" alt=""><span class="nm">' + c.name + (champClub() === x.id ? ' 🏆' : '') + '</span><div class="bar"><b style="width:' + Math.max(2, x.pts / top * 100) + '%;background:' + c.c1 + '"></b></div><span class="pt">' + x.pts.toLocaleString() + (x.members ? '<small>' + x.members + ' 👤</small>' : '') + '</span></div>'; }).join('') + '</div>';
+  const soon = '<div class="clSoon"><span class="si">🔒</span><div><small>COMING SOON</small><b>CLUB CHALLENGES</b><p>Weekly club-vs-club challenges with club-only rewards. Your club points will count towards them, so keep earning.</p></div></div>';
   if (!id || clubView === 'pick') {
     el.innerHTML = '<p class="clIntro">' + (id ? 'Switching moves you to a new club. Your rank starts again there; points you already earned stay with ' + CLUB_BY[id].name + '.' : 'Pick a motor club. Its badge goes on your roof and hood, and every game you play earns points for your club. Clubs race each other in a new event every week.') + '</p>' +
-      '<div class="clPick">' + CLUBS.map(c => '<button class="clCard' + (c.id === id ? ' on' : '') + '" data-join="' + c.id + '" style="--cc:' + c.c1 + '"><img src="' + badgeFor(c.id, true) + '" alt=""><b>' + c.name + '</b><em>"' + c.motto + '"</em><small>' + c.vibe + '</small><span class="go">' + (c.id === id ? 'YOUR CLUB' : (CLUB.life[c.id] ? 'REJOIN · ' + clubRank(CLUB.life[c.id]).name : 'JOIN')) + '</span></button>').join('') + '</div>' + (id ? '<button class="clBack" data-cv="">← Back to ' + CLUB_BY[id].name + '</button>' : '') + evCard;
+      '<div class="clPick">' + CLUBS.map(c => '<button class="clCard' + (c.id === id ? ' on' : '') + '" data-join="' + c.id + '" style="--cc:' + c.c1 + '"><img src="' + badgeFor(c.id, true) + '" alt=""><b>' + c.name + '</b><em>"' + c.motto + '"</em><small>' + c.vibe + '</small><span class="go">' + (c.id === id ? 'YOUR CLUB' : (CLUB.life[c.id] ? 'REJOIN · ' + clubRank(CLUB.life[c.id]).name : 'JOIN')) + '</span></button>').join('') + '</div>' + (id ? '<button class="clBack" data-cv="">← Back to ' + CLUB_BY[id].name + '</button>' : '') + evCard + soon;
     return;
   }
   const c = CLUB_BY[id], p = myClubPts(), rk = clubRank(p), mine = st.find(x => x.id === id) || { pts: 0 };
@@ -1237,7 +1281,7 @@ function renderClubSheet() {
     '<div class="rank"><b>' + rk.name + '</b>' + (rk.next ? '<span>' + (rk.need - p).toLocaleString() + ' to ' + rk.next + '</span>' : '<span>top rank</span>') + '</div><div class="rbar"><b style="width:' + (rk.k * 100).toFixed(1) + '%"></b></div>' +
     '<div class="nums"><span><b>' + p.toLocaleString() + '</b>lifetime pts</span><span><b>' + weekPts().toLocaleString() + '</b>this week</span><span><b>' + mine.pts.toLocaleString() + '</b>club this week</span></div></div></div>' +
     '<div class="clGoal"><small>WEEKLY CLUB GOAL</small><div class="gbar"><b style="width:' + Math.min(100, mine.pts / CLUB_GOAL * 100).toFixed(1) + '%;background:' + c.c1 + '"></b><span>' + mine.pts.toLocaleString() + ' / ' + CLUB_GOAL.toLocaleString() + (mine.pts >= CLUB_GOAL ? ' · CHROME BADGE UNLOCKED ✨' : '') + '</span></div></div>' +
-    evCard + stand +
+    evCard + soon + stand +
     (topM.length ? '<div class="clTop"><h4>TOP ' + c.name.toUpperCase() + ' THIS WEEK</h4>' + topM.slice(0, 8).map((m2, i) => '<div class="tm' + (m2.me ? ' me' : '') + '"><span>' + (i + 1) + '. ' + esc(m2.name) + '</span><b>' + (m2.pts | 0).toLocaleString() + '</b></div>').join('') + '</div>' : '') +
     '<div class="clHow"><h4>HOW TO EARN</h4><ul><li>💣 Blow up a base: 60 (Bomb Run) / 80 (online)</li><li>💥 KO a player: 8–10 · 🛑 stop a carrier: 25</li><li>🏆 Team win: 80–120</li><li>🛣️ Waves &amp; Daily: 1 per 20 score</li><li>' + ev.icon + ' ' + ev.name + ': ' + ev.desc.toLowerCase() + '</li></ul></div>' +
     '<button class="clSwitch" data-cv="pick">Switch club</button>';
@@ -1290,6 +1334,7 @@ function jTurnInput(c, tgt, stickBack, mag, l, r) {
   if (rE || lE) { const k = rE ? 1 : -1; if (c.jTap && c.jTap.k === k && now - c.jTap.t < 320 && c.throttle < 0) { jTurnFire(c, k); c.jTap = null; } else c.jTap = { k, t: now }; }
 }
 function driveCar(c, dt) {
+  if (c.stunT > 0) { c.stunT -= dt; c.throttle = 0; c.steer = 0; c.boost = false; c.handbrake = false; } // flipped: no control for a moment
   if ((c.jseq | 0) !== (c.jseen | 0)) { c.jseen = c.jseq | 0; if (!(c.jtT > 0)) { c.jtT = JT_DUR; c.jtDir = c.jdir || 1; } }
   if (c.jtT > 0) {
     const k = Math.min(dt, c.jtT); c.a += c.jtDir * Math.PI / JT_DUR * k; c.jtT -= dt;
@@ -1795,7 +1840,7 @@ function newGame() {
     runT0 = performance.now() - (ck.ms || 0); seenTypes = new Set(ck.seen || []);
   }
   player = makeCar(W / 2, H / 2 + 150, -Math.PI / 2, PLAYER_COL, true, 1);
-  applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player); player.club = myClubId();
+  applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player); player.club = myClubId(); player.mod = modsAllowed() ? GAR.equip : ''; SPIKES = [];
   cars.push(player);
   state = 'play'; $('overlay').classList.add('hidden');
   snapCamera();
@@ -1891,6 +1936,7 @@ const HAZ = {
 };
 const HAZ_TXT = { town: 'HAZARDS: oil slicks + explosive barrels', junk: 'HAZARDS: oil, barrels + the CAR CRUSHER - stay off its pad when it flashes', docks: 'HAZARDS: oil slicks + explosive barrels' };
 let barrels = [], oilCv = [], crusher = null, staticC = [], arenaIdxPrev = -1;
+let SPIKES = [], spikeId = 1; // car-mod spike strips
 function rebuildObst() { OBST_C = staticC.concat(barrels.filter(b => b.alive).map(b => ({ x: b.x, y: b.y, r: b.r, barrel: b }))); }
 function makeOil(r, seed) {
   const R2 = rng(seed), c = mkCanvas(Math.ceil(r * 7), Math.ceil(r * 7)), g = c.getContext('2d'), k = 2, cx = c.width / 2, cy = c.height / 2;
@@ -2150,6 +2196,10 @@ function hitCar(v, cp, atk, closing, nx, ny, noKb) {
     v.bullT = 3; v.inv = .35; spark(cp[0], cp[1], 16, 240, '#e6ebf2'); thud(.4, 180); addText(v.x, v.y - 36, 'BULL BAR!', '#cfd6e2');
     if (atk && !noKb) { atk.vx -= nx * 120; atk.vy -= ny * 120; } return false;
   }
+  if (v.mod === 'plow' && region === 'front' && closing < 430 && !v.boss) { // plow: the hit glances off sideways
+    const sx = -Math.sin(v.a), sy = Math.cos(v.a), sg = atk && ((atk.x - v.x) * sx + (atk.y - v.y) * sy) > 0 ? 1 : -1;
+    if (atk && !noKb) { atk.vx += sx * sg * 260; atk.vy += sy * sg * 260; atk.spin += sg * 2.5; } v.inv = .3; spark(cp[0], cp[1], 12, 220, '#ffbe0b'); addText(v.x, v.y - 36, 'PLOWED ASIDE', '#ffd166'); return false;
+  }
   if (v.perk === 'ghost' && Math.random() < 1 / 3) { v.inv = .4; spark(cp[0], cp[1], 10, 200, '#b9c3ff'); addText(v.x, v.y - 36, 'GLANCED OFF', '#b9c3ff'); return false; }
   let force;
   if (v.boss) {
@@ -2321,7 +2371,7 @@ function ai(c, dt) {
     a.retarget = .5 + Math.random() * .6; let best = null, bd = 1e9;
     for (const o of cars) {
       if (o === c || o.dead) continue;
-      const d = Math.hypot(o.x - c.x, o.y - c.y) * (o.isPlayer ? T.prefer : 1) * (.8 + a.fickle * .4);
+      const d = Math.hypot(o.x - c.x, o.y - c.y) * (o.isPlayer ? T.prefer : 1) * (.8 + a.fickle * .4) * (o.smokeT > 0 ? 6 : 1);
       if (d < bd) { bd = d; best = o; }
     }
     if (a.mode !== 'charge') a.target = best;
@@ -2495,6 +2545,7 @@ function step(dt) {
       }
     }
   }
+  modTimers(dt); modTick(dt);
   for (const c of cars) {
     if (c.inv > 0) c.inv -= dt;
     if (c.bullT > 0) c.bullT -= dt;
@@ -2635,7 +2686,7 @@ async function submitScore(mode) {
   if (mode === 'daily') body.day = daily.day;
   const r = await api('/api/score', body);
   const k = mode === 'daily' ? 'daily' : 'all';
-  if (r && r.rows) { boardCache[k] = r; if (mode === 'waves') { delete boardCache.week; } }
+  if (r && r.rows) { boardCache[k] = r; if (mode === 'waves') { delete boardCache.week; } if (mode === 'daily' && r.mine) achDailyRank(r.mine.rank); }
   else if (r && r.error) { $('final').textContent += '  •  Online score not accepted (' + (r.error === 'implausible' ? 'run looked too fast' : r.error) + ')'; loadBoard(); return r; }
   else boardCache[k] = boardCache[k] || { offline: true };
   if (boardTab === k) renderBoard(); else if (mode === 'waves' && boardTab === 'week') loadBoard();
@@ -2656,7 +2707,7 @@ function endGame(won, quit) {
   if (NET.role && (NET.started || state === 'play')) { netShowResults({ hostLeft: false }); return; }
   if (LOCAL_TEAM && !NET.role) { bombSpOver(quit); return; }
   state = 'over'; paused = false; $('pauseMenu').classList.add('hidden');
-  const isD = gameMode === 'daily';
+  const isD = gameMode === 'daily', wasDev = devRun;
   let idx = -1, kept = null, msg;
   if (devRun) {
     msg = 'Dev run ended on wave ' + wave + '  •  Score ' + score + '  •  not saved';
@@ -2689,7 +2740,7 @@ function endGame(won, quit) {
   best = Math.max(best, scores.length ? scores[0].score : 0);
   updateHud();
   { const ck = !isD && !quit ? getCheckpoint() : null; $('final').textContent = msg + (ck ? '  •  Checkpoint saved at wave ' + (ck.wave + 1) + ': tap CONTINUE' : '');
-    const cp = !quit || score > 0 ? clubAwardRun(isD ? 'daily' : 'waves', score, kills, bossKills) : null; $('clubAwardBox').innerHTML = cp || !myClubId() ? clubAwardHtml(cp) : ''; }
+    const cp = !quit || score > 0 ? clubAwardRun(isD ? 'daily' : 'waves', score, kills, bossKills) : null; $('clubAwardBox').innerHTML = cp || !myClubId() ? clubAwardHtml(cp) : ''; if (!wasDev) achRun(isD && !quit, score, kills, bossKills); }
   renderBoard(idx); renderDailyBox(); renderContinue();
   $('card').classList.remove('teamRes', 'spBomb'); $('goBomb').innerHTML = 'BOMB RUN<small>3v3 vs bots · plant the bomb</small>';
   $('card').classList.add('over'); $('banner').classList.remove('show');
@@ -2718,6 +2769,7 @@ const BEAM = (() => { const cv = document.createElement('canvas'); cv.width = 12
 function drawCar(c) {
   const fade = carFade(c), now = performance.now();
   ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.a);
+  if (c.hopT > 0) { const hs = 1 + .38 * Math.sin((1 - c.hopT / .7) * Math.PI); ctx.scale(hs, hs); }
   if (teamOn() && c.isPlayer && c.team != null && !c.dead) { ctx.globalAlpha = fade * .85; ctx.strokeStyle = TEAM_COL[c.team]; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(0, 0, (c.cL || L) * .62, (c.cW || WD) * .85, 0, 0, 6.283); ctx.stroke(); ctx.globalAlpha = 1; }
   if (!c.dead && !c.boss) { // beams under the body + a steady red glow at the rear
     const fx = (c.cL || L) / 2 - 3, lz = (c.cW || WD) / 2 * .6, rx = -(c.cL || L) / 2;
@@ -2731,6 +2783,7 @@ function drawCar(c) {
   const D = SD(c.styleId); ctx.drawImage(getCarImage(c), -D.fwu / 2, -D.fhu / 2, D.fwu, D.fhu);
   ctx.globalAlpha = fade;
   if (c.club && !c.boss) { const bi = clubImg(c.club); if (bi) { ctx.save(); ctx.globalAlpha = fade * (c.dead ? .5 : .95); ctx.rotate(Math.PI / 2); ctx.drawImage(bi, -6, -3, 12, 12); if (c.parts.hood !== false) { ctx.globalAlpha = fade * .8; ctx.drawImage(bi, -4.5, -(c.cL || L) * .33 - 4.5, 9, 9); } ctx.restore(); } }
+  drawModGear(c);
   if (!c.dead) {
     if (c.type === 'rammer' && c.parts.bumper) { ctx.fillStyle = '#3a3e45'; ctx.fillRect(25, -13, 4, 26); ctx.fillStyle = '#d0d5dc'; for (const y of [-9, -3, 3, 9]) { ctx.beginPath(); ctx.moveTo(29, y - 2.2); ctx.lineTo(34, y); ctx.lineTo(29, y + 2.2); ctx.fill(); } }
     if (c.type === 'bomber') { const near = player && Math.hypot(player.x - c.x, player.y - c.y) < 160, on = Math.floor(now / (near ? 90 : 260)) % 2; ctx.fillStyle = '#f2c31b'; ctx.beginPath(); ctx.arc(-4, 0, 5.5, 0, 6.283); ctx.fill(); ctx.fillStyle = '#151515'; ctx.beginPath(); ctx.arc(-4, 0, 3.6, 0, 6.283); ctx.fill(); ctx.fillStyle = on ? '#ff2b2b' : '#5a1010'; ctx.beginPath(); ctx.arc(-4, 0, 2.2, 0, 6.283); ctx.fill(); if (on) { ctx.globalCompositeOperation = 'lighter'; ctx.drawImage(PUFF.red, -16, -12, 24, 24); ctx.globalCompositeOperation = 'source-over'; } }
@@ -2807,7 +2860,7 @@ function vsHud() {
   rm.style.display = dead ? '' : 'none';
 }
 function render() {
-  try { vsHud(); } catch (e) {}
+  try { vsHud(); modHud(); } catch (e) {}
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
   ctx.fillStyle = '#14161a'; ctx.fillRect(0, 0, innerWidth, innerHeight);
   shX = shake > .2 ? (Math.random() - .5) * shake * ppu * .6 : 0; shY = shake > .2 ? (Math.random() - .5) * shake * ppu * .6 : 0;
@@ -2815,12 +2868,12 @@ function render() {
   const bg = BG_IMG[arena.id];
   if (bg && bg.complete && bg.naturalWidth) ctx.drawImage(bg, CB.x0, CB.y0, CB.x1 - CB.x0, CB.y1 - CB.y0);
   ctx.drawImage(marks, 0, 0, W, H); drawSkids();
-  drawPuddles(); drawOil(); drawCrusherBase(); drawBombGround(); drawObjs();
+  drawPuddles(); drawOil(); drawSpikes(); drawCrusherBase(); drawBombGround(); drawObjs();
   for (const d of debris) if (d.z < 6) drawDebris(d);
   drawScrap(); drawPickups(); drawBarrels();
   const sorted = cars.slice().sort((a, b) => (b.dead ? 1 : 0) - (a.dead ? 1 : 0));
   if (Object.keys(ATLAS).length) { for (const c of sorted) drawCarShadow(c); for (const c of sorted) drawCar(c); }
-  drawCrusherHead(); drawBombTop();
+  drawCrusherHead(); drawBombTop(); drawHooks();
   drawBossFx();
   for (const d of debris) if (d.z >= 6) drawDebris(d);
   drawParticles(false);
@@ -2856,7 +2909,7 @@ function render() {
   ctx.globalAlpha = 1;
   if (state === 'play') { drawArrows(); bombArrows(); drawBossBar(); }
   if (state === 'play' || state === 'over') drawEmotes();
-  if (mpOn() || teamOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = teamOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
+  if (mpOn() || teamOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname && !(c.smokeT > 0 && player && c !== player && foeOf(player, c))) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = teamOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
   bombMarkers();
   if (flashA > .01) { ctx.fillStyle = 'rgba(255,240,220,' + flashA.toFixed(3) + ')'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
   if (hurtA > .02) {
@@ -2907,6 +2960,7 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyM') muted = !muted;
   if (e.code === 'KeyE') playerEmote();
   if (e.code === 'KeyF' || e.code === 'KeyQ') wantPass();
+  if (e.code === 'KeyC' || e.code === 'KeyX') wantMod();
   if ((e.code === 'KeyP' || e.code === 'Escape') && state === 'play') { setPause(!paused); return; }
   if (e.code === 'Escape' && state === 'select') { goMenu(); return; }
   if (state === 'select') {
@@ -3175,7 +3229,7 @@ function makeBot(team, slot, i, diff) {
   const pool = dv >= 2 ? CARS : CARS.filter(d => d.unlock <= 5), d = pool[(Math.random() * pool.length) | 0];
   const c = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); c.bot = true; c.pid = 'bot' + i + Math.random().toString(36).slice(2, 6); c.pname = BOT_NAMES[i % BOT_NAMES.length];
   applyCar(c, d); c.team = team; c.slot = slot; c.score = 0; c.kos = 0; c.deaths = 0; c.dmg = 0; c.bossDmg = 0; c.plants = 0; c.stops = 0; c.carries = 0;
-  const sk = [.9, 1, 1.05][dv | 0] || 1; c.diff = dv; c.maxSpeed *= sk; c.accel *= sk; c.club = CLUBS[(Math.random() * CLUBS.length) | 0].id;
+  const sk = [.9, 1, 1.05][dv | 0] || 1; c.diff = dv; if (dv >= 2 || (dv === 1 && Math.random() < .5)) { const am = CMODS.filter(m => m.type === 'active'); c.mod = am[(Math.random() * am.length) | 0].id; } c.maxSpeed *= sk; c.accel *= sk; c.club = CLUBS[(Math.random() * CLUBS.length) | 0].id;
   return c;
 }
 function botSteer(c, tx, ty, opt) { // drive at a point; opt.stop = arrive and halt, opt.ram = full send
@@ -3206,7 +3260,7 @@ function botAI(c, dt) {
   const B = BOMB;
   if (introT > 0 || state !== 'play' || B.st === 'boom') { c.throttle = 0; c.steer = 0; c.handbrake = true; return; }
   b.t -= dt; b.wt -= dt;
-  if (b.t <= 0) { b.t = [.45, .28, .18][c.diff | 0] + Math.random() * .12; botPlan(c, b); b.wt = 0; }
+  if (b.t <= 0) { b.t = [.45, .28, .18][c.diff | 0] + Math.random() * .12; botPlan(c, b); b.wt = 0; if (c.mod) botMod(c); }
   if (b.tgt && !b.tgt.dead) { const lead = Math.min(.5, Math.hypot(b.tgt.x - c.x, b.tgt.y - c.y) / 480) * (c.diff ? 1 : .5); b.gx = b.tgt.x + b.tgt.vx * lead; b.gy = b.tgt.y + b.tgt.vy * lead; }
   if (b.wt <= 0) { b.wt = .15; const w = botWay(c, b, b.gx, b.gy); b.wx = w[0]; b.wy = w[1]; b.last = w[2]; }
   botSteer(c, b.wx, b.wy, { dt, stop: b.stop && b.last, ram: b.ram && b.last });
@@ -3245,6 +3299,7 @@ function botPlan(c, b) {
     const ts = theirs[(carrier.brain && carrier.brain.site) != null ? carrier.brain.site : nearSite(1 - t, carrier.x, carrier.y)[0]] || theirs[0];
     b.gx = carrier.x + (ts[0] - carrier.x) * .5; b.gy = clamp(carrier.y + (ts[1] - carrier.y) * .5 + (c.slot % 2 ? 150 : -150), 80, H - 80); return;
   }
+  if (carrier && carrier.smokeT > 0 && Math.random() < .7) { b.gx = carrier.x + rand(-160, 160); b.gy = carrier.y + rand(-120, 120); return; } // lost in the smoke
   if (carrier) { // they have it: a keeper parks on the site they're heading for, everyone else hunts the carrier
     const [si, sd] = nearSite(t, carrier.x, carrier.y), keeper = mates.slice().sort((p, q) => dist(p, mine[si][0], mine[si][1]) - dist(q, mine[si][0], mine[si][1]))[0];
     if (keeper === c && mates.length > 1 && sd > 220) { const p = mine[si], a = Math.atan2(carrier.y - p[1], carrier.x - p[0]); b.gx = p[0] + Math.cos(a) * 75; b.gy = p[1] + Math.sin(a) * 75; b.stop = true; return; }
@@ -3312,7 +3367,7 @@ function drawBombTop() {
 function bombMarkers() { // a big floating bomb pin over the carrier (or the loose bomb) that is never hidden by cars
   if (!bombOn() || (state !== 'play' && state !== 'over')) return;
   const B = BOMB, now = performance.now() / 1000; let x, y, col = '#ffb020', me = false;
-  if (B.st === 'carried') { const c = cars.find(o => o.id === B.carrier); if (!c || c.dead) return; x = c.x; y = c.y; col = TEAM_COL[c.team | 0]; me = c === player; }
+  if (B.st === 'carried') { const c = cars.find(o => o.id === B.carrier); if (!c || c.dead) return; if (c.smokeT > 0 && player && player.team !== c.team) return; x = c.x; y = c.y; col = TEAM_COL[c.team | 0]; me = c === player; }
   else if (B.st === 'ground' || B.st === 'air') { x = B.x; y = B.y; } else return;
   const [sx, sy1] = w2s(x, y), sy0 = sy1 - (B.st === 'air' ? B.lift * ppu * TK : 0), bob = Math.sin(now * 5) * 3, sy = sy0 - 40 - 12 * ppu + bob, r = 19;
   ctx.save();
@@ -3370,6 +3425,164 @@ function bombArrows() { // off-screen pointers: the bomb (amber); when carrying,
     ctx.restore();
   }
 }
+/* ---------- CMODS: one per car, bought with Garage Points from achievements, equipped in the Garage ---------- */
+const CMODS = [
+  { id: 'flipper', icon: '🔼', name: 'Flipper', type: 'active', where: 'Front', cd: 9, price: 600, desc: 'Launches the car right in front of you: it hops, spins out, is stunned for a second and loses a part.' },
+  { id: 'plow', icon: '🚜', name: 'Plow', type: 'passive', where: 'Front', price: 300, desc: 'Head-on hits glance off sideways and rarely cost you a part.' },
+  { id: 'spikes', icon: '📌', name: 'Spike Drop', type: 'active', where: 'Rear', cd: 10, price: 300, desc: 'Drops a spike strip behind you. Anyone who drives over it loses 1 part and slows right down.' },
+  { id: 'doors', icon: '🚪', name: 'Door Slam', type: 'active', where: 'Sides', cd: 7, price: 400, desc: 'Slams a door into the car beside you (either side): a big sideways shove and 1 part of damage.' },
+  { id: 'oil', icon: '🛢️', name: 'Oil Slick', type: 'active', where: 'Rear', cd: 12, price: 350, desc: 'Leaves an oil slick behind you that spins out anyone chasing.' },
+  { id: 'smoke', icon: '💨', name: 'Smoke Screen', type: 'active', where: 'Rear', cd: 14, price: 450, desc: '4 s of thick smoke: enemies lose track of you, and in Bomb Run the other team can\'t see the bomb on you.' },
+  { id: 'harpoon', icon: '🧲', name: 'Harpoon', type: 'active', where: 'Roof', cd: 12, price: 700, desc: 'Fires a cable at the nearest car ahead and yanks it towards you. Perfect set-up for a ram.' },
+  { id: 'repair', icon: '🔧', name: 'Field Repair', type: 'passive', where: 'Roof', price: 500, desc: 'Regrows one lost part every 25 s.' }
+];
+const CMOD_BY = Object.fromEntries(CMODS.map(m => [m.id, m]));
+const modsAllowed = () => gameMode !== 'daily'; // the Daily stays identical for everyone
+const foeOf = (a, b) => a !== b && !b.dead && (teamOn() ? !(a.isPlayer && b.isPlayer && a.team === b.team) : mpOn() ? !(a.isPlayer && b.isPlayer) : a.isPlayer !== b.isPlayer);
+function localOf(c, o) { const dx = o.x - c.x, dy = o.y - c.y, ca = Math.cos(c.a), sa = Math.sin(c.a); return [dx * ca + dy * sa, -dx * sa + dy * ca]; } // [forward, side]
+function modTarget(c, kind) {
+  let best = null, bd = 1e9;
+  for (const o of cars) {
+    if (!foeOf(c, o)) continue;
+    const [f, s] = localOf(c, o), d = Math.hypot(f, s), reach = ((c.cL || L) + (o.cL || L)) / 2;
+    if (kind === 'front' && f > 6 && f < reach + 34 && Math.abs(s) < 30 && d < bd) { bd = d; best = o; }
+    if (kind === 'side' && Math.abs(f) < 38 && Math.abs(s) > 6 && Math.abs(s) < ((c.cW || WD) + (o.cW || WD)) / 2 + 30 && d < bd) { bd = d; best = o; }
+    if (kind === 'cone' && f > 50 && d < 420 && Math.abs(Math.atan2(s, f)) < .55 && d < bd) { bd = d; best = o; }
+    if (kind === 'behind' && f < -20 && d < 190 && d < bd) { bd = d; best = o; }
+  }
+  return best;
+}
+function modHit(v, atk, region) { // 1 part of mod damage (armor soaks it)
+  if (v.dead || v.inv > 0) return;
+  if (v.boss) { addText(v.x, v.y - 60, 'TOO HEAVY!', '#cfd6e2'); return; } // bosses shrug mod damage off
+  if (v.armor) { v.armor = 0; addText(v.x, v.y - 36, 'ARMOR!', '#8fe3ff'); v.inv = .3; return; }
+  losePart(v, region, 0, 0, 220); v._key = ''; v.inv = .4;
+  if (atk && atk.isPlayer && atk !== v && foeOf(atk, v)) { if (teamOn()) { atk.score = (atk.score || 0) + 10; atk.dmg = (atk.dmg || 0) + 10; if (v.isPlayer) v.lastTeam = atk.team; } else score += 10; }
+  if (v === player) hurtA = .55;
+  if (v.lost >= (v.maxLost || 5)) killCar(v, atk);
+  updateHud();
+}
+function modUse(c) { // host / single player
+  const m = CMOD_BY[c.mod]; if (!m || m.type !== 'active' || c.dead || c.modCd > 0 || introT > 0 || state !== 'play') return false;
+  const ca = Math.cos(c.a), sa = Math.sin(c.a), back = (c.cL || L) * .62;
+  let used = true;
+  if (m.id === 'flipper') {
+    const t = modTarget(c, 'front');
+    if (!t) used = false;
+    else if (t.boss) { t.vx += ca * 120; t.vy += sa * 120; addText(t.x, t.y - 50, 'TOO HEAVY!', '#cfd6e2'); }
+    else { t.hopT = .7; t.stunT = 1; t.spin = (Math.random() < .5 ? -1 : 1) * 8; t.vx += ca * 300; t.vy += sa * 300; modHit(t, c, 'rear'); nev('md', 'flip', t.id); modFx('flip', t); addText(t.x, t.y - 50, 'FLIPPED!', '#ffd166', true); }
+    c.modT = .35; nev('md', 'plate', c.id);
+  } else if (m.id === 'spikes') {
+    const s = { id: spikeId++, x: c.x - ca * back, y: c.y - sa * back, a: c.a + Math.PI / 2, t: 12, owner: c.id, hits: 0, got: [] };
+    SPIKES.push(s); nev('sp', s.id, s.x | 0, s.y | 0, +s.a.toFixed(2)); thud(.3, 300);
+  } else if (m.id === 'doors') {
+    const t = modTarget(c, 'side');
+    if (!t) { used = false; c.doorT = .3; c.doorS = 1; }
+    else { const [, s] = localOf(c, t), sg = s > 0 ? 1 : -1, px = -sa * sg, py = ca * sg; t.vx += px * 430 / (t.mass || 1); t.vy += py * 430 / (t.mass || 1); t.spin += sg * 2; modHit(t, c, localOf(t, c)[1] > 0 ? 'right' : 'left'); c.doorT = .35; c.doorS = sg; nev('md', 'door', c.id, sg); modFx('door', t); addText(t.x, t.y - 46, 'DOOR SLAM!', '#ffd166', true); }
+  } else if (m.id === 'oil') {
+    const x = c.x - ca * (back + 14), y = c.y - sa * (back + 14), seed = (Math.random() * 1e6) | 0;
+    modOil(x, y, seed); nev('ol', x | 0, y | 0, seed);
+  } else if (m.id === 'smoke') {
+    c.smokeT = 4; nev('md', 'smoke', c.id); addText(c.x, c.y - 44, 'SMOKE!', '#cfd6e2');
+  } else if (m.id === 'harpoon') {
+    const t = modTarget(c, 'cone');
+    if (!t) used = false;
+    else { const dx = c.x - t.x, dy = c.y - t.y, d = Math.hypot(dx, dy) || 1, k = t.boss ? 120 : 520 / (t.mass || 1); t.vx += dx / d * k; t.vy += dy / d * k; c.vx -= dx / d * 120; c.vy -= dy / d * 120; c.hookT = .55; c.hookId = t.id; nev('md', 'hook', c.id, t.id); addText(t.x, t.y - 46, 'HOOKED!', '#ffd166', true); beep(300, .12); }
+  }
+  c.modCd = used ? m.cd : 2.5; if (!used) addText(c.x, c.y - 44, 'MISSED', '#8d97a8');
+  return used;
+}
+function modOil(x, y, seed) { oilCv.push({ x, y, r: 40, cv: makeOil(40, seed), life: 11 }); }
+function modFx(k, t) {
+  if (k === 'flip') { spark(t.x, t.y, 20, 260, '#ffd166'); thud(.7, 90); shake = Math.max(shake, 8); }
+  if (k === 'door') { spark(t.x, t.y, 14, 220, '#e6ebf2'); (SFX.clang.raw || SFX.clang)(1); shake = Math.max(shake, 5); }
+}
+function wantMod() { // local player pressed MOD
+  if (!player || player.dead || !player.mod || state !== 'play' || (paused && !mpOn())) return;
+  const m = CMOD_BY[player.mod]; if (!m || m.type !== 'active' || player.modCd > 0) return;
+  if (isGuest()) { NET.modSeq = (NET.modSeq | 0) + 1; NET.forceSend = true; player.modCd = m.cd; } else modUse(player);
+}
+function modTimers(dt) { // runs on host, single player and guests (visual timers)
+  for (const c of cars) {
+    if (c.modCd > 0) c.modCd -= dt; if (c.modT > 0) c.modT -= dt; if (c.doorT > 0) c.doorT -= dt; if (c.hookT > 0) c.hookT -= dt; if (c.hopT > 0) c.hopT -= dt;
+    if (c.smokeT > 0) { c.smokeT -= dt; if (Math.random() < dt * 30) smoke(c.x + rand(-40, 40), c.y + rand(-30, 30), false, false); }
+  }
+  for (const o of oilCv) if (o.life != null) o.life -= dt;
+  if (oilCv.some(o => o.life != null && o.life <= 0)) oilCv = oilCv.filter(o => o.life == null || o.life > 0);
+  for (const s of SPIKES) s.t -= dt;
+  if (SPIKES.some(s => s.t <= 0)) SPIKES = SPIKES.filter(s => s.t > 0);
+}
+function modTick(dt) { // host / single player: passives and spike hits
+  for (const c of cars) {
+    if (c.dead) continue;
+    if (c.mod === 'repair' && c.lost > 0) { c.repT = (c.repT || 0) + dt; if (c.repT >= 25) { c.repT = 0; const lost = PARTS.filter(q => !c.parts[q]); if (lost.length) { const q = lost[(Math.random() * lost.length) | 0]; c.parts[q] = true; c.lost--; c._key = ''; addText(c.x, c.y - 40, '🔧 ' + PNAME[q].toUpperCase() + ' FIXED', '#7dffb0'); ring(c.x, c.y, 40, '#7dffb0', .4, 3); } } }
+    else c.repT = 0;
+  }
+  for (const s of SPIKES) {
+    const ca = Math.cos(s.a), sa = Math.sin(s.a), owner = cars.find(o => o.id === s.owner);
+    for (const c of cars) {
+      if (c.dead || s.got.includes(c.id) || (c.id === s.owner && s.t > 11)) continue;
+      if (owner && owner !== c && !foeOf(owner, c)) continue;
+      const dx = c.x - s.x, dy = c.y - s.y, along = dx * ca + dy * sa, across = -dx * sa + dy * ca;
+      if (Math.abs(along) < 34 && Math.abs(across) < 16) {
+        s.got.push(c.id); s.hits++; c.vx *= .5; c.vy *= .5; spark(c.x, c.y, 14, 180, '#cfd6e2'); for (let i = 0; i < 6; i++) smoke(c.x + rand(-10, 10), c.y + rand(-8, 8), false, false);
+        addText(c.x, c.y - 40, 'SPIKED!', '#ff8a8f'); modHit(c, owner, 'rear');
+        if (s.hits >= 3) s.t = 0;
+      }
+    }
+  }
+  if (SPIKES.some(s => s.t <= 0)) { for (const s of SPIKES) if (s.t <= 0) nev('sx', s.id); SPIKES = SPIKES.filter(s => s.t > 0); }
+}
+function drawSpikes() {
+  for (const s of SPIKES) {
+    ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.a); ctx.globalAlpha = Math.min(1, s.t * 2);
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(-35, -6, 70, 14);
+    ctx.fillStyle = '#2b2f36'; ctx.fillRect(-34, -5, 68, 10); ctx.strokeStyle = '#ffbe0b'; ctx.lineWidth = 1.5; ctx.strokeRect(-34, -5, 68, 10);
+    ctx.fillStyle = '#d8dde6'; for (let x = -30; x <= 30; x += 6) { ctx.beginPath(); ctx.moveTo(x - 2.4, 0); ctx.lineTo(x, -7); ctx.lineTo(x + 2.4, 0); ctx.fill(); }
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+}
+function drawModGear(c) { // the fitted mod, drawn on the car (car-local space)
+  if (!c.mod || c.dead || c.boss) return;
+  const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2;
+  if (c.mod === 'plow') { ctx.fillStyle = '#5d646f'; ctx.beginPath(); ctx.moveTo(hl + 1, -hw - 3); ctx.lineTo(hl + 9, 0); ctx.lineTo(hl + 1, hw + 3); ctx.lineTo(hl - 2, hw + 2); ctx.lineTo(hl + 5, 0); ctx.lineTo(hl - 2, -hw - 2); ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#ffbe0b'; ctx.lineWidth = 1.2; ctx.stroke(); }
+  if (c.mod === 'flipper') { const up = c.modT > 0 ? Math.sin((1 - c.modT / .35) * Math.PI) : 0; ctx.fillStyle = up ? '#ffd166' : '#6b727d'; ctx.fillRect(hl - 1, -hw * .7, 5 + up * 8, hw * 1.4); ctx.fillStyle = '#2b2f36'; ctx.fillRect(hl + 1, -2, 2, 4); }
+  if (c.mod === 'spikes' || c.mod === 'oil' || c.mod === 'smoke') { ctx.fillStyle = c.mod === 'oil' ? '#1e2126' : c.mod === 'smoke' ? '#8d97a8' : '#3a3f47'; ctx.fillRect(-hl - 5, -6, 6, 12); ctx.fillStyle = '#ffbe0b'; ctx.fillRect(-hl - 5, -6, 1.5, 12); }
+  if (c.mod === 'harpoon') { ctx.fillStyle = '#2b2f36'; ctx.fillRect(-2, -3, 12, 6); ctx.fillStyle = '#c9ced6'; ctx.fillRect(9, -1.2, 6, 2.4); }
+  if (c.mod === 'repair') { ctx.fillStyle = 'rgba(125,255,176,.9)'; ctx.beginPath(); ctx.arc(-8, 0, 2.6, 0, 6.283); ctx.fill(); }
+  if (c.doorT > 0) { const k = Math.sin((1 - c.doorT / .35) * Math.PI), sg = c.doorS || 1; ctx.save(); ctx.translate(4, sg * hw); ctx.rotate(sg * k * .9); ctx.fillStyle = c.col ? c.col[0] : '#ccc'; ctx.fillRect(-14, sg > 0 ? 0 : -3, 16, 3); ctx.restore(); }
+}
+function drawHooks() {
+  for (const c of cars) if (c.smokeT > 0 && !c.dead) { // smoke screen cloud over the car
+    const k = Math.min(1, c.smokeT / .6, (4 - c.smokeT) / .4 + .2), r = 78, g = ctx.createRadialGradient(c.x, c.y, 6, c.x, c.y, r);
+    const a0 = (c === player ? .42 : .86) * k; g.addColorStop(0, 'rgba(196,202,212,' + a0 + ')'); g.addColorStop(.6, 'rgba(170,176,188,' + a0 * .8 + ')'); g.addColorStop(1, 'rgba(160,166,178,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(c.x, c.y, r, 0, 6.283); ctx.fill();
+  }
+  for (const c of cars) if (c.hookT > 0) { const t = cars.find(o => o.id === c.hookId); if (!t) continue; ctx.save(); ctx.globalAlpha = Math.min(1, c.hookT * 3); ctx.strokeStyle = '#c9ced6'; ctx.lineWidth = 2; ctx.setLineDash([5, 3]); ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(t.x, t.y); ctx.stroke(); ctx.setLineDash([]); ctx.restore(); }
+}
+function modHud() {
+  const b = $('bMod'), chip = $('modHud'); if (!b || !chip) return;
+  const m = player && !player.dead && state === 'play' ? CMOD_BY[player.mod] : null, act = m && m.type === 'active';
+  document.body.classList.toggle('hasMod', !!act);
+  if (!m) { chip.style.display = 'none'; return; }
+  const k = act && player.modCd > 0 ? clamp(player.modCd / m.cd, 0, 1) : 0, deg = (k * 360).toFixed(0);
+  if (b._i !== m.icon) { b._i = m.icon; b.innerHTML = '<i>' + m.icon + '</i><small>' + m.name.split(' ')[0].toUpperCase() + '</small>'; }
+  b.style.setProperty('--cd', deg + 'deg'); b.classList.toggle('cool', k > 0);
+  chip.style.display = 'flex'; const t = m.icon + ' ' + m.name + (act ? (k > 0 ? ' · ' + Math.ceil(player.modCd) + 's' : ' · ready (C)') : ' · passive');
+  if (chip._t !== t) { chip._t = t; chip.textContent = t; } chip.classList.toggle('ready', act && !k);
+}
+// bots in Bomb Run use their mods with simple rules
+function botMod(c) {
+  const m = CMOD_BY[c.mod]; if (!m || m.type !== 'active' || c.modCd > 0) return;
+  let go = false;
+  if (m.id === 'flipper') go = !!modTarget(c, 'front');
+  else if (m.id === 'doors') go = !!modTarget(c, 'side');
+  else if (m.id === 'spikes' || m.id === 'oil') go = !!modTarget(c, 'behind');
+  else if (m.id === 'smoke') go = c.bomb && cars.some(o => foeOf(c, o) && Math.hypot(o.x - c.x, o.y - c.y) < 230);
+  else if (m.id === 'harpoon') { const t = modTarget(c, 'cone'); go = !!t && (t.bomb || Math.random() < .3); }
+  if (go && Math.random() < .7) modUse(c);
+}
 /* ---------- single-player Bomb Run: you + 2 bots vs 3 bots ---------- */
 function renderBombSheet() {
   const lim = Math.max(maxWave, 1), cars0 = CARS.filter(d => d.unlock <= lim);
@@ -3400,7 +3613,7 @@ function startBombSP() {
   mctx.clearRect(0, 0, W, H); clearSkids();
   player = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); player.pid = PID; player.pname = pname;
   applyCar(player, CAR_BY_ID[SPB.car] || CAR_BY_ID.cruiser);
-  Object.assign(player, { team: 0, slot: 0, score: 0, kos: 0, deaths: 0, dmg: 0, bossDmg: 0, plants: 0, stops: 0, carries: 0, club: myClubId() });
+  Object.assign(player, { team: 0, slot: 0, score: 0, kos: 0, deaths: 0, dmg: 0, bossDmg: 0, plants: 0, stops: 0, carries: 0, picks: 0, club: myClubId(), mod: GAR.equip }); SPIKES = [];
   cars.push(player);
   let bi = (Math.random() * 12) | 0;
   for (const [t, s] of [[0, 1], [0, 2], [1, 0], [1, 1], [1, 2]]) cars.push(makeBot(t, s, bi++));
@@ -3413,7 +3626,7 @@ function bombSpOver(quit) {
   const r = teamPayload('versus'), w = r.vs.winner, me = r.players.find(p => p[5] === PID), myT = me ? me[6] : 0;
   const h1 = $('overlay').querySelector('#card h1');
   h1.innerHTML = quit ? 'MATCH <span>ABANDONED</span>' : w < 0 ? "IT'S A <span>DRAW</span>" : w === myT ? 'YOUR TEAM <span style="color:' + TEAM_COL[w] + '">WINS!</span>' : '<span style="color:' + TEAM_COL[w] + '">' + TEAM_NAME[w] + '</span> TEAM WINS';
-  const award = quit ? null : clubAward(r, true);
+  const award = quit ? null : clubAward(r, true); if (!quit) achTeam(r, true);
   $('final').innerHTML = bombResultsHtml(r); $('clubAwardBox').innerHTML = quit ? '' : clubAwardHtml(award);
   if (!quit && w === myT) { SFX.win && SFX.win(); }
   $('card').classList.add('over', 'teamRes', 'spBomb'); $('goBomb').innerHTML = 'PLAY AGAIN<small>💣 Bomb Run · same car and bots</small>'; $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
@@ -3441,6 +3654,7 @@ function netDriveRemote(c, dt) {
   c.steer = clamp(+inp[0] || 0, -1, 1); c.throttle = clamp(+inp[1] || 0, -1, 1); c.handbrake = !!inp[2];
   if ((inp[6] | 0) > (c.jseq | 0)) { c.jdir = inp[7] < 0 ? -1 : 1; c.jseq = inp[6] | 0; }
   if ((inp[8] | 0) > (c.passSeq | 0)) { c.passSeq = inp[8] | 0; if (bombOn()) bombPass(c); }
+  if ((inp[9] | 0) > (c.modSeq | 0)) { c.modSeq = inp[9] | 0; modUse(c); }
   const want = !!inp[3] && introT <= 0;
   c.boost = want && c.nitro > 0 && c.throttle >= 0;
   if (c.boost) c.nitro = Math.max(0, c.nitro - .85 * dt / (c.nitroEff || 1));
@@ -3522,7 +3736,7 @@ function netBroadcast(snap, ev) {
 function netSend(o) { try { if (NET.ws && NET.ws.readyState === 1) NET.ws.send(typeof o === 'string' ? o : JSON.stringify(o)); } catch (e) {} }
 const FLAG = { dead: 1, braking: 2, reversing: 4, boost: 8, rage: 16, slam: 32, windup: 64, armor: 128, hb: 256 };
 const P4 = ['hood', 'trunk', 'doorL', 'doorR'];
-function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '', Math.round(c.accel || 0), Math.round(c.maxSpeed || 0), +(c.turnRate || 0).toFixed(3), +(c.nitroEff || 1).toFixed(2), c.team == null ? -1 : c.team, c.bot ? 1 : 0, c.club || '']; }
+function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '', Math.round(c.accel || 0), Math.round(c.maxSpeed || 0), +(c.turnRate || 0).toFixed(3), +(c.nitroEff || 1).toFixed(2), c.team == null ? -1 : c.team, c.bot ? 1 : 0, c.club || '', c.mod || '']; }
 function netSnapshot() {
   NET.metaT -= 1; if (NET.metaT <= 0) { NET.metaT = 30; NET.metaSent.clear(); }
   const metas = [], cs = [];
@@ -3550,7 +3764,7 @@ function netApplyLayout(ai, L2) {
   const hz = HAZ[arena.id] || {}; crusher = hz.crusher ? Object.assign({ phase: 'idle', t: 4.5, e: 1, bt: 0 }, hz.crusher) : null;
 }
 function netGuestCar(m) {
-  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName, acc, ms, tr, ne, tm, bot, club] = m;
+  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName, acc, ms, tr, ne, tm, bot, club, mod] = m;
   let c = NET.byId.get(id);
   if (!c) { c = makeCar(0, 0, 0, col, !!isP, 1); c.id = id; c.init = false; NET.byId.set(id, c); }
   Object.assign(c, { type, styleId, col, isPlayer: !!isP, pid, pname, boss: !!boss, bossKind, cL: cL || undefined, cW: cW || undefined, phpMax, twinIdx, maxLost, carName });
@@ -3558,7 +3772,7 @@ function netGuestCar(m) {
   if (bossKind === 'crane' && !c.arm) c.arm = { ang: 0, w: 1, len: 150, r: 19, cd: new Map() };
   if (acc) { c.accel = acc; c.maxSpeed = ms; c.turnRate = tr; c.nitroEff = ne; }
   if (isP) { const d = CAR_BY_ID[styleId]; c.perk = (d && d.perk) || ''; c.boostK = c.perk === 'burn' ? 1.5 : 1; c.driftK = c.perk === 'drift' ? 2.5 : 1; }
-  c.team = tm >= 0 ? tm : undefined; c.bot = !!bot; c.club = club || '';
+  c.team = tm >= 0 ? tm : undefined; c.bot = !!bot; c.club = club || ''; c.mod = mod || '';
   if (isP && pid === PID) player = c;
   return c;
 }
@@ -3685,6 +3899,10 @@ function netEvents(evs) {
     else if (k === 'h') { const lh = NET.localHit; if (!(lh && performance.now() - lh.t < 650 && Math.hypot(e[1] - lh.x, e[2] - lh.y) < 90)) hitFx(e[1], e[2], e[3]); }
     else if (k === 'k' && c) { c.dead = true; c.deadT = 0; c._key = ''; killFx(c); }
     else if (k === 'bd' && c) bossDownFx(c);
+    else if (k === 'md') { const a2 = cars.find(o => o.id === e[2]); if (a2) { if (e[1] === 'flip') { a2.hopT = .7; modFx('flip', a2); } else if (e[1] === 'plate') a2.modT = .35; else if (e[1] === 'door') { a2.doorT = .35; a2.doorS = e[3]; const t2 = null; } else if (e[1] === 'smoke') a2.smokeT = 4; else if (e[1] === 'hook') { a2.hookT = .55; a2.hookId = e[3]; } } }
+    else if (k === 'sp') SPIKES.push({ id: e[1], x: e[2], y: e[3], a: e[4], t: 12, owner: 0, hits: 0, got: [] });
+    else if (k === 'sx') SPIKES = SPIKES.filter(q => q.id !== e[1]);
+    else if (k === 'ol') modOil(e[1], e[2], e[3]);
     else if (k === 'bf') bombFx(e[1], e[2], e[3], e[4] < 0 ? null : e[4], e[5]);
     else if (k === 'x') boomFx(e[1], e[2], e[3]);
     else if (k === 't') texts.push({ x: e[1], y: e[2], text: e[3], color: e[4], t: 0, big: !!e[5] });
@@ -3698,6 +3916,7 @@ function netEvents(evs) {
 }
 // guests: smooth toward the host's positions, run only visual effects locally
 function guestStep(dt) {
+  modTimers(dt);
   if (player && !player.dead) {
     const l = keys.ArrowLeft || touch.left, r = keys.ArrowRight || touch.right, g = keys.ArrowUp || touch.gas, b = keys.ArrowDown || touch.brake;
     let st = (r ? 1 : 0) - (l ? 1 : 0), th = g ? 1 : (b ? -1 : 0);
@@ -3709,7 +3928,7 @@ function guestStep(dt) {
     } else joy.rev = false;
     const nos = !!(keys.ShiftLeft || keys.ShiftRight || touch.nos) ? 1 : 0, hb = (keys.Space || touch.hand) ? 1 : 0;
     if (player.pred) { player.throttle = th; const tgt = joy.active && joy.mag > .15 ? Math.atan2(joy.dy / TK, joy.dx) : null; jTurnInput(player, tgt, joy.active && joy.rev, joy.mag, !!keys.ArrowLeft, !!keys.ArrowRight); }
-    NET.myIn = [+st.toFixed(2), +th.toFixed(2), hb, nos, NET.emo, player.jseq | 0, player.jdir || 1, NET.passSeq | 0];
+    NET.myIn = [+st.toFixed(2), +th.toFixed(2), hb, nos, NET.emo, player.jseq | 0, player.jdir || 1, NET.passSeq | 0, NET.modSeq | 0];
     if (player.pred) { // run my car's physics right away so steering feels instant
       player.steer = st; player.throttle = th; player.handbrake = !!hb; player.boost = !!nos && player.nitro > 0 && th >= 0 && introT <= 0;
       const tn = performance.now(); NET.inHist.push([tn, st, th, hb, player.boost ? 1 : 0, player.jseq | 0, player.jdir || 1]); while (NET.inHist.length && NET.inHist[0][0] < tn - 1200) NET.inHist.shift();
@@ -3766,7 +3985,7 @@ function netTick(rdt, raw) {
     const cur = JSON.stringify(NET.myIn || [0, 0, 0, 0, 0]);
     const direct = rtcOk(RTC.me);
     if (NET.sendT <= 0 && (direct || cur !== NET.lastIn || NET.sendT < -.5 || NET.forceSend)) {
-      const mi = NET.myIn || [0, 0, 0, 0, 0, 0, 1], msg = JSON.stringify({ i: mi.slice(0, 5).concat(Math.round(performance.now()), mi[5] | 0, mi[6] || 1, mi[7] | 0) });
+      const mi = NET.myIn || [0, 0, 0, 0, 0, 0, 1], msg = JSON.stringify({ i: mi.slice(0, 5).concat(Math.round(performance.now()), mi[5] | 0, mi[6] || 1, mi[7] | 0, mi[8] | 0) });
       let sent = false; if (direct) { try { RTC.me.u.send(msg); sent = true; } catch (e) {} }
       if (!sent) netSend(msg);
       NET.lastIn = cur; NET.sendT = 1 / 30; NET.forceSend = false;
@@ -3778,7 +3997,7 @@ function netTick(rdt, raw) {
 }
 function netOnMessage(raw) {
   let m; try { m = JSON.parse(raw); } catch (e) { return; }
-  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.role === 'guest' && NET.clubSent !== myClubId() + NET.room) { NET.clubSent = myClubId() + NET.room; netSend({ club: myClubId() }); } if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
+  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.role === 'guest' && NET.clubSent !== myClubId() + NET.room) { NET.clubSent = myClubId() + NET.room; netSend({ club: myClubId() }); netSend({ mod: GAR.equip }); } if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
   if (m.c === 'denied' && NET.recon) { netGiveUp(m.why === 'started' || m.why === 'gone' ? 'Lost connection to the room.' : null); return; }
   if (m.c === 'denied') { mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full.', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
   if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
@@ -3794,7 +4013,7 @@ function netOnMessage(raw) {
   if (m.c === 'hostleft') return;
   if (NET.role === 'guest' && !rtcDirect()) netGuestData(m); // when the direct link is flowing, ignore the relay copy
 }
-function netHostFrom(pid, d) { if (d.vq) { vsRequest(pid, d.vq); return; } if (d.club != null) { NET.clubs[pid] = CLUB_BY[d.club] ? d.club : ''; vsSync(); return; } if (d.i) { NET.inputs[pid] = d.i; NET.inT[pid] = [+d.i[5] || 0, performance.now()]; } }
+function netHostFrom(pid, d) { if (d.vq) { vsRequest(pid, d.vq); return; } if (d.club != null) { NET.clubs[pid] = CLUB_BY[d.club] ? d.club : ''; vsSync(); return; } if (d.mod != null) { NET.mods[pid] = CMOD_BY[d.mod] ? d.mod : ''; return; } if (d.i) { NET.inputs[pid] = d.i; NET.inT[pid] = [+d.i[5] || 0, performance.now()]; } }
 function netGuestData(m) {
   if (m.s && NET.started) netApplySnap(m.s);
   const t = (m.s && m.s.t) || m.t;
@@ -3885,7 +4104,7 @@ function netStartGame() {
     const ps = NET.lobby.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
     ps.forEach((p, i) => {
       const c = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); c.pid = p.pid; c.pname = p.name;
-      applyCar(c, CAR_BY_ID[p.car] || CAR_BY_ID.cruiser); c.score = 0; c.kos = 0; c.deaths = 0; c.dmg = 0; c.bossDmg = 0; c.plants = 0; c.stops = 0; c.carries = 0; c.club = p.pid === PID ? myClubId() : (NET.clubs[p.pid] || '');
+      applyCar(c, CAR_BY_ID[p.car] || CAR_BY_ID.cruiser); c.score = 0; c.kos = 0; c.deaths = 0; c.dmg = 0; c.bossDmg = 0; c.plants = 0; c.stops = 0; c.carries = 0; c.picks = 0; c.club = p.pid === PID ? myClubId() : (NET.clubs[p.pid] || ''); c.mod = p.pid === PID ? GAR.equip : (NET.mods[p.pid] || ''); SPIKES = [];
       if (NET.lobby.mode === 'versus') { const si = NET.vs.slots.indexOf(p.pid); c.slot = si < 0 ? 0 : si % 3; c.team = si >= 3 ? 1 : 0; }
       cars.push(c);
       if (p.pid === PID) player = c;
@@ -3903,7 +4122,7 @@ function netStartGame() {
 }
 function teamPayload(mode) {
   const hs = cars.filter(c => c.isPlayer);
-  const r = { mode, wave, score, players: hs.map(c => [c.pname, c.carName, c.score || 0, c.kos || 0, c.dead ? 1 : 0, c.pid, c.team | 0, c.deaths || 0, Math.round(c.dmg || 0), Math.round(c.bossDmg || 0), c.plants || 0, c.stops || 0, c.bot ? 1 : 0, c.club || '']) };
+  const r = { mode, wave, score, players: hs.map(c => [c.pname, c.carName, c.score || 0, c.kos || 0, c.dead ? 1 : 0, c.pid, c.team | 0, c.deaths || 0, Math.round(c.dmg || 0), Math.round(c.bossDmg || 0), c.plants || 0, c.stops || 0, c.bot ? 1 : 0, c.club || '', c.picks || 0]) };
   if (mode === 'versus') r.vs = { score: VS.score.slice(), winner: VS.score[0] > VS.score[1] ? 0 : VS.score[1] > VS.score[0] ? 1 : -1, boss: VS.boss, bossState: VS.bossState, kind: VS.kind };
   return r;
 }
@@ -3937,7 +4156,7 @@ function netShowResults(r) {
   else {
     if (r.mode === 'versus' && r.vs) {
       const w = r.vs.winner; h1.innerHTML = w < 0 ? "IT'S A <span>DRAW</span>" : '<span style="color:' + TEAM_COL[w] + '">' + TEAM_NAME[w] + '</span> TEAM WINS!';
-      $('final').innerHTML = vsResultsHtml(r); $('clubAwardBox').innerHTML = clubAwardHtml(clubAward(r));
+      $('final').innerHTML = vsResultsHtml(r); $('clubAwardBox').innerHTML = clubAwardHtml(clubAward(r)); try { achTeam(r, false); } catch (e) {}
       $('card').classList.add('over', 'teamRes'); $('card').classList.remove('spBomb'); $('overlay').classList.remove('hidden');
       if (NET.ws) { $('mpBack').style.display = ''; } else $('mpBack').style.display = 'none';
       return;
@@ -3947,6 +4166,7 @@ function netShowResults(r) {
     const rows = r.players.slice().sort((a2, b2) => r.mode === 'versus' ? (a2[4] - b2[4]) || (b2[2] - a2[2]) : 0)
       .map(p => esc(p[0]) + ' (' + esc(p[1]) + ')' + (r.mode === 'versus' ? ' - ' + p[2] + ' pts, ' + p[3] + ' KO' : '') + (p[4] ? '' : ' ✓')).join('  •  ');
     $('final').textContent = (r.mode === 'versus' ? 'Versus Derby  •  ' : 'Co-op  •  reached wave ' + r.wave + '  •  team score ' + r.score + '  •  ') + rows;
+    if (!r.hostLeft) try { achTeam(r, false); } catch (e) {}
   }
   $('card').classList.add('over'); $('overlay').classList.remove('hidden');
   if (NET.ws) { $('mpBack').style.display = ''; } else $('mpBack').style.display = 'none';
@@ -4242,7 +4462,7 @@ $('goHome').addEventListener('click', () => goMenu());
 if (matchMedia('(pointer:coarse)').matches) { $('touch').classList.add('on'); document.body.classList.add('touch'); $('mute').style.display = 'none'; }
 document.querySelectorAll('#touch button').forEach(b => {
   const k = b.dataset.k;
-  if (!k) { b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (b.id === 'bPass') wantPass(); }); return; }
+  if (!k) { b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (b.id === 'bPass') wantPass(); if (b.id === 'bMod') wantMod(); }); return; }
   const on = e => { e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (err) {} touch[k] = true; b.classList.add('hold'); };
   const off = e => { e.preventDefault(); touch[k] = false; b.classList.remove('hold'); };
   b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off);
@@ -4281,6 +4501,115 @@ renderBoard(-1); renderDailyBox(); loadBoard();
 api('/api/daily').then(r => { if (r && r.day) { dailyMeta = r; daily = null; todayDaily(); renderDailyBox(); if (boardTab === 'daily') loadBoard(); } });
 updateHud();
 // test hook (harmless in normal play)
+/* ---------- ACHIEVEMENTS → Garage Points (GP) → mods ---------- */
+const GAR_KEY = 'scrapArenaGarage';
+let GAR = lsGet(GAR_KEY, null) || {};
+GAR = Object.assign({ gp: 0, owned: [], equip: '', ach: {}, rep: {}, st: { kos: 0, bosses: 0, onlineWins: 0 } }, GAR); GAR.st = Object.assign({ kos: 0, bosses: 0, onlineWins: 0 }, GAR.st);
+const garSave = () => lsSet(GAR_KEY, GAR);
+const ACH = [
+  { id: 'welcome', g: 'Garage', icon: '🔧', name: 'Welcome to the Garage', desc: 'Open the garage', gp: 100 },
+  { id: 'w5', g: 'Waves', icon: '🔥', name: 'Warming Up', desc: 'Reach wave 5 in Waves', gp: 100, prog: () => [maxWave, 5] },
+  { id: 'w10', g: 'Waves', icon: '🔥', name: 'Double Digits', desc: 'Reach wave 10 in Waves', gp: 200, prog: () => [maxWave, 10] },
+  { id: 'w15', g: 'Waves', icon: '🔥', name: 'Survivor', desc: 'Reach wave 15 in Waves', gp: 300, prog: () => [maxWave, 15] },
+  { id: 'w20', g: 'Waves', icon: '🔥', name: 'Legend of the Pit', desc: 'Reach wave 20 in Waves', gp: 500, prog: () => [maxWave, 20] },
+  { id: 'boss1', g: 'Waves', icon: '👑', name: 'Giant Slayer', desc: 'Wreck a boss', gp: 150, prog: () => [GAR.st.bosses, 1] },
+  { id: 'boss10', g: 'Waves', icon: '👑', name: 'Boss Hunter', desc: 'Wreck 10 bosses', gp: 400, prog: () => [GAR.st.bosses, 10] },
+  { id: 'daily1', g: 'Daily', icon: '📅', name: 'Daily Driver', desc: 'Finish a Daily', gp: 100 },
+  { id: 'dtop3', g: 'Daily', icon: '🥉', name: 'Podium', desc: 'Finish top 3 on a Daily leaderboard', gp: 300 },
+  { id: 'streak3', g: 'Daily', icon: '📆', name: 'On a Roll', desc: 'Play the Daily 3 days in a row', gp: 150, prog: () => [streakNow(), 3] },
+  { id: 'streak7', g: 'Daily', icon: '📆', name: 'Weekly Regular', desc: 'Play the Daily 7 days in a row', gp: 400, prog: () => [streakNow(), 7] },
+  { id: 'bombR', g: 'Bomb Run', icon: '💣', name: 'Rookie Cup', desc: 'Win Bomb Run against Rookie bots', gp: 100 },
+  { id: 'bombP', g: 'Bomb Run', icon: '💣', name: 'Pro Cup', desc: 'Win Bomb Run against Pro bots', gp: 200 },
+  { id: 'bombL', g: 'Bomb Run', icon: '💣', name: 'Legend Cup', desc: 'Win Bomb Run against Legend bots', gp: 400 },
+  { id: 'plant1', g: 'Bomb Run', icon: '💥', name: 'Demolition Expert', desc: 'Blow up a site', gp: 100 },
+  { id: 'plant3', g: 'Bomb Run', icon: '💥', name: 'Triple Threat', desc: 'Blow up 3 sites in one match', gp: 300 },
+  { id: 'inter1', g: 'Bomb Run', icon: '🧤', name: 'Interception', desc: 'Catch the other team\'s pass', gp: 100 },
+  { id: 'stop3', g: 'Bomb Run', icon: '🛑', name: 'Brick Wall', desc: 'Stop 3 bomb carriers in one match', gp: 150 },
+  { id: 'derbyW', g: 'Online', icon: '🏆', name: 'Team Player', desc: 'Win an online Team Derby', gp: 200 },
+  { id: 'bombOW', g: 'Online', icon: '🏆', name: 'Bomb Squad', desc: 'Win an online Bomb Run', gp: 200 },
+  { id: 'online3', g: 'Online', icon: '🌐', name: 'Crowd Favourite', desc: 'Win 3 online matches', gp: 300, prog: () => [GAR.st.onlineWins, 3] },
+  { id: 'ko100', g: 'Career', icon: '💀', name: 'Wrecking Crew', desc: '100 KOs in total', gp: 200, prog: () => [GAR.st.kos, 100] },
+  { id: 'ko500', g: 'Career', icon: '💀', name: 'Scrap Merchant', desc: '500 KOs in total', gp: 400, prog: () => [GAR.st.kos, 500] }
+];
+const ACH_REP = [ // repeatable
+  { id: 'rDaily', icon: '📅', name: 'Daily bonus', desc: 'Finish today\'s Daily', gp: 40, per: 'day' },
+  { id: 'rBomb', icon: '💣', name: 'Bomb Run win', desc: 'Every win vs bots: 20 / 40 / 60 GP (Rookie / Pro / Legend)', gp: '20–60' },
+  { id: 'rOnline', icon: '🌐', name: 'Online win', desc: 'Every online win', gp: 50 }
+];
+const ACH_BY = Object.fromEntries(ACH.map(a => [a.id, a]));
+let achQ = [], runGp = 0;
+function gpSummary() { const box = $('clubAwardBox'); if (!box || !(runGp > 0)) return; box.insertAdjacentHTML('beforeend', '<div class="gpEarn">🔩 <b>+' + runGp + ' Garage Points</b> earned · spend them on mods in the Garage</div>'); runGp = 0; }
+function achGive(id) { // one-time achievement
+  const a = ACH_BY[id]; if (!a || GAR.ach[id] || devRun) return false;
+  GAR.ach[id] = Date.now(); GAR.gp += a.gp; runGp += a.gp; garSave(); achQ.push({ icon: a.icon, name: a.name, gp: a.gp }); achToast(); return true;
+}
+function gpGive(n, label, icon) { if (devRun || !(n > 0)) return; GAR.gp += n; runGp += n; garSave(); achQ.push({ icon: icon || '🔩', name: label, gp: n, rep: true }); achToast(); }
+function achCheckStatic() { // anything that can be read from saved progress (also credits players who already had it)
+  for (const a of ACH) if (a.prog && !GAR.ach[a.id]) { const [v, n] = a.prog(); if (v >= n) achGive(a.id); }
+  if (!GAR.ach.daily1 && (streakNow() > 0 || dailyDone())) achGive('daily1');
+}
+function achToast() {
+  const el = $('achToast'); if (!el || el._busy || !achQ.length) return;
+  const a = achQ.shift(); el._busy = true;
+  el.innerHTML = '<span class="ai">' + a.icon + '</span><div><small>' + (a.rep ? 'BONUS' : 'ACHIEVEMENT UNLOCKED') + '</small><b>' + esc(a.name) + '</b></div><em>+' + a.gp + ' GP</em>';
+  el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); if (!a.rep) SFX.combo && SFX.combo(5);
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => { el._busy = false; achToast(); }, 350); }, achQ.length ? 1900 : 2600);
+  renderGarageSheet(); renderHubGarage();
+}
+// results hooks
+function achRun(isD, sc, k, bossN) { runGp = 0; setTimeout(gpSummary, 2500); GAR.st.kos += k || 0; GAR.st.bosses += bossN || 0; garSave(); achCheckStatic(); if (isD && !devRun) { achGive('daily1'); const day = todayDaily().day; if (GAR.rep.rDaily !== day) { GAR.rep.rDaily = day; gpGive(40, 'Daily bonus', '📅'); } } }
+function achDailyRank(rank) { if (rank && rank <= 3) achGive('dtop3'); }
+function achTeam(r, sp) {
+  const me = r.players.find(p => p[5] === PID); if (!me) return; runGp = 0; setTimeout(gpSummary, 2500);
+  GAR.st.kos += me[3] || 0;
+  if (!r.vs) { garSave(); achCheckStatic(); return; } // co-op: KOs count towards career
+  const won = r.vs.winner === me[6], bomb = r.vs.kind === 'bomb';
+  if (bomb) { if ((me[10] || 0) >= 1) achGive('plant1'); if ((me[10] || 0) >= 3) achGive('plant3'); if ((me[11] || 0) >= 3) achGive('stop3'); if ((me[14] || 0) >= 1) achGive('inter1'); }
+  if (won && sp && bomb) { achGive(['bombR', 'bombP', 'bombL'][SPB.diff | 0]); gpGive([20, 40, 60][SPB.diff | 0], 'Bomb Run win', '💣'); }
+  if (won && !sp) { GAR.st.onlineWins++; achGive(bomb ? 'bombOW' : 'derbyW'); gpGive(50, 'Online win', '🌐'); }
+  garSave(); achCheckStatic();
+}
+function buyMod(id) { const m = CMOD_BY[id]; if (!m || GAR.owned.includes(id) || GAR.gp < m.price) return; GAR.gp -= m.price; GAR.owned.push(id); if (!GAR.equip) GAR.equip = id; garSave(); SFX.cheer && SFX.cheer(.8); renderGarageSheet(); renderHubGarage(); garModNet(); }
+function equipMod(id) { if (id && !GAR.owned.includes(id)) return; GAR.equip = GAR.equip === id ? '' : id; garSave(); renderGarageSheet(); renderHubGarage(); garModNet(); }
+function garModNet() { if (NET.role === 'guest') netSend({ mod: GAR.equip }); else if (NET.role === 'host') vsSync(); }
+/* ---------- the Garage screen ---------- */
+let garTab = 'cars';
+function openGarage(tab) { $('garageSheet').classList.remove('hidden'); if (tab) garTab = tab; achGive('welcome'); achCheckStatic(); renderGarageSheet(); }
+function renderGarageSheet() {
+  const el = $('garBody'); if (!el || $('garageSheet').classList.contains('hidden')) return;
+  $('garGp').textContent = GAR.gp.toLocaleString();
+  document.querySelectorAll('#garTabs button').forEach(b => b.classList.toggle('on', b.dataset.gt === garTab));
+  if (garTab === 'cars') {
+    const d = CAR_BY_ID[HUB.car] || CARS[0], lk = carLocked(d), em = CMOD_BY[GAR.equip];
+    el.innerHTML = '<div class="gCars"><div class="gShow"><img class="' + (lk ? 'lockedCar' : '') + '" src="' + showUrl(d.id) + '" alt="">' + (lk ? '<div class="lockOv"><i></i><b>WAVE ' + d.unlock + '</b></div>' : '') +
+      '<div class="gName"><b>' + d.name.toUpperCase() + '</b><small>' + d.role + '</small></div></div>' +
+      '<div class="gInfo"><div class="pstats">' + [['SPEED', d.spd], ['HANDLING', d.hnd], ['STRENGTH', d.str]].map(([n, v]) => '<div>' + n + '<i><b style="width:' + clamp((v + 12) / 34 * 100, 4, 100).toFixed(0) + '%"></b></i></div>').join('') + '</div>' +
+      '<p class="gPerk">' + (d.perk ? '<b>' + PERKS[d.perk].icon + ' ' + PERKS[d.perk].name + '</b> · ' + PERKS[d.perk].desc : 'Base model · no perk') + '</p>' +
+      '<div class="gMod" data-gt="mods">' + (em ? '<span class="mi">' + em.icon + '</span><div><small>FITTED MOD</small><b>' + em.name + '</b></div>' : '<span class="mi">＋</span><div><small>FITTED MOD</small><b>None, pick one in Mods</b></div>') + '</div>' +
+      '<div class="gList">' + CARS.map(c => '<button class="gCar' + (c.id === d.id ? ' on' : '') + (carLocked(c) ? ' lk' : '') + '" data-gcar="' + c.id + '"><span class="bsPic"><img src="' + tileUrl(c.id) + '" alt="">' + (carLocked(c) ? '<span class="tlock"></span>' : '') + '</span><b>' + c.name + '</b></button>').join('') + '</div></div></div>';
+  } else if (garTab === 'mods') {
+    el.innerHTML = '<p class="gNote">Fit <b>one</b> mod at a time. Active mods go on the <b>MOD</b> button (key <b>C</b>) with a cooldown; passive ones are always on. Mods work in Waves, Bomb Run and online, but not in the Daily.</p><div class="gMods">' +
+      CMODS.map(m => { const own = GAR.owned.includes(m.id), on = GAR.equip === m.id, can = GAR.gp >= m.price;
+        return '<div class="gModC' + (on ? ' on' : '') + (own ? ' own' : '') + '"><div class="mTop"><span class="mi">' + m.icon + '</span><div><b>' + m.name + '</b><small><em class="' + m.type + '">' + m.type.toUpperCase() + '</em> · ' + m.where + (m.cd ? ' · ⏱ ' + m.cd + ' s' : '') + '</small></div></div><p>' + m.desc + '</p>' +
+          (own ? '<button class="mBtn ' + (on ? 'eq' : '') + '" data-equip="' + m.id + '">' + (on ? '✓ FITTED' : 'FIT THIS MOD') + '</button>' : '<button class="mBtn buy" data-buy="' + m.id + '"' + (can ? '' : ' disabled') + '>' + (can ? 'BUY · ' + m.price + ' GP' : '🔒 ' + m.price + ' GP · need ' + (m.price - GAR.gp) + ' more') + '</button>') + '</div>'; }).join('') + '</div>';
+  } else {
+    const groups = [...new Set(ACH.map(a => a.g))], n = ACH.filter(a => GAR.ach[a.id]).length;
+    el.innerHTML = '<p class="gNote">Achievements pay out <b>Garage Points</b> to spend on mods. <b>' + n + ' / ' + ACH.length + '</b> unlocked.</p>' +
+      groups.map(g => '<h4 class="gH">' + g.toUpperCase() + '</h4><div class="gAch">' + ACH.filter(a => a.g === g).map(a => { const done = !!GAR.ach[a.id], p = a.prog ? a.prog() : null;
+        return '<div class="gA' + (done ? ' done' : '') + '"><span class="ai">' + (done ? a.icon : '🔒') + '</span><div class="at"><b>' + a.name + '</b><small>' + a.desc + '</small>' + (p && !done ? '<i class="ap"><b style="width:' + Math.min(100, p[0] / p[1] * 100).toFixed(0) + '%"></b></i><small class="pn">' + Math.min(p[0], p[1]) + ' / ' + p[1] + '</small>' : '') + '</div><em>' + (done ? '✓ ' : '') + a.gp + ' GP</em></div>'; }).join('') + '</div>').join('') +
+      '<h4 class="gH">EVERY TIME</h4><div class="gAch">' + ACH_REP.map(a => '<div class="gA rep"><span class="ai">' + a.icon + '</span><div class="at"><b>' + a.name + '</b><small>' + a.desc + '</small></div><em>+' + a.gp + ' GP</em></div>').join('') + '</div>';
+  }
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('#garTabs [data-gt], .gMod[data-gt]'); if (t) { garTab = t.dataset.gt; renderGarageSheet(); return; }
+  const c = e.target.closest('[data-gcar]'); if (c) { hubSetCar(c.dataset.gcar); renderGarageSheet(); return; }
+  const b = e.target.closest('[data-buy]'); if (b && !b.disabled) { buyMod(b.dataset.buy); return; }
+  const q = e.target.closest('[data-equip]'); if (q) { equipMod(q.dataset.equip); return; }
+});
+function renderHubGarage() {
+  const g = $('hubGp'); if (g) g.textContent = GAR.gp.toLocaleString();
+  const em = CMOD_BY[GAR.equip], chip = $('hubMod'); if (chip) { chip.innerHTML = em ? em.icon + ' ' + em.name : '＋ Fit a mod'; chip.classList.toggle('none', !em); }
+}
 /* ---------- main menu hub ---------- */
 const HUB = { car: lsGet('scrapArenaHubCar', 'cruiser') };
 const carLocked = d => d.unlock > Math.max(maxWave, 1);
@@ -4347,7 +4676,7 @@ function renderHubTicker() {
     yt && yt.name ? 'Yesterday\'s daily winner: <b>' + esc(yt.name) + '</b> (' + yt.score + ')' : '', best ? 'Your best: <b>' + best.toLocaleString() + '</b>' : ''].filter(Boolean);
   const h = bits.join(i) + i; if ($('hubTicker')._h !== h) { $('hubTicker')._h = h; $('hubTicker').innerHTML = h; }
 }
-function renderHub() { if (!$('hub')) return; try { renderHubCar(false); renderHubProfile(); renderHubClub(); renderHubTiles(); renderHubTicker(); } catch (e) { console.error(e); } }
+function renderHub() { if (!$('hub')) return; try { renderHubCar(false); renderHubProfile(); renderHubClub(); renderHubTiles(); renderHubTicker(); renderHubGarage(); } catch (e) { console.error(e); } }
 let hubSyncing = false;
 function syncHub() {
   if (hubSyncing) return; hubSyncing = true;
@@ -4374,6 +4703,9 @@ $('hubNext').addEventListener('click', () => { const i = CARS.findIndex(c => c.i
 { let sx = null; $('hubStage').addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true }); $('hubStage').addEventListener('touchend', e => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) $(dx < 0 ? 'hubNext' : 'hubPrev').click(); }); }
 $('hubBadge').addEventListener('click', openClub); $('hubPBadge').addEventListener('click', openClub);
 document.addEventListener('click', e => { if (e.target.closest('#hubClubGo') || e.target.closest('[data-join-peek]')) openClub(); const sh = e.target.classList && e.target.classList.contains('bigSheet') ? e.target : null; if (sh) sh.classList.add('hidden'); });
+$('hubGarage').addEventListener('click', () => openGarage());
+$('hubMod').addEventListener('click', () => openGarage('mods'));
+$('hubStage').addEventListener('click', e => { if (e.target.closest('#hubCar, .lockOv')) openGarage('cars'); });
 $('hubBoard').addEventListener('click', () => { $('boardBody').appendChild($('board')); $('boardSheet').classList.remove('hidden'); loadBoard(); });
 $('hubHow').addEventListener('click', () => $('howBtn').click());
 $('hubInstall').addEventListener('click', () => $('installBtn').click());
@@ -4382,13 +4714,13 @@ $('hubDev').addEventListener('click', () => $('devBtn').click());
 document.addEventListener('keydown', e => { if (!document.body.classList.contains('atHub') || e.target.tagName === 'INPUT') return; if (e.code === 'ArrowLeft') $('hubPrev').click(); if (e.code === 'ArrowRight') $('hubNext').click(); });
 setInterval(() => { if (document.body.classList.contains('atHub')) { renderHubClub(); renderHubTicker(); } }, 30000);
 if (!CARS.some(c => c.id === HUB.car)) HUB.car = 'cruiser';
-syncHub(); renderHub();
+syncHub(); renderHub(); setTimeout(() => { achCheckStatic(); renderHubGarage(); }, 1200);
 
 window.__sa = { get state() { return state; }, get wave() { return wave; }, get score() { return score; }, get cars() { return cars; }, get player() { return player; },
   get pickups() { return pickups; }, get arena() { return arena.id; }, combo, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { if (c.boss) { killCar(c, player); continue; } c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x + 26 * Math.cos(c.a), c.y + 26 * Math.sin(c.a)], player, 300, Math.cos(c.a), Math.sin(c.a)); } },
   spawnPickup() { spawnPickup(); }, get scrap() { return scrap; }, hitRegion(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; c.armor = 0; return hitCar(c, cp, a === undefined ? player : a, 300, Math.cos(c.a), Math.sin(c.a)); }, get introT() { return introT; }, get joy() { return joy; }, setScrap(n) { scrap = n; }, get UP() { return UP; }, get barrels() { return barrels; }, get crusher() { return crusher; },
   perkHit(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; return hitCar(c, cp, a, 300, Math.cos(c.a), Math.sin(c.a)); }, hubSetCar,
-  get world() { return [W, H, CB, arena.id, OBST_C.length]; },
+  get world() { return [W, H, CB, arena.id, OBST_C.length]; }, get gar() { return GAR; }, openGarage, buyMod, equipMod, modUse, wantMod, get spikes() { return SPIKES; }, achGive, CMODS,
   get mode() { return gameMode; }, get bomb() { return BOMB; }, get VS() { return VS; }, get cars() { return cars; }, teamOn, bombOn, startBombSP, openBomb, openClub, joinClub, get club() { return CLUB; }, clubWeek, clubEvent, renderHub, get hubCar() { return HUB.car; }, get player() { return player; }, bombState, setWaveNow(n) { wave = n; }, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { c.dead = true; c.deadT = 0; } }, get checkpoint() { return getCheckpoint(); }, get wave() { return wave; }, get net() { return NET }, get netView() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, get skids() { const n = performance.now(); return SKID.slices.filter(x => x.used && n - x.t0 < SKID.LIFE).length; }, skidAlpha() { const n = performance.now(); return SKID.slices.filter(x => x.used).map(x => +clamp((SKID.LIFE - (n - x.t0)) / SKID.FADE, 0, 1).toFixed(2)); }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
 })();
 </script>
