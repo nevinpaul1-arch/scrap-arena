@@ -44,6 +44,16 @@
   #card .keys{display:inline-grid;grid-template-columns:auto auto;gap:4px 14px;text-align:left;font-size:14px;color:#dfe5ee;margin:6px 0 14px}
   kbd{background:#2a2f38;border:1px solid #444c5a;border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-size:12px;color:#dfe5ee}
   #card.over .intro,#card.over .keys,#card.over .hint{display:none}
+  /* results on tablets/desktops: two columns so nothing drops below the fold */
+  @media (min-width:900px){
+    body:not(.phone) #card.over{max-width:1120px;width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 32px;align-items:start;grid-template-areas:"t t" "f d" "c d" "m b" "l b" "x b" ". b"}
+    body:not(.phone) #card.over>h1{grid-area:t;margin:0 0 4px} body:not(.phone) #card.over #final{grid-area:f;margin:0} body:not(.phone) #card.over #clubAwardBox{grid-area:c;margin:0;max-width:none}
+    body:not(.phone) #card.over #modes{grid-area:m;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} body:not(.phone) #card.over #modes button{max-width:none}
+    body:not(.phone) #card.over #menuLinks{grid-area:l;justify-content:flex-start} body:not(.phone) #card.over #menuLinks button{margin:0 6px 0 0} body:not(.phone) #card.over #mpBack{grid-area:x;margin:0}
+    body:not(.phone) #card.over #dailyBox{grid-area:d;margin:0;max-width:none} body:not(.phone) #card.over #board{grid-area:b;margin:0;max-width:none}
+    body:not(.phone) #card.over.teamRes{grid-template-columns:minmax(0,1.4fr) minmax(0,.9fr);grid-template-areas:"t t" "f c" "f m" "f l" "f x" "f ."}
+    body:not(.phone) #card.over.teamRes #modes{grid-template-columns:minmax(0,1fr)}
+  }
   #pname{display:block;margin:0 auto 12px;width:220px;max-width:90%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid #3a4150;background:#171a20;color:#fff;font-size:16px;text-align:center}
   #pname:focus{outline:none;border-color:#e63946}
   #board{margin:18px auto 0;max-width:360px;text-align:left}
@@ -57,6 +67,7 @@
   #modes{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:4px 0 6px}
   #modes button{flex:1 1 200px;max-width:250px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:13px 16px 12px}
   #modes button small{font-size:11.5px;font-weight:600;letter-spacing:.02em;opacity:.9;line-height:1.35;text-transform:none}
+  #modes button.again{order:-1;box-shadow:0 0 0 2px rgba(255,255,255,.85),0 6px 18px rgba(0,0,0,.35)}
   button#goDaily{background:#1d6fd8;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:800;letter-spacing:.06em;cursor:pointer}
   button#goDaily:hover{background:#2a82f0}
   button#goCont{background:#2a9d8f;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:800;letter-spacing:.06em;cursor:pointer} button#goCont:hover{background:#33b3a3} button#goCont.hidden{display:none}
@@ -177,9 +188,10 @@
   body.phone #card h1{margin:0;font-size:30px;line-height:1.05}
   body.phone #howBtn{display:block;background:none;border:1px solid #3a4150;color:#cfd6e2;border-radius:8px;padding:7px 10px;font-weight:700;font-size:12.5px;cursor:pointer}
   body.phone #pname{margin:0;width:100%;box-sizing:border-box;padding:8px 10px;font-size:15px}
-  body.phone #modes{margin:0;gap:7px;flex-direction:column}
-  body.phone #modes button{max-width:none;flex:none;padding:8px 12px;font-size:16px;flex-direction:row;justify-content:space-between;align-items:center;text-align:left}
-  body.phone #modes button small{font-size:11px;max-width:62%;text-align:right}
+  body.phone #modes{margin:0;gap:6px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  body.phone #modes button{max-width:none;flex:none;min-height:46px;padding:6px 11px;font-size:15px;flex-direction:column;justify-content:center;align-items:flex-start;gap:1px;text-align:left;min-width:0}
+  body.phone #modes button small{font-size:10.5px;max-width:100%;width:100%;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  body.phone #card.teamRes #modes{grid-template-columns:minmax(0,1fr)} body.phone #card.teamRes #clubAwardBox{flex-direction:column}
   body.phone #dailyBox{margin:0;max-width:none;padding:7px 10px;font-size:12px;gap:2px 10px}
   body.phone #dailyBox .ic{font-size:20px}
   body.phone #dailyBox .mt{font-size:11px;padding-top:4px}
@@ -251,14 +263,14 @@
   body.phone #sheetBg:not(.hidden){display:block;position:fixed;inset:0;z-index:30;background:rgba(8,9,12,.7)}
   body.phone.sh-garage #garage.on,body.phone.sh-road #road{display:block;position:fixed;z-index:31;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,620px);max-height:86%;overflow:auto;margin:0;box-sizing:border-box}
   body.phone.sh-garage #garage:not(.on){display:block;position:fixed;z-index:31;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,520px);margin:0;padding:16px}
-  body.phone.sh-garage #garage:not(.on)::after{content:'The garage opens after wave 2. Collect scrap from wrecks to spend here.';color:#8791a1;font-size:13px}
+  body.phone.sh-garage #garage:not(.on)::after{content:'The pit stop opens after wave 2. Collect scrap from wrecks to spend here.';color:#8791a1;font-size:13px}
   /* online panel + dev panel */
   body.phone #mpPanel,body.phone #devPanel{padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));align-items:center}
   body.phone #mpPanel .mp,body.phone #devPanel .dp{max-height:100%;overflow:auto;padding:12px 14px;box-sizing:border-box;max-width:760px}
   body.phone #mpPanel h2,body.phone #devPanel h2{font-size:16px}
   body.phone #mpPanel h4,body.phone #devPanel h4{margin:7px 0 4px}
   body.phone #mpPanel .sub,body.phone #devPanel .sub{font-size:11.5px;margin:2px 0 4px}
-  body.phone #mpPanel .opt,body.phone #devPanel .opt{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  body.phone #mpPanel .opt{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent);padding-right:18px} body.phone #devPanel .opt{flex-wrap:wrap;gap:5px}
   body.phone #mpPanel .opt button,body.phone #devPanel .opt button{flex:none;padding:5px 9px;font-size:11.5px}
   body.phone #mpPanel .row2{margin-top:8px;gap:8px} body.phone #mpPanel .row2 button{padding:9px;font-size:13px}
   body.phone #mpPanel .join input{font-size:17px;padding:6px 10px}
@@ -307,7 +319,7 @@
   body.phone .vsBox .cap small{display:none} body.phone .vsBox .cap span,body.phone .vsVote .cap span{font-size:10.5px} body.phone .vsVote .cap em{font-size:9.5px}
   body.phone .vsVotes{gap:5px} body.phone .vsVote{aspect-ratio:1.72} body.phone .vsBossCol h4{margin:0 0 4px;font-size:11px}
   body.phone .lobBottom{flex-direction:row;align-items:center;gap:10px;margin-top:6px} body.phone .lobBottom .lobCar{flex:1;min-width:0} body.phone .lobBottom h4{display:none}
-  body.phone .lobBottom .row2{margin:0!important;flex:none} body.phone .lobBottom .row2 button{padding:8px 12px!important;font-size:12.5px!important}
+  body.phone .lobBottom .row2{margin:0!important;flex:none;flex-wrap:nowrap} body.phone .lobBottom .row2 button{flex:none!important} body.phone .lobBottom .row2 button{padding:8px 12px!important;font-size:12.5px!important}
   body.phone #mpLobby .mode{margin:2px 0 6px} body.phone #mpModeTxt{font-size:11px}
   @media (orientation:portrait){ body.phone .lobBottom{flex-direction:column;align-items:stretch} body.phone .lobBottom .row2 button{flex:1} }
   .vsRes{margin:6px 0} .vsRes .sc{display:flex;justify-content:center;gap:12px;font:900 24px system-ui,sans-serif} .vsRes .sub{text-align:center;color:#8791a1;font-size:12px;margin:2px 0 6px}
@@ -316,7 +328,10 @@
   .vsRes td small{color:#6f7888;margin-left:6px;font-size:10.5px} .vsRes tr.me td{background:#2a2617}
   body.phone .vsRes{max-height:52vh;overflow:auto} body.phone .vsRes .sc{font-size:18px} body.phone .vsRes table{font-size:11px} body.phone .vsRes td small{display:none}
   #devBtn{position:fixed;top:12px;right:12px;z-index:22;background:#1a1e26;color:#9aa3b2;border:1px dashed #4a5262;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:800;letter-spacing:.08em;cursor:pointer}
-  #overlay.hidden ~ #devBtn{display:none}
+  #devPanel h4 small{font-weight:600;letter-spacing:.02em;text-transform:none;color:#6f7888}
+  #devPanel .row2 #devBomb{background:#e08a00;color:#fff;flex:0 1 150px}
+  #devPanel .row2{position:sticky;bottom:0;background:#14171d;padding:10px 0 2px;z-index:2;box-shadow:0 -10px 14px #14171d}
+  #devPanel .opt button.on{background:#e63946;border-color:#e63946;color:#fff}
   #devPanel{position:fixed;inset:0;z-index:40;background:rgba(8,9,12,.86);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow:auto}
   #devPanel.hidden{display:none}
   #devPanel .dp{background:#14171d;border:1px dashed #4a5262;border-radius:14px;padding:18px 20px;max-width:560px;width:100%;text-align:left;color:#cfd6e2;margin:auto}
@@ -485,9 +500,13 @@
   .plate{position:relative;width:100%;max-width:calc(var(--u)*62);background:linear-gradient(180deg,rgba(18,21,28,.85),rgba(10,12,16,.92));border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:calc(var(--u)*1.2) calc(var(--u)*1.8);box-shadow:0 10px 30px rgba(0,0,0,.45);box-sizing:border-box}
   .plate::before{content:'';position:absolute;left:14px;right:14px;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--cc,#e63946),transparent)}
   .pl1{display:flex;align-items:baseline;gap:10px} .pl1 b{font:900 italic calc(var(--u)*3)/1.05 system-ui,sans-serif;letter-spacing:.03em} .pl1 small{color:#8d97a8;font:700 calc(var(--u)*1.5) system-ui,sans-serif}
-  .pstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:calc(var(--u)*.8)}
-  .pstats div{font:800 calc(var(--u)*1.2) system-ui,sans-serif;letter-spacing:.1em;color:#8d97a8}
-  .pstats i{display:block;height:5px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:3px;overflow:hidden} .pstats i b{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#ffbe0b,#ff6b3d);transition:width .4s}
+  .pstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .pstats>div{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;column-gap:4px;font:800 10px system-ui,sans-serif;letter-spacing:.1em;color:#8d97a8;white-space:nowrap}
+  .pstats span{overflow:hidden;text-overflow:clip} .pstats em{font-style:normal;letter-spacing:.02em;color:#aab3c2;font-variant-numeric:tabular-nums} .pstats .sUp em{color:#7dffb0} .pstats .sDn em{color:#ffb070} .pstats span b{font:inherit;color:inherit} .pstats .ls{display:none}
+  .pstats i{grid-column:1/-1;display:block;height:5px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:3px;overflow:hidden} .pstats i b{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#ffbe0b,#ff6b3d);transition:width .4s}
+  .pstats.rows{grid-template-columns:minmax(0,1fr);gap:5px} .pstats.rows>div{grid-template-columns:76px minmax(0,1fr) 42px;align-items:center;column-gap:8px} .pstats.rows span{order:1} .pstats.rows i{order:2;grid-column:auto;margin:0} .pstats.rows em{order:3;text-align:right}
+  #hubStats{margin-top:calc(var(--u)*.8)} #hubStats>div{font-size:calc(var(--u)*1.2)}
+  @media (max-height:500px),(max-width:760px){ #hubStats .lf{display:none} #hubStats .ls{display:inline} }
   .perkline{margin-top:calc(var(--u)*.8);font:700 calc(var(--u)*1.45)/1.3 system-ui,sans-serif;color:#cdd4e0} .perkline:empty{display:none} .perkline b{color:#ffd166}
   .perkline.lock{color:#ffbe0b}
   .dots{display:flex;gap:5px;margin-top:6px} .dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18)} .dots i.on{background:#ff4d5a;box-shadow:0 0 8px #ff4d5a} .dots i.lk{background:rgba(255,255,255,.07)}
@@ -523,7 +542,7 @@
     .modes{gap:7px} .tile{max-height:74px;min-height:52px;gap:10px;padding:0 18px 0 9px;border-radius:12px;clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%)}
     .tile .ico{width:38px;height:38px;font-size:20px} .tile b{font-size:19px} .tile small{font-size:10.5px;margin-top:2px} .tile .tag{top:5px;right:18px;font-size:8.5px;padding:2px 5px}
     .stage .nav{width:32px;height:32px;font-size:22px;top:30%} .sticker{width:44px;top:4%;right:6%}
-    .plate{padding:6px 11px;border-radius:12px} .pl1 b{font-size:17px} .pl1 small{font-size:10.5px} .pstats{gap:6px;margin-top:4px} .pstats div{font-size:8px} .pstats i{height:4px}
+    .plate{padding:6px 11px;border-radius:12px} .pl1 b{font-size:17px} .pl1 small{font-size:10.5px} #hubStats{gap:6px;margin-top:4px} #hubStats>div{font-size:8px} #hubStats i{height:4px}
     .perkline{font-size:10.5px;margin-top:4px} .dots{margin-top:4px} .dots i{width:5px;height:5px} .stage .floor{bottom:34%}
     .clubCard{padding:10px 11px;gap:6px;border-radius:14px} .cc1{gap:9px} .cc1 img{width:42px;min-width:0} .cc1 small{font-size:8px} .cc1 h3{font-size:15px} .cc1 em{font-size:10px}
     .ccRank{font-size:10px} .ccBar{height:5px} .ccEv{padding:5px 8px;gap:8px;border-radius:10px} .ccEv .ei{font-size:20px} .ccEv small{font-size:7.5px} .ccEv b{font-size:12px}
@@ -532,11 +551,24 @@
     .tick{font-size:10px;line-height:1.6}
   }
   /* portrait: stack */
-  @media (orientation:portrait) and (max-width:700px){
-    body.atHub #overlay{overflow:auto} body.atHub #hub{height:auto;min-height:100%;--u:min(.62vh,1.25vw)}
-    .hubTop{flex-wrap:wrap} .logo{font-size:34px} .profile{margin-left:0;order:3;width:100%;box-sizing:border-box} .topBtns{margin-left:auto}
-    .hubMain{grid-template-columns:1fr;gap:12px} .stage{order:-1;height:42vh} .tile{min-height:64px;max-height:none} .tile b{font-size:22px} .tile small{font-size:12px}
+  body.atHub #hub{grid-template-columns:minmax(0,1fr)} .hubTop>*{min-width:0} .clubCard>*{min-width:0;max-width:100%} .ccJoin{overflow:hidden}
+  /* narrow landscape phones (e.g. 667 wide): tighter top bar */
+  @media (max-width:760px) and (orientation:landscape){
+    .logo{font-size:22px} body.atHub #pname{width:110px} .pTxt small{max-width:120px;overflow:hidden;text-overflow:ellipsis} .topBtns{gap:4px} .topBtns button{min-width:32px;padding:0 6px}
+    .hubMain{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,.9fr);gap:9px}
   }
+  @media (max-height:385px) and (orientation:landscape){ .ccNo p{display:none} .ccJoin{height:40px} }
+  @media (max-height:780px) and (min-height:501px){ .ccList{gap:3px} .ccList button{padding:3px 8px} .ccList button small{display:none} }
+  /* portrait (phones and tablets): stack everything and scroll */
+  @media (orientation:portrait){
+    body.atHub #overlay{overflow:auto} body.atHub #hub{height:auto;min-height:100%;--u:min(.62vh,1.25vw);grid-template-rows:auto auto auto}
+    .hubTop{flex-wrap:wrap;row-gap:8px} .logo{font-size:clamp(26px,7vw,46px)} .profile{margin-left:0;order:3;width:100%;box-sizing:border-box} .topBtns{margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+    .topBtns button span{display:none} .topBtns .garBtn span{display:inline}
+    .hubMain{grid-template-columns:minmax(0,1fr);gap:12px} .stage{order:-1;height:min(42vh,520px)} .modes{display:grid;grid-template-columns:minmax(0,1fr);gap:10px} .tile{min-height:64px;max-height:none;flex:none} .tile b{font-size:clamp(20px,5.4vw,30px)} .tile small{font-size:clamp(11.5px,2.6vw,15px)}
+    .clubCard{min-height:320px} .ccList{max-height:none}
+  }
+  @media (orientation:portrait) and (min-width:600px){ .modes{grid-template-columns:repeat(2,minmax(0,1fr))} .tile{min-height:96px} }
+  @media (orientation:portrait) and (max-width:480px){ .topBtns .garBtn span{display:none} .topBtns{gap:4px} .topBtns button{min-width:34px;height:36px;padding:0 7px} }
 
   /* garage */
   .garBtn em{font-style:normal;font-size:11px;color:#ffd166;background:rgba(255,190,11,.12);border:1px solid rgba(255,190,11,.3);border-radius:999px;padding:1px 7px;margin-left:2px}
@@ -550,7 +582,7 @@
   .gShow{position:relative;border-radius:16px;overflow:hidden;background:radial-gradient(70% 70% at 50% 45%,rgba(255,220,180,.18),rgba(10,12,16,0) 70%),linear-gradient(180deg,#1a1d25,#0e1015);border:1px solid #2d3340;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
   .gShow img{width:130%;max-width:none;-webkit-mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 46% 50% at 50% 52%,#000 58%,transparent 100%)} .gShow img.lockedCar{filter:grayscale(1) brightness(.62);opacity:.85}
   .gShow .gName{position:absolute;left:14px;bottom:10px} .gShow .gName b{display:block;font:900 italic 24px system-ui,sans-serif} .gShow .gName small{color:#8d97a8;font-weight:700}
-  .gShow .lockOv{top:42%} .gInfo .pstats div{font-size:10px} .gPerk{font-size:13px;line-height:1.45;color:#cfd6e2;margin:10px 0} .gPerk b{color:#ffd166}
+  .gShow .lockOv{top:42%} .gInfo .pstats>div{font-size:11px} .gPerk{font-size:13px;line-height:1.45;color:#cfd6e2;margin:10px 0} .gPerk b{color:#ffd166}
   .gMod{display:flex;align-items:center;gap:10px;border:1px solid rgba(255,190,11,.35);background:rgba(255,190,11,.07);border-radius:12px;padding:8px 12px;cursor:pointer} .gMod .mi{font-size:26px} .gMod small{display:block;font:800 10px system-ui,sans-serif;letter-spacing:.16em;color:#d9b45a} .gMod b{font:900 15px system-ui,sans-serif}
   .gList{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:12px} .gCar{border:1px solid #2d3340;background:#12151b;border-radius:10px;padding:4px;color:#dfe5ee;cursor:pointer;text-align:center} .gCar img{width:100%;aspect-ratio:2/1;object-fit:contain} .gCar b{font:900 italic 11px system-ui,sans-serif} .gCar.on{border-color:#ff4d5a;box-shadow:0 0 0 2px rgba(255,77,90,.3)} .gCar.lk img{filter:grayscale(1) brightness(.6)}
   .gNote{margin:0 0 10px;font-size:13px;color:#aab3c2;line-height:1.45} .gNote b{color:#fff}
@@ -564,13 +596,24 @@
   .gA{display:flex;align-items:center;gap:10px;border:1px solid #232833;background:#11141a;border-radius:10px;padding:7px 10px} .gA .ai{font-size:22px;width:30px;text-align:center;opacity:.55} .gA .at{flex:1;min-width:0} .gA b{display:block;font:900 13px system-ui,sans-serif;color:#aab3c2} .gA small{display:block;font-size:11px;color:#7d8696}
   .gA em{font-style:normal;font:900 12px system-ui,sans-serif;color:#8d97a8;white-space:nowrap} .gA.done{border-color:rgba(125,255,176,.35);background:linear-gradient(90deg,rgba(125,255,176,.08),#11141a)} .gA.done .ai{opacity:1} .gA.done b{color:#fff} .gA.done em{color:#7dffb0} .gA.rep em{color:#ffd166} .gA.rep .ai{opacity:1}
   .gA .ap{display:block;height:4px;border-radius:3px;background:rgba(255,255,255,.07);margin-top:4px;overflow:hidden} .gA .ap b{display:block;height:100%;background:#ffbe0b} .gA .pn{font-size:10px}
+  @media (orientation:portrait) and (max-width:600px){ .gCars{grid-template-columns:minmax(0,1fr)!important} .gCar b{font-size:10px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .gMods{grid-template-columns:minmax(0,1fr)!important} .gAch{grid-template-columns:minmax(0,1fr)!important} }
   @media (max-width:760px),(max-height:500px){ .gCars{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px} .gMods{grid-template-columns:repeat(2,minmax(0,1fr))} .gModC p{font-size:11px} .gList{grid-template-columns:repeat(4,minmax(0,1fr))} .gShow .gName b{font-size:18px} }
   @media (max-height:500px){ .garBs{padding:10px 12px} #garTabs{margin-bottom:8px} #garTabs button{padding:6px;font-size:11px} .gPerk{font-size:11.5px;margin:6px 0} .gMods{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px} .gModC{padding:7px;gap:4px} .mTop .mi{width:32px;height:32px;font-size:17px} .mTop b{font-size:12.5px} .mTop small{font-size:9px} .gModC p{font-size:10px} .mBtn{padding:6px;font-size:10.5px} .gAch{gap:4px} .gA{padding:5px 8px} .gA b{font-size:12px} }
-.gpEarn{margin-top:8px;padding:6px 12px;border-radius:10px;background:rgba(255,190,11,.1);border:1px solid rgba(255,190,11,.35);font-size:13px;color:#e8dcc0} .gpEarn b{color:#ffd166}
+/* results: club points + garage points side by side, one compact row */
+  #clubAwardBox{display:flex;gap:8px;justify-content:center;align-items:stretch;max-width:640px;margin:10px auto 0} #clubAwardBox:empty{display:none}
+  #clubAwardBox>*{flex:1 1 0;min-width:0;margin:0!important;max-width:none}
+  .gpEarn{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:12px;background:linear-gradient(90deg,rgba(255,190,11,.16),rgba(255,190,11,.04));border:1px solid rgba(255,190,11,.4);color:#e8dcc0;text-align:left;cursor:pointer;font:inherit}
+  .gpEarn .gi{font-size:22px} .gpEarn .gt{display:flex;flex-direction:column;min-width:0} .gpEarn b{color:#ffd166;font:900 15px system-ui,sans-serif;white-space:nowrap} .gpEarn small{font-size:11px;color:#c9b98f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  body.phone #clubAwardBox{margin:0;gap:6px} body.phone #clubAwardBox .clubAward{padding:5px 9px;gap:7px;font-size:11.5px;line-height:1.25} body.phone #clubAwardBox .clubAward img{width:26px} body.phone .gpEarn{padding:4px 9px;gap:6px} body.phone .gpEarn .gi{font-size:17px} body.phone .gpEarn b{font-size:13px} body.phone .gpEarn small{font-size:10px}
+  #boardSheet #board h3{display:none}
+  /* comfortable tap targets on touch screens */
+  .shClose{min-width:40px;min-height:40px;display:grid;place-items:center;right:4px;top:2px} #mpClose{min-width:36px;min-height:34px;display:grid;place-items:center;right:4px;top:4px}
+  body.touch #board .tabs button{min-height:30px} body.touch .mBtn{min-height:32px} body.touch #mpPanel .opt button{min-height:30px} body.touch #devPanel .opt button,body.touch #devPanel .waves button{min-height:30px}
+  body.touch .modChip{min-height:26px}
   .clSoon{display:flex;gap:12px;align-items:center;margin:10px 0;padding:10px 12px;border-radius:14px;border:1px dashed rgba(157,107,255,.55);background:linear-gradient(90deg,rgba(157,107,255,.14),rgba(157,107,255,.03))} .clSoon .si{font-size:28px} .clSoon small{font:800 10.5px system-ui,sans-serif;letter-spacing:.16em;color:#c4a8ff} .clSoon b{display:block;font:900 italic 17px system-ui,sans-serif} .clSoon p{margin:2px 0 0;font-size:12.5px;color:#cfd6e2;line-height:1.4}
   /* achievement toast + mod controls */
-  #achToast{position:fixed;left:50%;bottom:max(16px,calc(env(safe-area-inset-bottom) + 10px));transform:translate(-50%,30px);z-index:45;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:14px;background:linear-gradient(90deg,rgba(40,30,8,.95),rgba(16,18,24,.95));border:1px solid rgba(255,209,102,.6);box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;color:#fff}
-  #achToast.show{opacity:1;transform:translate(-50%,0)} #achToast .ai{font-size:26px} #achToast small{display:block;font:800 9.5px system-ui,sans-serif;letter-spacing:.18em;color:#ffd166} #achToast b{font:900 15px system-ui,sans-serif} #achToast em{font-style:normal;font:900 15px system-ui,sans-serif;color:#7dffb0;margin-left:6px}
+  #achToast{position:fixed;left:50%;top:max(10px,calc(env(safe-area-inset-top) + 6px));transform:translate(-50%,-30px);z-index:45;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:14px;background:linear-gradient(90deg,rgba(40,30,8,.95),rgba(16,18,24,.95));border:1px solid rgba(255,209,102,.6);box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;color:#fff}
+  #achToast.show{opacity:1;transform:translate(-50%,0)} body.phone #achToast{padding:5px 11px 5px 8px;gap:8px;border-radius:12px} body.phone #achToast .ai{font-size:20px} body.phone #achToast b,body.phone #achToast em{font-size:13px} body.phone #achToast small{font-size:8.5px} #achToast .ai{font-size:26px} #achToast small{display:block;font:800 9.5px system-ui,sans-serif;letter-spacing:.18em;color:#ffd166} #achToast b{font:900 15px system-ui,sans-serif} #achToast em{font-style:normal;font:900 15px system-ui,sans-serif;color:#7dffb0;margin-left:6px}
   #modHud{display:none;position:fixed;left:max(12px,env(safe-area-inset-left));top:max(86px,calc(env(safe-area-inset-top) + 82px));z-index:6;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(10,12,16,.75);border:1px solid #3a3f4b;font:800 12px system-ui,sans-serif;color:#aab3c2;pointer-events:none} #modHud.ready{color:#ffd166;border-color:rgba(255,209,102,.6)}
   body.touch #modHud{display:none!important}
   #bMod{display:none;position:relative;width:64px;height:64px;font-size:11px;margin-bottom:6px;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;border-color:rgba(255,138,92,.9)!important;color:#ffd0b8!important;background:conic-gradient(rgba(0,0,0,.55) var(--cd,0deg),rgba(120,50,20,.55) 0)!important}
@@ -579,6 +622,9 @@
   /* sheets for leaderboard, clubs and bomb run setup */
   .bigSheet{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(4,5,8,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));box-sizing:border-box}
   .bigSheet.hidden{display:none}
+  .bigSheet .bs>.shClose{position:sticky;top:-6px;float:right;margin:-8px -10px -40px 0;z-index:5;background:rgba(14,16,22,.85);border-radius:50%}
+  #sheetX{display:none;position:fixed;z-index:33;top:max(8px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));width:40px;height:40px;border-radius:50%;border:1px solid #3a4150;background:#14171d;color:#dfe5ee;font-size:18px;cursor:pointer}
+  body.phone.sh-garage #sheetX,body.phone.sh-road #sheetX{display:block}
   .bigSheet .bs{position:relative;width:min(980px,100%);max-height:100%;overflow:auto;background:linear-gradient(180deg,#171a22,#0e1015);border:1px solid #2d3340;border-radius:18px;padding:16px 18px;box-sizing:border-box;color:#dfe5ee;text-align:left;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:sheetIn .28s cubic-bezier(.2,.9,.3,1.2)}
   @keyframes sheetIn{from{transform:translateY(24px) scale(.98);opacity:0}}
   .bigSheet h2{margin:0 0 10px;font:900 italic 22px system-ui,sans-serif;letter-spacing:.05em}
@@ -613,7 +659,7 @@
   .clSwitch,.clBack{margin-top:12px;background:none;border:1px solid #3a4150;color:#aab3c2;border-radius:10px;padding:8px 14px;font:800 12px system-ui,sans-serif;cursor:pointer}
   .clubAward{display:flex;gap:10px;align-items:center;margin:10px auto 0;max-width:520px;padding:8px 12px;border-radius:12px;background:linear-gradient(90deg,color-mix(in srgb,var(--cc,#ffbe0b) 22%,transparent),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);text-align:left;font-size:13px;color:#dfe5ee;cursor:default}
   .clubAward img{width:38px} .clubAward b{color:#fff} .clubAward em{color:#ffd166;font-style:normal;font-weight:800;margin-left:4px} .clubAward .up{color:#7dffb0;font-weight:900}
-  .clubAward.none{cursor:pointer;justify-content:center}
+  .clubAward.none{cursor:pointer;font:inherit;font-size:13px;justify-content:flex-start} .clubAward.none small{color:#aab3c2}
   .vsRes img.cb{width:16px;vertical-align:-3px;margin-right:4px} .vsRes em.bot{font-style:normal;font-size:9px;font-weight:900;letter-spacing:.1em;background:#2d3340;color:#aab3c2;padding:1px 4px;border-radius:4px}
   .vsBox{position:relative} .vsBox img.cb{position:absolute;top:4px;right:4px;width:20px;height:20px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
   #mpCars button.lk,#mpCars2 button.lk{opacity:.45;cursor:not-allowed}
@@ -661,9 +707,9 @@
     <div id="garage"></div>
     <div id="selGrid"></div>
     <div id="selInfo"></div>
-    <div id="selTools"><button id="openGarage">🔧 GARAGE</button><button id="openRoad">🛣 ROAD AHEAD</button></div>
+    <div id="selTools"><button id="openGarage">🛠 PIT STOP</button><button id="openRoad">🛣 ROAD AHEAD</button></div>
     <div id="road"></div>
-    <div id="sheetBg" class="hidden"></div>
+    <div id="sheetBg" class="hidden"></div><button id="sheetX" aria-label="Close">✕</button>
   </div>
   <div id="selBar">
     <button id="selGo">DRIVE</button>
@@ -676,9 +722,11 @@
   <h2>🛠 DEVELOPER MODE</h2><div class="sub">Jump straight into any wave. Dev runs are never saved or sent to the leaderboard, and don't unlock cars.</div>
   <h4>START AT WAVE</h4><div class="waves" id="devWaves"></div>
   <h4>CAR</h4><div class="opt" id="devCars"></div>
+  <h4>CAR MOD <small>(fitted for this dev run, owned or not)</small></h4><div class="opt" id="devCmods"></div>
   <h4>OPTIONS</h4><div class="opt" id="devOpts"></div>
   <h4>DAILY MODIFIER (optional)</h4><div class="opt" id="devMods"></div>
-  <div class="row2"><button id="devClose">CLOSE</button><button id="devGo">PLAY WAVE 1</button></div>
+  <h4>GARAGE TOOLS <small>(changes your saved garage on this device)</small></h4><div class="opt" id="devGar"></div>
+  <div class="row2"><button id="devClose">CLOSE</button><button id="devBomb">💣 BOMB RUN</button><button id="devGo">PLAY WAVE 1</button></div>
 </div></div>
 <div id="devTag">DEV RUN</div>
 <div id="overlay">
@@ -724,11 +772,11 @@
     <div id="clubAwardBox"></div>
     <input id="pname" maxlength="14" placeholder="Your name" autocomplete="off" spellcheck="false">
     <div id="modes">
-      <button id="go">WAVES<small>The classic run: endless waves, unlock cars</small></button>
+      <button id="go">WAVES<small>Endless waves · unlock cars</small></button>
       <button id="goCont" class="hidden">CONTINUE</button>
       <button id="goDaily">DAILY<small id="dailySub">Same challenge for everyone today</small></button>
-      <button id="goBomb">BOMB RUN<small>3v3 vs bots · plant the bomb</small></button>
-      <button id="goOnline">ONLINE<small>Play with friends: co-op or versus</small></button>
+      <button id="goBomb">BOMB RUN<small>3v3 vs bots · The Depot</small></button>
+      <button id="goOnline">ONLINE<small>Co-op · Team Derby · Bomb Run</small></button>
     </div>
     <div id="dailyBox"></div>
     <div id="menuLinks"><button id="goHome">🏠 Home</button><button id="howBtn">❓ How to play</button><button id="installBtn" class="hidden">📲 Install app</button></div>
@@ -754,6 +802,7 @@
     <li><b>Shake your phone</b> to show how you feel.</li>
   </ul>
   <p><b>💣 Bomb Run</b> (3v3, alone with bots or online): a bomb drops in an amber ring in the first 10 s. It's played on its own big map, The Depot, with two sites per team (A and B). Carry the bomb into one of theirs and stay still for 5 s to blow it up (+1 point, everyone respawns). Press F (or PASS) to lob it to a team-mate over the low barriers. Wreck the carrier to make them drop it.</p>
+  <p><b>🔧 Garage &amp; mods</b>: achievements pay out Garage Points (GP). Spend them in the Garage on car mods like the Flipper, Spike Drop or Harpoon. Fit one at a time; active mods go on the <b>MOD</b> button (key <b>C</b>) with a cooldown, passive ones are always on. Mods are off in the Daily.</p>
   <p><b>🏁 Motor clubs</b>: tap the badge at the top of the menu to join one. Its badge goes on your car, every game earns club points, and clubs race in a new event each week.</p>
   <p><b>Unlocked cars</b> are stronger and each has a perk: 🌀 Drifter, 🐂 Hauler, 🔥 Rocket, 🛡 Fortress, 👻 Phantom.</p>
   <p>Chain hits for combos, pin cars against walls for double damage, grab 🔧 repair, 🛡 armor and ⚡ nitro pickups. Arrows at the screen edge point to cars you can't see. Clearing a wave repairs 2 parts. A boss shows up every 5th wave.</p>
@@ -797,10 +846,10 @@
     <div class="msg" id="mpMsg2"></div>
   </div>
 </div></div>
-<button id="devBtn">🛠 DEV</button>
+
 <button class="fsBtn" id="fsMenu" title="Fullscreen">⛶</button>
 <button class="fsBtn" id="fsGame" title="Fullscreen">⛶</button>
-<div id="rotate"><div class="ph"></div><div>Turn your phone sideways</div><small>Scrap Arena plays in landscape. The game is paused until you rotate.</small></div>
+<div id="rotate"><div class="ph"></div><div>Turn your device sideways</div><small>Scrap Arena plays in landscape. The game is paused until you rotate.</small></div>
 <script>
 (() => {
 'use strict';
@@ -1064,7 +1113,7 @@ const MODS = [
   { id: 'heavy', name: 'Heavyweights', icon: '🦏', desc: 'Only Tanks and Rammers show up' },
   { id: 'barrels', name: 'Barrel Party', icon: '🧨', desc: 'Extra explosive barrels everywhere' },
   { id: 'bossrush', name: 'Boss Rush', icon: '👹', desc: 'The Dozer on waves 3 and 5' },
-  { id: 'nogarage', name: 'No Garage', icon: '🚫', desc: 'No upgrades today - pure skill' },
+  { id: 'nogarage', name: 'No Pit Stop', icon: '🚫', desc: 'No upgrades today - pure skill' },
   { id: 'scrap', name: 'Scrap Frenzy', icon: '🔩', desc: 'Double scrap, but double prices' }
 ];
 const mod = id => gameMode === 'daily' && !!daily && daily.mod.id === id;
@@ -1212,7 +1261,7 @@ function clubAddPts(pts) {
 }
 // award from a team results payload (online versus / co-op / single-player Bomb Run)
 function clubAward(r, sp) {
-  if (!myClubId() || devRun) return null;
+  if (!myClubId() || devRun || DEV.bombRun) return null;
   const me = r.players.find(p => p[5] === PID); if (!me) return null;
   let st;
   if (r.mode === 'versus' && r.vs) st = { kos: me[3], plants: me[10] || 0, stops: me[11] || 0, win: r.vs.winner === me[6] ? 1 : 0 };
@@ -1229,7 +1278,7 @@ function clubAwardRun(kind, sc, kos, boss) { // single-player Waves / Daily
   return res;
 }
 function clubAwardHtml(res) {
-  if (!myClubId()) return '<div class="clubAward none" onclick="window.__openClub && window.__openClub()">🏁 <b>Join a motor club</b> to earn club points from every game</div>';
+  if (!myClubId()) return '<button type="button" class="clubAward none" onclick="window.__openClub && window.__openClub()"><span style="font-size:20px">🏁</span><div><b>Join a motor club</b><br><small>earn club points from every game ›</small></div></button>';
   if (!res || !res.pts) return '';
   const c = CLUB_BY[CLUB.id];
   return '<div class="clubAward" style="--cc:' + c.c1 + '"><img src="' + clubBadgeUrl(c.id) + '" alt=""><div><b>+' + res.pts + ' club points</b> for ' + esc(c.name) + (res.ev && Object.keys(res.br).some(k => res.ev.mult[k]) ? ' <em>' + res.ev.icon + ' ' + res.ev.name + ' bonus</em>' : '') + (res.rankUp ? '<br><span class="up">⬆ Promoted to ' + res.rankUp + '!</span>' : '') + '</div></div>';
@@ -1427,6 +1476,9 @@ const PERKS = {
 const CAR_BY_ID = {}; CARS.forEach(c => { CAR_BY_ID[c.id] = c; });
 let selId = 'cruiser', pendingFresh = true, selWave = 1;
 const fmtPct = v => (v > 0 ? '+' : '') + v + '%';
+// one stat display for every screen (home, garage, car select): same fill and same numbers everywhere
+const statPct = v => clamp(50 + v * 2.2, 8, 100), statTxt = v => v > 0 ? '+' + v + '%' : v < 0 ? '−' + Math.abs(v) + '%' : 'base';
+function carStatsHtml(d, rows) { return '<div class="pstats' + (rows ? ' rows' : '') + '">' + [['SPEED', d.spd], ['HANDLING', d.hnd], ['STRENGTH', d.str]].map(([n, v]) => '<div class="' + (v > 0 ? 'sUp' : v < 0 ? 'sDn' : '') + '"><span><b class="lf">' + n + '</b><b class="ls">' + ({ SPEED: 'SPD', HANDLING: 'HDL', STRENGTH: 'STR' })[n] + '</b></span><em>' + statTxt(v) + '</em><i><b style="width:' + statPct(v).toFixed(0) + '%"></b></i></div>').join('') + '</div>'; }
 function applyCar(c, d) {
   c.col = d.col; c.carName = d.name; c.styleId = d.id;
   if (c.isPlayer && !c.bot && (!c.pid || c.pid === PID)) { const p = PAINTS.find(q => q.id === paintId); if (p && p.col && paintOk(p)) c.col = p.col; }
@@ -1537,10 +1589,7 @@ function buildSelect() {
     const ci = document.createElement('img'); ci.className = 'shot'; ci.alt = d.name; ci.src = ASSET.show[d.id];
     const cn = document.createElement('div'); cn.className = 'shotW'; cn.appendChild(ci); if (locked) { const lk = document.createElement('span'); lk.className = 'tlock'; cn.appendChild(lk); }
     const stats = document.createElement('div'); stats.className = 'stats';
-    stats.innerHTML = [['Speed', d.spd], ['Handling', d.hnd], ['Strength', d.str]].map(([n, v]) => {
-      const w = Math.min(50, Math.abs(v) * 2.4), left = v >= 0 ? 50 : 50 - w;
-      return '<div class="st"><span>' + n + '</span><div class="bar"><b style="left:' + left + '%;width:' + w + '%;background:' + (v > 0 ? '#3ddc84' : v < 0 ? '#ff9f1c' : '#5a6272') + '"></b></div><span class="v">' + (v ? fmtPct(v) : '0') + '</span></div>';
-    }).join('');
+    stats.innerHTML = carStatsHtml(d, true);
     const note = document.createElement('div');
     note.className = 'note' + (locked ? ' lock' : isNew ? ' new' : '');
     note.textContent = isD ? (locked ? 'Not in today\'s daily' : 'TODAY\'S DAILY CAR') : locked ? 'Locked - unlocks at wave ' + d.unlock : isNew ? 'NEW - just unlocked' : '';
@@ -1554,7 +1603,7 @@ function buildSelect() {
 function showSelect(forWave, fresh) {
   state = 'select'; selWave = forWave; pendingFresh = fresh;
   $('overlay').classList.add('hidden'); $('banner').classList.remove('show');
-  buildSelect(); $('select').classList.remove('hidden'); $('select').scrollTop = 0;
+  openSheet(null); buildSelect(); $('select').classList.remove('hidden'); $('select').scrollTop = 0;
 }
 function moveSel(dir) {
   const ids = CARS.filter(c => c.unlock <= Math.max(selWave, maxWave)).map(c => c.id);
@@ -1590,7 +1639,7 @@ function waveNote(w) {
   if (arenaStart) notes.push(ARENAS[ai].name.charAt(0) + ARENAS[ai].name.slice(1).toLowerCase() + (ARENAS[ai].id === 'junk' ? ' + crusher' : ''));
   const t = TYPE_INTRO[w]; if (t) notes.push('New: ' + TYPES[t].name);
   for (const c of CARS) if (c.unlock === w && w > 1) notes.push('Unlocks ' + c.name);
-  if (w === 3) notes.push('Garage opens');
+  if (w === 3) notes.push('Pit stop opens');
   if (!notes.length) notes.push(Math.min(2 + w, 7) + ' cars');
   else if (!isBossWave(w) && notes.length < 2) notes.push(Math.min(2 + w, 7) + ' cars');
   return notes.slice(0, 3).join(' · ');
@@ -1772,6 +1821,7 @@ function spawnEnemy(i, type) {
       else c.slamT = 6;
     }
   }
+  if (devRun && DEV.foemods && !c.boss) { const am = CMODS.filter(m => m.type === 'active'); c.mod = am[(Math.random() * am.length) | 0].id; }
   cars.push(c); return c;
 }
 function resetPlayerPos() {
@@ -1840,7 +1890,7 @@ function newGame() {
     runT0 = performance.now() - (ck.ms || 0); seenTypes = new Set(ck.seen || []);
   }
   player = makeCar(W / 2, H / 2 + 150, -Math.PI / 2, PLAYER_COL, true, 1);
-  applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player); player.club = myClubId(); player.mod = modsAllowed() ? GAR.equip : ''; SPIKES = [];
+  applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player); player.club = myClubId(); player.mod = devRun ? DEV.cmod : (modsAllowed() ? GAR.equip : ''); SPIKES = [];
   cars.push(player);
   state = 'play'; $('overlay').classList.add('hidden');
   snapCamera();
@@ -1901,8 +1951,8 @@ function renderGarage() {
   const g = $('garage');
   if (pendingFresh || !player) { g.classList.remove('on'); g.innerHTML = ''; return; }
   g.classList.add('on');
-  if (mod('nogarage')) { g.innerHTML = '<h3>GARAGE <span>SCRAP ' + scrap + '</span></h3><div class="msg" style="color:#8791a1;font-size:13px;padding:4px 0 2px">🚫 No Garage today - pure skill.</div>'; return; }
-  g.innerHTML = '<h3>GARAGE <span>SCRAP ' + scrap + '</span></h3><div class="ups"></div>';
+  if (mod('nogarage')) { g.innerHTML = '<h3>PIT STOP <span>SCRAP ' + scrap + '</span></h3><div class="msg" style="color:#8791a1;font-size:13px;padding:4px 0 2px">🚫 No pit stop today - pure skill.</div>'; return; }
+  g.innerHTML = '<h3>PIT STOP <span>SCRAP ' + scrap + '</span></h3><div class="ups"></div>';
   const box = g.querySelector('.ups');
   for (const u of UPG) {
     const lvl = UP[u.id] || 0, maxed = u.max && lvl >= u.max, cost = u.cost(lvl) * (mod('scrap') ? 2 : 1);
@@ -2366,6 +2416,7 @@ function ai(c, dt) {
   c.boost = false;
   if (introT > 0) { c.throttle = 0; c.steer = 0; c.handbrake = true; return; }
   c.handbrake = false;
+  if (c.mod) { c.modThink = (c.modThink || 0) - dt; if (c.modThink <= 0) { c.modThink = .3; botMod(c); } }
   a.retarget -= dt;
   if (a.retarget <= 0 || !a.target || a.target.dead) {
     a.retarget = .5 + Math.random() * .6; let best = null, bd = 1e9;
@@ -2703,8 +2754,9 @@ function renderDailyBox() {
     '<div class="mt"><span class="streak">' + (st ? '🔥 ' + st + '-day streak' : 'Start a streak: play daily') + '</span><span id="dailyCd">New daily in ' + fmtDur(msToReset()) + '</span>' + (yt && yt.name ? '<span>Yesterday\'s winner: ' + esc(yt.name) + ' (' + yt.score + ')</span>' : '') + '</div>';
 }
 setInterval(() => { const c = $('dailyCd'); if (c && state !== 'play') { if (todayDaily().day !== torontoDay() && !dailyMeta) daily = null; c.textContent = 'New daily in ' + fmtDur(msToReset()); } }, 30000);
-function endGame(won, quit) {
-  if (NET.role && (NET.started || state === 'play')) { netShowResults({ hostLeft: false }); return; }
+function endGame(won, quit) { try { endGameInner(won, quit); } catch (e) { resultsFailSafe(e); } }
+function endGameInner(won, quit) {
+  if (NET.role && NET.started) { netShowResults({ hostLeft: false }); return; }
   if (LOCAL_TEAM && !NET.role) { bombSpOver(quit); return; }
   state = 'over'; paused = false; $('pauseMenu').classList.add('hidden');
   const isD = gameMode === 'daily', wasDev = devRun;
@@ -2742,8 +2794,9 @@ function endGame(won, quit) {
   { const ck = !isD && !quit ? getCheckpoint() : null; $('final').textContent = msg + (ck ? '  •  Checkpoint saved at wave ' + (ck.wave + 1) + ': tap CONTINUE' : '');
     const cp = !quit || score > 0 ? clubAwardRun(isD ? 'daily' : 'waves', score, kills, bossKills) : null; $('clubAwardBox').innerHTML = cp || !myClubId() ? clubAwardHtml(cp) : ''; if (!wasDev) achRun(isD && !quit, score, kills, bossKills); }
   renderBoard(idx); renderDailyBox(); renderContinue();
-  $('card').classList.remove('teamRes', 'spBomb'); $('goBomb').innerHTML = 'BOMB RUN<small>3v3 vs bots · plant the bomb</small>';
+  $('card').classList.remove('teamRes', 'spBomb'); $('goBomb').innerHTML = 'BOMB RUN<small>3v3 vs bots · The Depot</small>';
   $('card').classList.add('over'); $('banner').classList.remove('show');
+  { const ag = isD ? 'goDaily' : (getCheckpoint() && !quit && !$('goCont').classList.contains('hidden') ? 'goCont' : 'go'); for (const id of ['go', 'goCont', 'goDaily', 'goBomb', 'goOnline']) $(id).classList.toggle('again', id === ag); }
   $('overlay').querySelector('#card h1').innerHTML = won ? 'DAILY <span>DONE</span>' : quit ? 'RUN <span>ENDED</span>' : 'YOU’RE <span>SCRAP</span>';
   $('overlay').classList.remove('hidden');
 }
@@ -2973,7 +3026,9 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => { keys[e.code] = false; });
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
 // ---- developer mode: start any wave with any car ----
-let devRun = false; const DEV = { wave: 1, car: 'cruiser', god: false, scrap: false, mod: '' };
+// dev tools exist only on the /dev/ preview and local builds, never on the main site
+const DEV_BUILD = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || /^\/dev(\/|$)/.test(location.pathname);
+let devRun = false; const DEV = { wave: 1, car: 'cruiser', god: false, scrap: false, mod: '', cmod: '', nocd: false, foemods: false };
 function renderDev() {
   const wv = $('devWaves'); wv.innerHTML = '';
   const prevMode = gameMode; gameMode = 'waves';
@@ -2982,16 +3037,24 @@ function renderDev() {
   const cs = $('devCars'); cs.innerHTML = '';
   for (const d of CARS) { const b = document.createElement('button'); b.textContent = d.name; b.className = DEV.car === d.id ? 'on' : ''; b.onclick = () => { DEV.car = d.id; renderDev(); }; cs.appendChild(b); }
   const op = $('devOpts'); op.innerHTML = '';
-  for (const [k, n] of [['god', 'God mode (no damage)'], ['scrap', 'Start with 500 scrap']]) { const b = document.createElement('button'); b.textContent = n; b.className = DEV[k] ? 'on' : ''; b.onclick = () => { DEV[k] = !DEV[k]; renderDev(); }; op.appendChild(b); }
+  for (const [k, n] of [['god', 'God mode (no damage)'], ['scrap', 'Start with 500 scrap'], ['nocd', 'No mod cooldown'], ['foemods', 'Enemies use mods']]) { const b = document.createElement('button'); b.textContent = n; b.className = DEV[k] ? 'on' : ''; b.onclick = () => { DEV[k] = !DEV[k]; renderDev(); }; op.appendChild(b); }
+  const cm = $('devCmods'); cm.innerHTML = '';
+  for (const m of [{ id: '', name: 'None', icon: '' }, ...CMODS]) { const b = document.createElement('button'); b.textContent = (m.icon ? m.icon + ' ' : '') + m.name; b.className = DEV.cmod === m.id ? 'on' : ''; b.onclick = () => { DEV.cmod = m.id; renderDev(); }; cm.appendChild(b); }
+  const ga = $('devGar'); ga.innerHTML = '';
+  for (const [n, f] of [['+1000 GP', () => { GAR.gp += 1000; }], ['Own all mods', () => { GAR.owned = CMODS.map(m => m.id); }], ['Unlock all achievements', () => { for (const a of ACH) GAR.ach[a.id] = GAR.ach[a.id] || Date.now(); }], ['Reset garage', () => { GAR.gp = 0; GAR.owned = []; GAR.equip = ''; GAR.ach = {}; GAR.rep = {}; GAR.st = { kos: 0, bosses: 0, onlineWins: 0 }; }]]) {
+    const b = document.createElement('button'); b.textContent = n; b.onclick = () => { f(); garSave(); renderHubGarage(); b.textContent = '✓ ' + n; setTimeout(() => { b.textContent = n; }, 900); }; ga.appendChild(b);
+  }
   const ms = $('devMods'); ms.innerHTML = '';
   for (const m of [{ id: '', name: 'None', icon: '' }, ...MODS]) { const b = document.createElement('button'); b.textContent = (m.icon ? m.icon + ' ' : '') + m.name; b.className = DEV.mod === m.id ? 'on' : ''; b.onclick = () => { DEV.mod = m.id; renderDev(); }; ms.appendChild(b); }
   const bk = (() => { gameMode = 'waves'; const r = isBossWave(DEV.wave) ? ' · ' + BOSS_INFO[bossKind(DEV.wave)].name : ''; gameMode = prevMode; return r; })();
   $('devGo').textContent = 'PLAY WAVE ' + DEV.wave + bk;
 }
-$('devBtn').addEventListener('click', () => { renderDev(); $('devPanel').classList.remove('hidden'); });
+function openDev() { if (!DEV_BUILD) return; try { renderDev(); } catch (e) { console.error(e); } $('devPanel').classList.remove('hidden'); $('devPanel').scrollTop = 0; }
 $('devClose').addEventListener('click', () => $('devPanel').classList.add('hidden'));
+$('devPanel').addEventListener('click', e => { if (e.target === $('devPanel')) $('devPanel').classList.add('hidden'); });
+$('devBomb').addEventListener('click', () => { $('devPanel').classList.add('hidden'); SPB.car = DEV.car; SPB.diff = 2; startBombSP(true); });
 $('devGo').addEventListener('click', () => {
-  $('devPanel').classList.add('hidden');
+  $('devPanel').classList.add('hidden'); if (NET.role) netLeave(true);
   devRun = true; document.body.classList.add('dev'); gameMode = 'waves'; daily = null;
   if (DEV.mod) { gameMode = 'daily'; daily = makeDaily(torontoDay()); daily.mod = MODS.find(m => m.id === DEV.mod); daily.arena = Math.floor((DEV.wave - 1) / 2) % ARENAS.length; }
   pname = ($('pname').value || '').trim().slice(0, 14) || 'Player';
@@ -3490,6 +3553,7 @@ function modUse(c) { // host / single player
     else { const dx = c.x - t.x, dy = c.y - t.y, d = Math.hypot(dx, dy) || 1, k = t.boss ? 120 : 520 / (t.mass || 1); t.vx += dx / d * k; t.vy += dy / d * k; c.vx -= dx / d * 120; c.vy -= dy / d * 120; c.hookT = .55; c.hookId = t.id; nev('md', 'hook', c.id, t.id); addText(t.x, t.y - 46, 'HOOKED!', '#ffd166', true); beep(300, .12); }
   }
   c.modCd = used ? m.cd : 2.5; if (!used) addText(c.x, c.y - 44, 'MISSED', '#8d97a8');
+  if (c === player && DEV.nocd && (devRun || DEV.bombRun)) c.modCd = .35;
   return used;
 }
 function modOil(x, y, seed) { oilCv.push({ x, y, r: 40, cv: makeOil(40, seed), life: 11 }); }
@@ -3596,7 +3660,8 @@ document.addEventListener('click', e => {
 });
 SPB.car = lsGet('scrapArenaBombCar', 'cruiser'); SPB.diff = lsGet('scrapArenaBombDiff', 1);
 function openBomb() { $('bombSheet').classList.remove('hidden'); renderBombSheet(); }
-function startBombSP() {
+function startBombSP(dev) {
+  DEV.bombRun = dev === true; // dev-panel test run: nothing is saved or awarded
   if (NET.role) netLeave(true);
   if (devRun) { devRun = false; document.body.classList.remove('dev'); }
   $('bombSheet').classList.add('hidden');
@@ -3613,7 +3678,7 @@ function startBombSP() {
   mctx.clearRect(0, 0, W, H); clearSkids();
   player = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); player.pid = PID; player.pname = pname;
   applyCar(player, CAR_BY_ID[SPB.car] || CAR_BY_ID.cruiser);
-  Object.assign(player, { team: 0, slot: 0, score: 0, kos: 0, deaths: 0, dmg: 0, bossDmg: 0, plants: 0, stops: 0, carries: 0, picks: 0, club: myClubId(), mod: GAR.equip }); SPIKES = [];
+  Object.assign(player, { team: 0, slot: 0, score: 0, kos: 0, deaths: 0, dmg: 0, bossDmg: 0, plants: 0, stops: 0, carries: 0, picks: 0, club: myClubId(), mod: DEV.bombRun ? DEV.cmod : GAR.equip }); SPIKES = [];
   cars.push(player);
   let bi = (Math.random() * 12) | 0;
   for (const [t, s] of [[0, 1], [0, 2], [1, 0], [1, 1], [1, 2]]) cars.push(makeBot(t, s, bi++));
@@ -3621,13 +3686,14 @@ function startBombSP() {
   state = 'play'; $('overlay').classList.add('hidden'); document.body.classList.add('vs');
   startWave(); bombBases(); bombRound(true); snapCamera(); updateHud();
 }
-function bombSpOver(quit) {
+function bombSpOver(quit) { try { bombSpOverInner(quit); } catch (e) { resultsFailSafe(e); } }
+function bombSpOverInner(quit) {
   state = 'over'; paused = false; $('pauseMenu').classList.add('hidden'); document.body.classList.remove('vs');
   const r = teamPayload('versus'), w = r.vs.winner, me = r.players.find(p => p[5] === PID), myT = me ? me[6] : 0;
   const h1 = $('overlay').querySelector('#card h1');
   h1.innerHTML = quit ? 'MATCH <span>ABANDONED</span>' : w < 0 ? "IT'S A <span>DRAW</span>" : w === myT ? 'YOUR TEAM <span style="color:' + TEAM_COL[w] + '">WINS!</span>' : '<span style="color:' + TEAM_COL[w] + '">' + TEAM_NAME[w] + '</span> TEAM WINS';
-  const award = quit ? null : clubAward(r, true); if (!quit) achTeam(r, true);
-  $('final').innerHTML = bombResultsHtml(r); $('clubAwardBox').innerHTML = quit ? '' : clubAwardHtml(award);
+  const award = quit ? null : clubAward(r, true);
+  $('final').innerHTML = bombResultsHtml(r); $('clubAwardBox').innerHTML = quit ? '' : clubAwardHtml(award); if (!quit) achTeam(r, true);
   if (!quit && w === myT) { SFX.win && SFX.win(); }
   $('card').classList.add('over', 'teamRes', 'spBomb'); $('goBomb').innerHTML = 'PLAY AGAIN<small>💣 Bomb Run · same car and bots</small>'; $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
   $('overlay').classList.remove('hidden'); renderHub();
@@ -4144,7 +4210,8 @@ function bombResultsHtml(r) {
   return '<div class="vsRes"><div class="sc"><b style="color:' + TEAM_COL[0] + '">BLUE ' + r.vs.score[0] + '</b><span>–</span><b style="color:' + TEAM_COL[1] + '">' + r.vs.score[1] + ' RED</b></div><div class="sub">💣 Bomb Run · 3:00 · each destroyed base = 1 point</div>' +
     '<table><tr><th>Player</th><th>💣</th><th>🛑</th><th>K</th><th>D</th><th>Pts</th></tr>' + body + '</table><div class="sub" style="margin-top:4px">💣 bases blown up · 🛑 bomb carriers stopped</div></div>';
 }
-function netShowResults(r) {
+function netShowResults(r) { try { netShowResultsInner(r); } catch (e) { resultsFailSafe(e); } }
+function netShowResultsInner(r) {
   if (NET.role === 'host' && NET.started && !r.hostLeft) {
     const hs = cars.filter(c => c.isPlayer);
     r = teamPayload(NET.mode);
@@ -4152,6 +4219,7 @@ function netShowResults(r) {
   } else if (NET.role === 'guest') NET.started = false;
   state = 'over'; paused = false; $('pauseMenu').classList.add('hidden'); document.body.classList.remove('mp', 'vs');
   const h1 = $('overlay').querySelector('#card h1');
+  $('card').classList.remove('teamRes', 'spBomb'); $('clubAwardBox').innerHTML = '';
   if (r.hostLeft) { h1.innerHTML = 'MATCH <span>ENDED</span>'; $('final').textContent = r.lost ? 'Lost connection to the room.' : 'The host left the room.'; }
   else {
     if (r.mode === 'versus' && r.vs) {
@@ -4166,9 +4234,9 @@ function netShowResults(r) {
     const rows = r.players.slice().sort((a2, b2) => r.mode === 'versus' ? (a2[4] - b2[4]) || (b2[2] - a2[2]) : 0)
       .map(p => esc(p[0]) + ' (' + esc(p[1]) + ')' + (r.mode === 'versus' ? ' - ' + p[2] + ' pts, ' + p[3] + ' KO' : '') + (p[4] ? '' : ' ✓')).join('  •  ');
     $('final').textContent = (r.mode === 'versus' ? 'Versus Derby  •  ' : 'Co-op  •  reached wave ' + r.wave + '  •  team score ' + r.score + '  •  ') + rows;
-    if (!r.hostLeft) try { achTeam(r, false); } catch (e) {}
+    try { $('clubAwardBox').innerHTML = clubAwardHtml(clubAward(r)); achTeam(r, false); } catch (e) {}
   }
-  $('card').classList.add('over'); $('overlay').classList.remove('hidden');
+  $('card').classList.add('over'); $('overlay').classList.remove('hidden'); for (const id of ['go', 'goCont', 'goDaily', 'goBomb', 'goOnline']) $(id).classList.remove('again');
   if (NET.ws) { $('mpBack').style.display = ''; } else $('mpBack').style.display = 'none';
 }
 // ---- team versus lobby: the host keeps the slot list and the boss votes and shares them ----
@@ -4281,7 +4349,7 @@ function renderSelInfo() {
 function openSheet(k) { document.body.classList.remove('sh-garage', 'sh-road'); if (k) document.body.classList.add('sh-' + k); $('sheetBg').classList.toggle('hidden', !k); }
 $('openGarage').addEventListener('click', () => openSheet('garage'));
 $('openRoad').addEventListener('click', () => { openSheet('road'); const n = $('road').querySelector('.wv.next'); if (n) n.scrollIntoView({ inline: 'center', block: 'nearest' }); });
-$('sheetBg').addEventListener('click', () => openSheet(null));
+$('sheetBg').addEventListener('click', () => openSheet(null)); $('sheetX').addEventListener('click', () => openSheet(null));
 $('howBtn').addEventListener('click', () => $('howSheet').classList.remove('hidden'));
 // ---- installable app: fullscreen from the home screen, offline single-player ----
 const isStandalone = () => matchMedia('(display-mode: fullscreen)').matches || matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
@@ -4441,7 +4509,13 @@ $('pmResume').addEventListener('click', () => setPause(false));
 $('pmMenu').addEventListener('click', goMenu);
 setInterval(() => document.body.classList.toggle('playing', state === 'play'), 250);
 addEventListener('visibilitychange', () => { if (document.hidden && state === 'play' && !paused) setPause(true); });
+// if building a results screen ever throws, still land on a usable screen instead of a frozen game
+function resultsFailSafe(e) {
+  console.error(e); state = 'over'; paused = false; document.body.classList.remove('vs', 'mp', 'playing');
+  try { $('pauseMenu').classList.add('hidden'); $('card').classList.add('over'); $('overlay').classList.remove('hidden'); if (!$('final').textContent) $('final').textContent = 'Game over'; } catch (e2) {}
+}
 function begin(mode, fromWave) {
+  if (NET.role) netLeave(true); // a single-player game never runs while still sitting in an online room
   $('clubAwardBox').innerHTML = ''; LOCAL_TEAM = false; document.body.classList.remove('vs');
   if (devRun) { devRun = false; document.body.classList.remove('dev'); daily = null; }
   if (mode) gameMode = mode;
@@ -4538,12 +4612,17 @@ const ACH_REP = [ // repeatable
 ];
 const ACH_BY = Object.fromEntries(ACH.map(a => [a.id, a]));
 let achQ = [], runGp = 0;
-function gpSummary() { const box = $('clubAwardBox'); if (!box || !(runGp > 0)) return; box.insertAdjacentHTML('beforeend', '<div class="gpEarn">🔩 <b>+' + runGp + ' Garage Points</b> earned · spend them on mods in the Garage</div>'); runGp = 0; }
-function achGive(id) { // one-time achievement
-  const a = ACH_BY[id]; if (!a || GAR.ach[id] || devRun) return false;
-  GAR.ach[id] = Date.now(); GAR.gp += a.gp; runGp += a.gp; garSave(); achQ.push({ icon: a.icon, name: a.name, gp: a.gp }); achToast(); return true;
+function gpChip() { // Garage Points earned this game: one compact chip next to the club points, rendered with the results (no late layout shift)
+  const box = $('clubAwardBox'); if (!box) return; let el = $('gpEarn');
+  if (!(runGp > 0)) { if (el) el.remove(); return; }
+  if (!el) { box.insertAdjacentHTML('beforeend', '<button class="gpEarn" id="gpEarn" type="button"><span class="gi">🔩</span><span class="gt"><b></b><small>Spend in the Garage ›</small></span></button>'); el = $('gpEarn'); el.addEventListener('click', () => openGarage('mods')); }
+  el.querySelector('b').textContent = '+' + runGp + ' GP earned';
 }
-function gpGive(n, label, icon) { if (devRun || !(n > 0)) return; GAR.gp += n; runGp += n; garSave(); achQ.push({ icon: icon || '🔩', name: label, gp: n, rep: true }); achToast(); }
+function achGive(id) { // one-time achievement
+  const a = ACH_BY[id]; if (!a || GAR.ach[id] || devRun || DEV.bombRun) return false;
+  GAR.ach[id] = Date.now(); GAR.gp += a.gp; runGp += a.gp; if ($('gpEarn')) gpChip(); garSave(); achQ.push({ icon: a.icon, name: a.name, gp: a.gp }); achToast(); return true;
+}
+function gpGive(n, label, icon) { if (devRun || DEV.bombRun || !(n > 0)) return; GAR.gp += n; runGp += n; if ($('gpEarn')) gpChip(); garSave(); achQ.push({ icon: icon || '🔩', name: label, gp: n, rep: true }); achToast(); }
 function achCheckStatic() { // anything that can be read from saved progress (also credits players who already had it)
   for (const a of ACH) if (a.prog && !GAR.ach[a.id]) { const [v, n] = a.prog(); if (v >= n) achGive(a.id); }
   if (!GAR.ach.daily1 && (streakNow() > 0 || dailyDone())) achGive('daily1');
@@ -4554,13 +4633,22 @@ function achToast() {
   el.innerHTML = '<span class="ai">' + a.icon + '</span><div><small>' + (a.rep ? 'BONUS' : 'ACHIEVEMENT UNLOCKED') + '</small><b>' + esc(a.name) + '</b></div><em>+' + a.gp + ' GP</em>';
   el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); if (!a.rep) SFX.combo && SFX.combo(5);
   setTimeout(() => { el.classList.remove('show'); setTimeout(() => { el._busy = false; achToast(); }, 350); }, achQ.length ? 1900 : 2600);
-  renderGarageSheet(); renderHubGarage();
+  garLiveUpdate(); renderHubGarage();
+}
+function garLiveUpdate() { // a toast mid-tap must not rebuild the buttons under the player's finger
+  if ($('garageSheet').classList.contains('hidden')) return;
+  $('garGp').textContent = GAR.gp.toLocaleString();
+  const key = garTab + '|' + CMODS.map(m => GAR.gp >= m.price ? 1 : 0).join('');
+  if (garTab === 'ach' || (garTab === 'mods' && key !== garLiveUpdate.k)) renderGarageSheet();
+  garLiveUpdate.k = key;
 }
 // results hooks
-function achRun(isD, sc, k, bossN) { runGp = 0; setTimeout(gpSummary, 2500); GAR.st.kos += k || 0; GAR.st.bosses += bossN || 0; garSave(); achCheckStatic(); if (isD && !devRun) { achGive('daily1'); const day = todayDaily().day; if (GAR.rep.rDaily !== day) { GAR.rep.rDaily = day; gpGive(40, 'Daily bonus', '📅'); } } }
+function achRun(isD, sc, k, bossN) { runGp = 0; GAR.st.kos += k || 0; GAR.st.bosses += bossN || 0; garSave(); achCheckStatic(); if (isD && !devRun) { achGive('daily1'); const day = todayDaily().day; if (GAR.rep.rDaily !== day) { GAR.rep.rDaily = day; gpGive(40, 'Daily bonus', '📅'); } } gpChip(); }
 function achDailyRank(rank) { if (rank && rank <= 3) achGive('dtop3'); }
 function achTeam(r, sp) {
-  const me = r.players.find(p => p[5] === PID); if (!me) return; runGp = 0; setTimeout(gpSummary, 2500);
+  const me = r.players.find(p => p[5] === PID); if (!me) return; runGp = 0; try { achTeamInner(r, sp, me); } finally { gpChip(); }
+}
+function achTeamInner(r, sp, me) {
   GAR.st.kos += me[3] || 0;
   if (!r.vs) { garSave(); achCheckStatic(); return; } // co-op: KOs count towards career
   const won = r.vs.winner === me[6], bomb = r.vs.kind === 'bomb';
@@ -4577,13 +4665,14 @@ let garTab = 'cars';
 function openGarage(tab) { $('garageSheet').classList.remove('hidden'); if (tab) garTab = tab; achGive('welcome'); achCheckStatic(); renderGarageSheet(); }
 function renderGarageSheet() {
   const el = $('garBody'); if (!el || $('garageSheet').classList.contains('hidden')) return;
+  garLiveUpdate.k = garTab + '|' + CMODS.map(m => GAR.gp >= m.price ? 1 : 0).join('');
   $('garGp').textContent = GAR.gp.toLocaleString();
   document.querySelectorAll('#garTabs button').forEach(b => b.classList.toggle('on', b.dataset.gt === garTab));
   if (garTab === 'cars') {
     const d = CAR_BY_ID[HUB.car] || CARS[0], lk = carLocked(d), em = CMOD_BY[GAR.equip];
     el.innerHTML = '<div class="gCars"><div class="gShow"><img class="' + (lk ? 'lockedCar' : '') + '" src="' + showUrl(d.id) + '" alt="">' + (lk ? '<div class="lockOv"><i></i><b>WAVE ' + d.unlock + '</b></div>' : '') +
       '<div class="gName"><b>' + d.name.toUpperCase() + '</b><small>' + d.role + '</small></div></div>' +
-      '<div class="gInfo"><div class="pstats">' + [['SPEED', d.spd], ['HANDLING', d.hnd], ['STRENGTH', d.str]].map(([n, v]) => '<div>' + n + '<i><b style="width:' + clamp((v + 12) / 34 * 100, 4, 100).toFixed(0) + '%"></b></i></div>').join('') + '</div>' +
+      '<div class="gInfo">' + carStatsHtml(d, true) +
       '<p class="gPerk">' + (d.perk ? '<b>' + PERKS[d.perk].icon + ' ' + PERKS[d.perk].name + '</b> · ' + PERKS[d.perk].desc : 'Base model · no perk') + '</p>' +
       '<div class="gMod" data-gt="mods">' + (em ? '<span class="mi">' + em.icon + '</span><div><small>FITTED MOD</small><b>' + em.name + '</b></div>' : '<span class="mi">＋</span><div><small>FITTED MOD</small><b>None, pick one in Mods</b></div>') + '</div>' +
       '<div class="gList">' + CARS.map(c => '<button class="gCar' + (c.id === d.id ? ' on' : '') + (carLocked(c) ? ' lk' : '') + '" data-gcar="' + c.id + '"><span class="bsPic"><img src="' + tileUrl(c.id) + '" alt="">' + (carLocked(c) ? '<span class="tlock"></span>' : '') + '</span><b>' + c.name + '</b></button>').join('') + '</div></div></div>';
@@ -4629,7 +4718,7 @@ function renderHubCar(anim) {
   if (anim) { $('hubCar').classList.add('swap'); $('hubLock').classList.add('hidden'); setTimeout(put, 160); } else put();
   $('hubCarName').textContent = d.name.toUpperCase(); $('hubCarRole').textContent = d.role;
   const bar = (n, v) => '<div>' + n + '<i><b style="width:' + clamp((v + 12) / 34 * 100, 4, 100).toFixed(0) + '%"></b></i></div>';
-  $('hubStats').innerHTML = bar('SPEED', d.spd) + bar('HANDLING', d.hnd) + bar('STRENGTH', d.str);
+  $('hubStats').outerHTML = carStatsHtml(d).replace('<div class="pstats"', '<div class="pstats" id="hubStats"');
   const pk = $('hubPerk'); pk.classList.toggle('lock', lk);
   pk.innerHTML = lk ? '🔒 Reach wave ' + d.unlock + ' in Waves to unlock' + (d.perk ? ' · ' + PERKS[d.perk].icon + ' ' + PERKS[d.perk].name : '') : d.perk ? '<b>' + PERKS[d.perk].icon + ' ' + PERKS[d.perk].name + '</b> · ' + PERKS[d.perk].desc : 'Base model · balanced and honest';
   $('hubDots').innerHTML = CARS.map(c => '<i class="' + (c.id === d.id ? 'on' : carLocked(c) ? 'lk' : '') + '"></i>').join('');
@@ -4710,7 +4799,7 @@ $('hubBoard').addEventListener('click', () => { $('boardBody').appendChild($('bo
 $('hubHow').addEventListener('click', () => $('howBtn').click());
 $('hubInstall').addEventListener('click', () => $('installBtn').click());
 $('hubFs').addEventListener('click', () => $('fsMenu').click());
-$('hubDev').addEventListener('click', () => $('devBtn').click());
+if (DEV_BUILD) $('hubDev').addEventListener('click', openDev); else { $('hubDev').remove(); $('devPanel').remove(); $('devTag').remove(); }
 document.addEventListener('keydown', e => { if (!document.body.classList.contains('atHub') || e.target.tagName === 'INPUT') return; if (e.code === 'ArrowLeft') $('hubPrev').click(); if (e.code === 'ArrowRight') $('hubNext').click(); });
 setInterval(() => { if (document.body.classList.contains('atHub')) { renderHubClub(); renderHubTicker(); } }, 30000);
 if (!CARS.some(c => c.id === HUB.car)) HUB.car = 'cruiser';
