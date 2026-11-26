@@ -953,7 +953,7 @@ function genLayout(id, R2) {
   return { groups, fixed, barrels, oil, puddles };
 }
 function setArena(i) {
-  arenaIdx = i; arena = ARENA_ALL[i] || ARENAS[0]; OBST_C = []; setWorld(arena); SPIKES = [];
+  arenaIdx = i; arena = ARENA_ALL[i] || ARENAS[0]; OBST_C = []; setWorld(arena); SPIKES = []; GOO = []; SMOKES = [];
   const R2 = gameMode === 'daily' && daily && !devRun ? rng(daily.seed + i * 101 + 7) : Math.random;
   LAY = arena === DEPOT ? depotLayout() : genLayout(arena.id, R2); wetMarks = [];
   if (NET.role === 'host' && NET.started) setTimeout(() => nev(...netLayoutMsg()), 0);
@@ -1394,9 +1394,10 @@ function driveCar(c, dt) {
   const fx = Math.cos(c.a), fy = Math.sin(c.a), rx = -fy, ry = fx;
   let vf = c.vx * fx + c.vy * fy, vl = c.vx * rx + c.vy * ry;
   const bf = c.boost ? 1 : 0, thr = c.boost ? 1 : c.throttle;
-  const bk = c.boostK || 1, acc = c.accel * (1 + 1.4 * bf * bk), ms = c.maxSpeed * (1 + .38 * bf * bk) * (c.bombK || 1);
+  const gk = c.gooT > 0 ? .7 : 1, bk = c.boostK || 1, acc = c.accel * (1 + 1.4 * bf * bk) * gk, ms = c.maxSpeed * (1 + .38 * bf * bk) * (c.bombK || 1) * gk;
   if (thr > 0) vf += thr * acc * dt * (1 - clamp(vf / (Math.max(1, ms) * 1.12), 0, 1));
   else if (thr < 0) { vf += thr * (vf > 0 ? c.accel * 1.5 : c.accel * .6) * dt; vf = Math.max(vf, -c.maxSpeed * .45); }
+  if (gk < 1 && vf > ms) vf = Math.max(ms, vf - 600 * dt); // goo drags you down to the slower top speed
   c.braking = (thr < 0 && vf > 20) || (c.handbrake && Math.abs(vf) > 20);
   c.reversing = thr < 0 && vf <= 20;
   vf *= Math.exp(-.5 * dt);
@@ -1986,7 +1987,7 @@ const HAZ = {
 };
 const HAZ_TXT = { town: 'HAZARDS: oil slicks + explosive barrels', junk: 'HAZARDS: oil, barrels + the CAR CRUSHER - stay off its pad when it flashes', docks: 'HAZARDS: oil slicks + explosive barrels' };
 let barrels = [], oilCv = [], crusher = null, staticC = [], arenaIdxPrev = -1;
-let SPIKES = [], spikeId = 1; // car-mod spike strips
+let SPIKES = [], spikeId = 1, GOO = [], SMOKES = [], smokeN = 1; // car-mod spike strips, goo puddles, smoke clouds
 function rebuildObst() { OBST_C = staticC.concat(barrels.filter(b => b.alive).map(b => ({ x: b.x, y: b.y, r: b.r, barrel: b }))); }
 function makeOil(r, seed) {
   const R2 = rng(seed), c = mkCanvas(Math.ceil(r * 7), Math.ceil(r * 7)), g = c.getContext('2d'), k = 2, cx = c.width / 2, cy = c.height / 2;
@@ -2427,7 +2428,11 @@ function ai(c, dt) {
     }
     if (a.mode !== 'charge') a.target = best;
   }
-  const t = a.target; if (!t) { c.throttle = 0; c.steer = 0; return; }
+  let t = a.target; if (!t) { c.throttle = 0; c.steer = 0; return; }
+  if (t.smokeT > 0 && t.smokeX != null) { // lost in the smoke: hunt around where it was popped
+    if (a.sFor !== t.smokeN || Math.hypot(a.sx - c.x, a.sy - c.y) < 55) { a.sFor = t.smokeN; const k = Math.random() * 6.283, r = rand(30, 190); a.sx = clamp(t.smokeX + Math.cos(k) * r, 60, W - 60); a.sy = clamp(t.smokeY + Math.sin(k) * r * .8, 60, H - 60); }
+    t = { x: a.sx, y: a.sy, vx: 0, vy: 0, a: t.a };
+  }
   const speed = Math.hypot(c.vx, c.vy);
   if (a.reverseT > 0) { a.reverseT -= dt; c.throttle = -1; c.steer = a.rsteer; return; }
   if (a.mode !== 'windup') { if (speed < 35) a.stuck += dt; else a.stuck = 0; }
@@ -2585,7 +2590,7 @@ function step(dt) {
     if (c === cars[0]) { updatePuddles(dt); updateEmotes(dt); }
     // damage effects: light smoke at 2 lost parts, dark smoke at 3, fire + sparks at 4
     const dmg = c.boss ? c.lost + 1 : c.lost;
-    if (!c.dead && dmg >= 2) {
+    if (!c.dead && dmg >= 2 && !hiddenFrom(c)) {
       c.smT = (c.smT || 0) - dt;
       if (c.smT <= 0) {
         c.smT = dmg >= 4 ? .05 : dmg >= 3 ? .09 : .16;
@@ -2603,7 +2608,7 @@ function step(dt) {
     if (c.perk === 'plate' && !c.dead && !c.armor) { c.plateT = (c.plateT || 0) + dt; if (c.plateT >= 15) { c.plateT = 0; c.armor = 1; ring(c.x, c.y, 44, '#4cc9f0', .4, 4); addText(c.x, c.y - 36, 'PLATING BACK', '#8fe3ff'); } }
     if (!c.dead) {
       driveCar(c, dt);
-      if (c.boost && Math.random() < .9) {
+      if (c.boost && Math.random() < .9 && !hiddenFrom(c)) {
         const [ex, ey] = toWorld(c, -L / 2 - 2, rand(-4, 4)), fx = Math.cos(c.a), fy = Math.sin(c.a);
         parts.push({ x: ex, y: ey, vx: -fx * rand(120, 220) + c.vx * .6, vy: -fy * rand(120, 220) + c.vy * .6, life: rand(.1, .2), max: .2, size: rand(3, 5.5), sp: Math.random() < .4 ? 'blue' : 'fire2', type: 'fire', k: 4 });
       }
@@ -2615,7 +2620,7 @@ function step(dt) {
     }
     wallCollide(c); obstacleCollide(c);
     // skid marks
-    if (!c.dead && c.slip > 60) {
+    if (!c.dead && c.slip > 60 && !hiddenFrom(c)) {
       const fx = Math.cos(c.a), fy = Math.sin(c.a), rx = -fy, ry = fx, junk = arena.id === 'junk';
       const W4 = [[-17, -10], [-17, 10], [16, -10], [16, 10]].map(([lx, ly]) => [c.x + fx * lx + rx * ly, c.y + fy * lx + ry * ly]);
       const a = clamp((c.slip - 60) / 160, .14, .5);
@@ -2803,8 +2808,9 @@ function endGameInner(won, quit) {
 
 /* ---------- rendering ---------- */
 function rr(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); ctx.fill(); }
-const carFade = c => c.dead ? clamp(1 - Math.max(0, c.deadT - 2.4) / .8, 0, 1) : 1;
+const carFade = c => c.dead ? clamp(1 - Math.max(0, c.deadT - 2.4) / .8, 0, 1) : hiddenFrom(c) ? 0 : c.smokeT > 0 ? .62 : 1;
 function drawCarShadow(c) {
+  if (hiddenFrom(c)) return;
   // The sprites are shot from straight above, so a long offset shadow makes the car look like it hovers.
   // Anchor it with a tight contact shadow right under the body, plus a short, soft sun shadow in the arena's light direction.
   const T = tinted(c.styleId, c.col[0]), so = SHADOW_OFF[arena.id] || [6.5, 2.4], D = SD(c.styleId), f = carFade(c);
@@ -2820,6 +2826,7 @@ const BEAM = (() => { const cv = document.createElement('canvas'); cv.width = 12
   const gr = g.createLinearGradient(0, 0, 128, 0); gr.addColorStop(0, 'rgba(255,240,190,.95)'); gr.addColorStop(.35, 'rgba(255,236,180,.45)'); gr.addColorStop(1, 'rgba(255,236,180,0)');
   g.fillStyle = gr; g.fillRect(0, 0, 128, 64); return cv; })();
 function drawCar(c) {
+  if (hiddenFrom(c) || (c === player && c.smokeT > 0 && !c.dead && !drawCar.top)) return; // your own smoked car is drawn above the cloud
   const fade = carFade(c), now = performance.now();
   ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.a);
   if (c.hopT > 0) { const hs = 1 + .38 * Math.sin((1 - c.hopT / .7) * Math.PI); ctx.scale(hs, hs); }
@@ -2890,7 +2897,7 @@ function drawParticles(additive) {
 function drawArrows() {
   const m = 30, cx = innerWidth / 2, cy = innerHeight / 2;
   for (const c of cars) {
-    if (c.dead || (c.isPlayer && !(teamOn() && player && c.team !== player.team))) continue;
+    if (c.dead || hiddenFrom(c) || (c.isPlayer && !(teamOn() && player && c.team !== player.team))) continue;
     const [sx, sy] = w2s(c.x, c.y);
     if (sx > -12 && sx < innerWidth + 12 && sy > -12 && sy < innerHeight + 12) continue;
     const ang = Math.atan2(sy - cy, sx - cx), ca = Math.cos(ang), sa = Math.sin(ang);
@@ -2921,12 +2928,13 @@ function render() {
   const bg = BG_IMG[arena.id];
   if (bg && bg.complete && bg.naturalWidth) ctx.drawImage(bg, CB.x0, CB.y0, CB.x1 - CB.x0, CB.y1 - CB.y0);
   ctx.drawImage(marks, 0, 0, W, H); drawSkids();
-  drawPuddles(); drawOil(); drawSpikes(); drawCrusherBase(); drawBombGround(); drawObjs();
+  drawPuddles(); drawOil(); drawGoo(); drawSpikes(); drawCrusherBase(); drawBombGround(); drawObjs();
   for (const d of debris) if (d.z < 6) drawDebris(d);
   drawScrap(); drawPickups(); drawBarrels();
   const sorted = cars.slice().sort((a, b) => (b.dead ? 1 : 0) - (a.dead ? 1 : 0));
   if (Object.keys(ATLAS).length) { for (const c of sorted) drawCarShadow(c); for (const c of sorted) drawCar(c); }
-  drawCrusherHead(); drawBombTop(); drawHooks();
+  drawCrusherHead(); drawBombTop(); drawHooks(); drawSmokes();
+  if (player && player.smokeT > 0 && !player.dead && Object.keys(ATLAS).length) { drawCar.top = true; try { drawCar(player); } finally { drawCar.top = false; } }
   drawBossFx();
   for (const d of debris) if (d.z >= 6) drawDebris(d);
   drawParticles(false);
@@ -2942,7 +2950,7 @@ function render() {
   const ps = clamp(ppu / 2.2, .7, 1.35);
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   if (state === 'play' || state === 'over') for (const c of cars) {
-    if (c.dead || c.boss) continue;
+    if (c.dead || c.boss || hiddenFrom(c)) continue;
     const [sx, sy0] = w2s(c.x, c.y), sy = sy0 - 30 * ppu * TK - 6 * ps;
     const rem = 5 - c.lost, col = rem >= 4 ? '#3ddc84' : rem >= 3 ? '#ffd23f' : rem >= 2 ? '#ff9f1c' : '#ff4d5a';
     const pw = 9 * ps, gap = 2 * ps, tw = 5 * pw + 4 * gap;
@@ -3362,7 +3370,7 @@ function botPlan(c, b) {
     const ts = theirs[(carrier.brain && carrier.brain.site) != null ? carrier.brain.site : nearSite(1 - t, carrier.x, carrier.y)[0]] || theirs[0];
     b.gx = carrier.x + (ts[0] - carrier.x) * .5; b.gy = clamp(carrier.y + (ts[1] - carrier.y) * .5 + (c.slot % 2 ? 150 : -150), 80, H - 80); return;
   }
-  if (carrier && carrier.smokeT > 0 && Math.random() < .7) { b.gx = carrier.x + rand(-160, 160); b.gy = carrier.y + rand(-120, 120); return; } // lost in the smoke
+  if (carrier && carrier.smokeT > 0 && carrier.team !== t && carrier.smokeX != null) { b.gx = carrier.smokeX + rand(-170, 170); b.gy = carrier.smokeY + rand(-130, 130); return; } // lost in the smoke
   if (carrier) { // they have it: a keeper parks on the site they're heading for, everyone else hunts the carrier
     const [si, sd] = nearSite(t, carrier.x, carrier.y), keeper = mates.slice().sort((p, q) => dist(p, mine[si][0], mine[si][1]) - dist(q, mine[si][0], mine[si][1]))[0];
     if (keeper === c && mates.length > 1 && sd > 220) { const p = mine[si], a = Math.atan2(carrier.y - p[1], carrier.x - p[0]); b.gx = p[0] + Math.cos(a) * 75; b.gy = p[1] + Math.sin(a) * 75; b.stop = true; return; }
@@ -3494,8 +3502,8 @@ const CMODS = [
   { id: 'plow', icon: '🚜', name: 'Plow', type: 'passive', where: 'Front', price: 300, desc: 'Head-on hits glance off sideways and rarely cost you a part.' },
   { id: 'spikes', icon: '📌', name: 'Spike Drop', type: 'active', where: 'Rear', cd: 10, price: 300, desc: 'Drops a spike strip behind you. Anyone who drives over it loses 1 part and slows right down.' },
   { id: 'doors', icon: '🚪', name: 'Door Slam', type: 'active', where: 'Sides', cd: 7, price: 400, desc: 'Slams a door into the car beside you (either side): a big sideways shove and 1 part of damage.' },
-  { id: 'oil', icon: '🛢️', name: 'Oil Slick', type: 'active', where: 'Rear', cd: 12, price: 350, desc: 'Leaves an oil slick behind you that spins out anyone chasing.' },
-  { id: 'smoke', icon: '💨', name: 'Smoke Screen', type: 'active', where: 'Rear', cd: 14, price: 450, desc: '4 s of thick smoke: enemies lose track of you, and in Bomb Run the other team can\'t see the bomb on you.' },
+  { id: 'goo', icon: '🟢', name: 'Sticky Goo', type: 'active', where: 'Rear', cd: 12, price: 350, desc: 'Drops a puddle of sticky goo behind you. Anyone who drives through it is slowed by 30% for 3–5 s.' },
+  { id: 'smoke', icon: '💨', name: 'Smoke Screen', type: 'active', where: 'Rear', cd: 14, price: 450, desc: 'Pops a smoke cloud and you vanish for 4 s: opponents (bots and real players) only see the smoke, not you or your bomb. You still see yourself.' },
   { id: 'harpoon', icon: '🧲', name: 'Harpoon', type: 'active', where: 'Roof', cd: 12, price: 700, desc: 'Fires a cable at the nearest car ahead and yanks it towards you. Perfect set-up for a ram.' },
   { id: 'repair', icon: '🔧', name: 'Field Repair', type: 'passive', where: 'Roof', price: 500, desc: 'Regrows one lost part every 25 s.' }
 ];
@@ -3542,11 +3550,11 @@ function modUse(c) { // host / single player
     const t = modTarget(c, 'side');
     if (!t) { used = false; c.doorT = .3; c.doorS = 1; }
     else { const [, s] = localOf(c, t), sg = s > 0 ? 1 : -1, px = -sa * sg, py = ca * sg; t.vx += px * 430 / (t.mass || 1); t.vy += py * 430 / (t.mass || 1); t.spin += sg * 2; modHit(t, c, localOf(t, c)[1] > 0 ? 'right' : 'left'); c.doorT = .35; c.doorS = sg; nev('md', 'door', c.id, sg); modFx('door', t); addText(t.x, t.y - 46, 'DOOR SLAM!', '#ffd166', true); }
-  } else if (m.id === 'oil') {
-    const x = c.x - ca * (back + 14), y = c.y - sa * (back + 14), seed = (Math.random() * 1e6) | 0;
-    modOil(x, y, seed); nev('ol', x | 0, y | 0, seed);
+  } else if (m.id === 'goo') {
+    const g = { id: spikeId++, x: c.x - ca * (back + 16), y: c.y - sa * (back + 16), r: 44, t: 10, owner: c.id, seed: (Math.random() * 1e6) | 0 };
+    GOO.push(g); nev('go', g.id, g.x | 0, g.y | 0, g.seed); thud(.25, 160);
   } else if (m.id === 'smoke') {
-    c.smokeT = 4; nev('md', 'smoke', c.id); addText(c.x, c.y - 44, 'SMOKE!', '#cfd6e2');
+    smokeOn(c, c.x, c.y, smokeN++); nev('md', 'smoke', c.id, c.x | 0, c.y | 0, c.smokeN);
   } else if (m.id === 'harpoon') {
     const t = modTarget(c, 'cone');
     if (!t) used = false;
@@ -3557,6 +3565,21 @@ function modUse(c) { // host / single player
   return used;
 }
 function modOil(x, y, seed) { oilCv.push({ x, y, r: 40, cv: makeOil(40, seed), life: 11 }); }
+// smoke screen: a cloud stays where you popped it and you vanish from opponents' screens for 4 s
+function smokeOn(c, x, y, n) { c.smokeT = 4; c.smokeX = x; c.smokeY = y; c.smokeN = n; SMOKES.push({ x, y, t: 4.6, n }); for (let i = 0; i < 26; i++) smoke(x + rand(-50, 50), y + rand(-40, 40), false, false); }
+const hiddenFrom = c => c.smokeT > 0 && !c.dead && !!player && c !== player && foeOf(player, c);
+function gooPuddle(g) { if (g.cv) return g.cv; const cv = document.createElement('canvas'), R = rng(g.seed || 1), S = 128; cv.width = cv.height = S; const x = cv.getContext('2d');
+  x.fillStyle = 'rgba(120,230,60,.85)'; x.beginPath(); for (let i = 0; i <= 18; i++) { const a = i / 18 * 6.283, r = S * (.36 + R() * .1); x[i ? 'lineTo' : 'moveTo'](S / 2 + Math.cos(a) * r, S / 2 + Math.sin(a) * r); } x.fill();
+  for (let i = 0; i < 6; i++) { x.beginPath(); x.arc(S / 2 + (R() - .5) * S * .9, S / 2 + (R() - .5) * S * .9, S * (.04 + R() * .05), 0, 6.283); x.fill(); }
+  x.globalCompositeOperation = 'source-atop'; const gr = x.createRadialGradient(S * .4, S * .38, 4, S / 2, S / 2, S * .5); gr.addColorStop(0, 'rgba(220,255,170,.9)'); gr.addColorStop(.5, 'rgba(110,210,50,.5)'); gr.addColorStop(1, 'rgba(40,110,20,.8)'); x.fillStyle = gr; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 9; i++) { x.fillStyle = 'rgba(240,255,210,.55)'; x.beginPath(); x.arc(S * (.25 + R() * .5), S * (.25 + R() * .5), 1.5 + R() * 3, 0, 6.283); x.fill(); }
+  return (g.cv = cv); }
+function drawGoo() { for (const g of GOO) { ctx.globalAlpha = Math.min(1, g.t * 1.5) * .92; const cv = gooPuddle(g); ctx.drawImage(cv, g.x - g.r * 1.15, g.y - g.r * 1.15, g.r * 2.3, g.r * 2.3); } ctx.globalAlpha = 1; }
+function drawSmokes() { // stationary clouds, drawn over the cars
+  for (const k of SMOKES) { const a = Math.min(1, k.t / .7, (4.6 - k.t) / .25 + .1), r = 118, g = ctx.createRadialGradient(k.x, k.y, 10, k.x, k.y, r);
+    g.addColorStop(0, 'rgba(200,205,214,' + (.95 * a) + ')'); g.addColorStop(.65, 'rgba(176,182,194,' + (.85 * a) + ')'); g.addColorStop(1, 'rgba(160,166,178,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(k.x, k.y, r, 0, 6.283); ctx.fill();
+    ctx.fillStyle = 'rgba(214,218,226,' + (.55 * a) + ')'; for (let i = 0; i < 7; i++) { const an = i * .9 + k.n, rr = 48 + (i % 3) * 14; ctx.beginPath(); ctx.arc(k.x + Math.cos(an + k.t * .2) * rr, k.y + Math.sin(an + k.t * .2) * rr * .8, 34, 0, 6.283); ctx.fill(); } }
+}
 function modFx(k, t) {
   if (k === 'flip') { spark(t.x, t.y, 20, 260, '#ffd166'); thud(.7, 90); shake = Math.max(shake, 8); }
   if (k === 'door') { spark(t.x, t.y, 14, 220, '#e6ebf2'); (SFX.clang.raw || SFX.clang)(1); shake = Math.max(shake, 5); }
@@ -3569,11 +3592,13 @@ function wantMod() { // local player pressed MOD
 function modTimers(dt) { // runs on host, single player and guests (visual timers)
   for (const c of cars) {
     if (c.modCd > 0) c.modCd -= dt; if (c.modT > 0) c.modT -= dt; if (c.doorT > 0) c.doorT -= dt; if (c.hookT > 0) c.hookT -= dt; if (c.hopT > 0) c.hopT -= dt;
-    if (c.smokeT > 0) { c.smokeT -= dt; if (Math.random() < dt * 30) smoke(c.x + rand(-40, 40), c.y + rand(-30, 30), false, false); }
+    if (c.smokeT > 0) c.smokeT -= dt; if (c.gooT > 0) { c.gooT -= dt; if (Math.random() < dt * 6 && !hiddenFrom(c)) spark(c.x + rand(-10, 10), c.y + rand(-8, 8), 1, 40, '#8de04a'); }
   }
   for (const o of oilCv) if (o.life != null) o.life -= dt;
   if (oilCv.some(o => o.life != null && o.life <= 0)) oilCv = oilCv.filter(o => o.life == null || o.life > 0);
   for (const s of SPIKES) s.t -= dt;
+  for (const g of GOO) g.t -= dt; if (GOO.some(g => g.t <= 0)) GOO = GOO.filter(g => g.t > 0);
+  for (const k of SMOKES) { k.t -= dt; if (Math.random() < dt * 14) smoke(k.x + rand(-70, 70), k.y + rand(-55, 55), false, false); } if (SMOKES.some(k => k.t <= 0)) SMOKES = SMOKES.filter(k => k.t > 0);
   if (SPIKES.some(s => s.t <= 0)) SPIKES = SPIKES.filter(s => s.t > 0);
 }
 function modTick(dt) { // host / single player: passives and spike hits
@@ -3581,6 +3606,13 @@ function modTick(dt) { // host / single player: passives and spike hits
     if (c.dead) continue;
     if (c.mod === 'repair' && c.lost > 0) { c.repT = (c.repT || 0) + dt; if (c.repT >= 25) { c.repT = 0; const lost = PARTS.filter(q => !c.parts[q]); if (lost.length) { const q = lost[(Math.random() * lost.length) | 0]; c.parts[q] = true; c.lost--; c._key = ''; addText(c.x, c.y - 40, '🔧 ' + PNAME[q].toUpperCase() + ' FIXED', '#7dffb0'); ring(c.x, c.y, 40, '#7dffb0', .4, 3); } } }
     else c.repT = 0;
+  }
+  for (const g of GOO) {
+    const owner = cars.find(o => o.id === g.owner);
+    for (const c of cars) {
+      if (c.dead || c.boss || (c.id === g.owner) || (owner && !foeOf(owner, c)) || Math.hypot(c.x - g.x, c.y - g.y) > g.r * .9) continue;
+      if (!(c.gooT > 0)) { c.gooT = rand(3, 5); nev('gs', c.id, +c.gooT.toFixed(1)); if (!hiddenFrom(c)) addText(c.x, c.y - 40, 'GOOED! −30%', '#a8f070'); } else c.gooT = Math.max(c.gooT, 3);
+    }
   }
   for (const s of SPIKES) {
     const ca = Math.cos(s.a), sa = Math.sin(s.a), owner = cars.find(o => o.id === s.owner);
@@ -3608,11 +3640,12 @@ function drawSpikes() {
   ctx.globalAlpha = 1;
 }
 function drawModGear(c) { // the fitted mod, drawn on the car (car-local space)
-  if (!c.mod || c.dead || c.boss) return;
   const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2;
+  if (c.gooT > 0 && !c.dead) { ctx.fillStyle = 'rgba(140,230,70,.5)'; ctx.beginPath(); ctx.ellipse(0, 0, hl * .9, hw * .95, 0, 0, 6.283); ctx.fill(); }
+  if (!c.mod || c.dead || c.boss) return;
   if (c.mod === 'plow') { ctx.fillStyle = '#5d646f'; ctx.beginPath(); ctx.moveTo(hl + 1, -hw - 3); ctx.lineTo(hl + 9, 0); ctx.lineTo(hl + 1, hw + 3); ctx.lineTo(hl - 2, hw + 2); ctx.lineTo(hl + 5, 0); ctx.lineTo(hl - 2, -hw - 2); ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#ffbe0b'; ctx.lineWidth = 1.2; ctx.stroke(); }
   if (c.mod === 'flipper') { const up = c.modT > 0 ? Math.sin((1 - c.modT / .35) * Math.PI) : 0; ctx.fillStyle = up ? '#ffd166' : '#6b727d'; ctx.fillRect(hl - 1, -hw * .7, 5 + up * 8, hw * 1.4); ctx.fillStyle = '#2b2f36'; ctx.fillRect(hl + 1, -2, 2, 4); }
-  if (c.mod === 'spikes' || c.mod === 'oil' || c.mod === 'smoke') { ctx.fillStyle = c.mod === 'oil' ? '#1e2126' : c.mod === 'smoke' ? '#8d97a8' : '#3a3f47'; ctx.fillRect(-hl - 5, -6, 6, 12); ctx.fillStyle = '#ffbe0b'; ctx.fillRect(-hl - 5, -6, 1.5, 12); }
+  if (c.mod === 'spikes' || c.mod === 'goo' || c.mod === 'smoke') { ctx.fillStyle = c.mod === 'goo' ? '#5aa82a' : c.mod === 'smoke' ? '#8d97a8' : '#3a3f47'; ctx.fillRect(-hl - 5, -6, 6, 12); ctx.fillStyle = '#ffbe0b'; ctx.fillRect(-hl - 5, -6, 1.5, 12); }
   if (c.mod === 'harpoon') { ctx.fillStyle = '#2b2f36'; ctx.fillRect(-2, -3, 12, 6); ctx.fillStyle = '#c9ced6'; ctx.fillRect(9, -1.2, 6, 2.4); }
   if (c.mod === 'repair') { ctx.fillStyle = 'rgba(125,255,176,.9)'; ctx.beginPath(); ctx.arc(-8, 0, 2.6, 0, 6.283); ctx.fill(); }
   if (c.doorT > 0) { const k = Math.sin((1 - c.doorT / .35) * Math.PI), sg = c.doorS || 1; ctx.save(); ctx.translate(4, sg * hw); ctx.rotate(sg * k * .9); ctx.fillStyle = c.col ? c.col[0] : '#ccc'; ctx.fillRect(-14, sg > 0 ? 0 : -3, 16, 3); ctx.restore(); }
@@ -3642,7 +3675,7 @@ function botMod(c) {
   let go = false;
   if (m.id === 'flipper') go = !!modTarget(c, 'front');
   else if (m.id === 'doors') go = !!modTarget(c, 'side');
-  else if (m.id === 'spikes' || m.id === 'oil') go = !!modTarget(c, 'behind');
+  else if (m.id === 'spikes' || m.id === 'goo') go = !!modTarget(c, 'behind');
   else if (m.id === 'smoke') go = c.bomb && cars.some(o => foeOf(c, o) && Math.hypot(o.x - c.x, o.y - c.y) < 230);
   else if (m.id === 'harpoon') { const t = modTarget(c, 'cone'); go = !!t && (t.bomb || Math.random() < .3); }
   if (go && Math.random() < .7) modUse(c);
@@ -3965,10 +3998,12 @@ function netEvents(evs) {
     else if (k === 'h') { const lh = NET.localHit; if (!(lh && performance.now() - lh.t < 650 && Math.hypot(e[1] - lh.x, e[2] - lh.y) < 90)) hitFx(e[1], e[2], e[3]); }
     else if (k === 'k' && c) { c.dead = true; c.deadT = 0; c._key = ''; killFx(c); }
     else if (k === 'bd' && c) bossDownFx(c);
-    else if (k === 'md') { const a2 = cars.find(o => o.id === e[2]); if (a2) { if (e[1] === 'flip') { a2.hopT = .7; modFx('flip', a2); } else if (e[1] === 'plate') a2.modT = .35; else if (e[1] === 'door') { a2.doorT = .35; a2.doorS = e[3]; const t2 = null; } else if (e[1] === 'smoke') a2.smokeT = 4; else if (e[1] === 'hook') { a2.hookT = .55; a2.hookId = e[3]; } } }
+    else if (k === 'md') { const a2 = cars.find(o => o.id === e[2]); if (a2) { if (e[1] === 'flip') { a2.hopT = .7; modFx('flip', a2); } else if (e[1] === 'plate') a2.modT = .35; else if (e[1] === 'door') { a2.doorT = .35; a2.doorS = e[3]; const t2 = null; } else if (e[1] === 'smoke') smokeOn(a2, e[3], e[4], e[5]); else if (e[1] === 'hook') { a2.hookT = .55; a2.hookId = e[3]; } } }
     else if (k === 'sp') SPIKES.push({ id: e[1], x: e[2], y: e[3], a: e[4], t: 12, owner: 0, hits: 0, got: [] });
     else if (k === 'sx') SPIKES = SPIKES.filter(q => q.id !== e[1]);
     else if (k === 'ol') modOil(e[1], e[2], e[3]);
+    else if (k === 'go') GOO.push({ id: e[1], x: e[2], y: e[3], r: 44, t: 10, seed: e[4] });
+    else if (k === 'gs') { const a2 = cars.find(o => o.id === e[1]); if (a2) { a2.gooT = e[2]; if (!hiddenFrom(a2)) addText(a2.x, a2.y - 40, 'GOOED! −30%', '#a8f070'); } }
     else if (k === 'bf') bombFx(e[1], e[2], e[3], e[4] < 0 ? null : e[4], e[5]);
     else if (k === 'x') boomFx(e[1], e[2], e[3]);
     else if (k === 't') texts.push({ x: e[1], y: e[2], text: e[3], color: e[4], t: 0, big: !!e[5] });
@@ -4017,6 +4052,7 @@ function guestStep(dt) {
     if (c.slam) c.slam.t = Math.max(.05, c.slam.t - dt);
     if (c.dead) { c.deadT += dt; if (c.deadT < 4 && Math.random() < .5) smoke(c.x + rand(-8, 8), c.y + rand(-6, 6), c.deadT > 2, c.deadT < 2.2); continue; }
     const dmg = c.boss ? c.lost + 1 : c.lost;
+    if (hiddenFrom(c)) { c.wp = null; continue; }
     if (dmg >= 2) { c.smT = (c.smT || 0) - dt; if (c.smT <= 0) { c.smT = dmg >= 4 ? .05 : dmg >= 3 ? .09 : .16; const [sx, sy] = toWorld(c, (c.cL || L) * .28, rand(-4, 4)); smoke(sx, sy, dmg >= 3, dmg >= 4 && Math.random() < .45); } }
     if (c.boost && Math.random() < .9) { const [ex, ey] = toWorld(c, -L / 2 - 2, rand(-4, 4)), fx = Math.cos(c.a), fy = Math.sin(c.a); parts.push({ x: ex, y: ey, vx: -fx * rand(120, 220) + c.vx * .6, vy: -fy * rand(120, 220) + c.vy * .6, life: rand(.1, .2), max: .2, size: rand(3, 5.5), sp: Math.random() < .4 ? 'blue' : 'fire2', type: 'fire', k: 4 }); }
     if (c.slip > 60) {
@@ -4434,6 +4470,7 @@ function updateEmotes(dt) {
 }
 function drawEmotes() {
   for (const e of emotes) {
+    if (hiddenFrom(e.c)) continue;
     const [sx, sy] = w2s(e.c.x, e.c.y), k = e.t < .22 ? (e.t / .22) * 1.15 : e.t < .32 ? 1.15 - (e.t - .22) * 1.5 : 1, fade = Math.min(1, (e.max - e.t) / .4);
     const bob = Math.sin(e.t * 5) * 2, y = sy - (30 + 22 * ppu) + bob, big = e.c.isPlayer ? 1 : .85;
     ctx.save(); ctx.globalAlpha = fade; ctx.translate(sx, y); ctx.scale(k * big, k * big);
@@ -4578,7 +4615,8 @@ updateHud();
 /* ---------- ACHIEVEMENTS → Garage Points (GP) → mods ---------- */
 const GAR_KEY = 'scrapArenaGarage';
 let GAR = lsGet(GAR_KEY, null) || {};
-GAR = Object.assign({ gp: 0, owned: [], equip: '', ach: {}, rep: {}, st: { kos: 0, bosses: 0, onlineWins: 0 } }, GAR); GAR.st = Object.assign({ kos: 0, bosses: 0, onlineWins: 0 }, GAR.st);
+GAR = Object.assign({ gp: 0, owned: [], equip: '', ach: {}, rep: {}, st: { kos: 0, bosses: 0, onlineWins: 0 } }, GAR);
+GAR.owned = [...new Set(GAR.owned.map(id => id === 'oil' ? 'goo' : id))]; if (GAR.equip === 'oil') GAR.equip = 'goo'; GAR.st = Object.assign({ kos: 0, bosses: 0, onlineWins: 0 }, GAR.st);
 const garSave = () => lsSet(GAR_KEY, GAR);
 const ACH = [
   { id: 'welcome', g: 'Garage', icon: '🔧', name: 'Welcome to the Garage', desc: 'Open the garage', gp: 100 },
