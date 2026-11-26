@@ -2423,13 +2423,13 @@ function ai(c, dt) {
     a.retarget = .5 + Math.random() * .6; let best = null, bd = 1e9;
     for (const o of cars) {
       if (o === c || o.dead) continue;
-      const d = Math.hypot(o.x - c.x, o.y - c.y) * (o.isPlayer ? T.prefer : 1) * (.8 + a.fickle * .4) * (o.smokeT > 0 ? 6 : 1);
+      const d = Math.hypot(o.x - c.x, o.y - c.y) * (o.isPlayer ? T.prefer : 1) * (.8 + a.fickle * .4) * (o.scrT > 0 ? 6 : 1);
       if (d < bd) { bd = d; best = o; }
     }
     if (a.mode !== 'charge') a.target = best;
   }
   let t = a.target; if (!t) { c.throttle = 0; c.steer = 0; return; }
-  if (t.smokeT > 0 && t.smokeX != null) { // lost in the smoke: hunt around where it was popped
+  if (t.scrT > 0 && t.smokeX != null) { // lost in the smoke: hunt around where it was popped
     if (a.sFor !== t.smokeN || Math.hypot(a.sx - c.x, a.sy - c.y) < 55) { a.sFor = t.smokeN; const k = Math.random() * 6.283, r = rand(30, 190); a.sx = clamp(t.smokeX + Math.cos(k) * r, 60, W - 60); a.sy = clamp(t.smokeY + Math.sin(k) * r * .8, 60, H - 60); }
     t = { x: a.sx, y: a.sy, vx: 0, vy: 0, a: t.a };
   }
@@ -2808,7 +2808,7 @@ function endGameInner(won, quit) {
 
 /* ---------- rendering ---------- */
 function rr(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); ctx.fill(); }
-const carFade = c => c.dead ? clamp(1 - Math.max(0, c.deadT - 2.4) / .8, 0, 1) : hiddenFrom(c) ? 0 : c.smokeT > 0 ? .62 : 1;
+const carFade = c => c.dead ? clamp(1 - Math.max(0, c.deadT - 2.4) / .8, 0, 1) : hiddenFrom(c) ? 0 : c.scrT > 0 ? .62 : 1;
 function drawCarShadow(c) {
   if (hiddenFrom(c)) return;
   // The sprites are shot from straight above, so a long offset shadow makes the car look like it hovers.
@@ -2826,7 +2826,7 @@ const BEAM = (() => { const cv = document.createElement('canvas'); cv.width = 12
   const gr = g.createLinearGradient(0, 0, 128, 0); gr.addColorStop(0, 'rgba(255,240,190,.95)'); gr.addColorStop(.35, 'rgba(255,236,180,.45)'); gr.addColorStop(1, 'rgba(255,236,180,0)');
   g.fillStyle = gr; g.fillRect(0, 0, 128, 64); return cv; })();
 function drawCar(c) {
-  if (hiddenFrom(c) || (c === player && c.smokeT > 0 && !c.dead && !drawCar.top)) return; // your own smoked car is drawn above the cloud
+  if (hiddenFrom(c) || (c === player && c.scrT > 0 && !c.dead && !drawCar.top)) return; // your own smoked car is drawn above the cloud
   const fade = carFade(c), now = performance.now();
   ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.a);
   if (c.hopT > 0) { const hs = 1 + .38 * Math.sin((1 - c.hopT / .7) * Math.PI); ctx.scale(hs, hs); }
@@ -2934,7 +2934,7 @@ function render() {
   const sorted = cars.slice().sort((a, b) => (b.dead ? 1 : 0) - (a.dead ? 1 : 0));
   if (Object.keys(ATLAS).length) { for (const c of sorted) drawCarShadow(c); for (const c of sorted) drawCar(c); }
   drawCrusherHead(); drawBombTop(); drawHooks(); drawSmokes();
-  if (player && player.smokeT > 0 && !player.dead && Object.keys(ATLAS).length) { drawCar.top = true; try { drawCar(player); } finally { drawCar.top = false; } }
+  if (player && player.scrT > 0 && !player.dead && Object.keys(ATLAS).length) { drawCar.top = true; try { drawCar(player); } finally { drawCar.top = false; } }
   drawBossFx();
   for (const d of debris) if (d.z >= 6) drawDebris(d);
   drawParticles(false);
@@ -2970,7 +2970,7 @@ function render() {
   ctx.globalAlpha = 1;
   if (state === 'play') { drawArrows(); bombArrows(); drawBossBar(); }
   if (state === 'play' || state === 'over') drawEmotes();
-  if (mpOn() || teamOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname && !(c.smokeT > 0 && player && c !== player && foeOf(player, c))) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = teamOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
+  if (mpOn() || teamOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname && !(c.scrT > 0 && player && c !== player && foeOf(player, c))) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = teamOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
   bombMarkers();
   if (flashA > .01) { ctx.fillStyle = 'rgba(255,240,220,' + flashA.toFixed(3) + ')'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
   if (hurtA > .02) {
@@ -3370,7 +3370,7 @@ function botPlan(c, b) {
     const ts = theirs[(carrier.brain && carrier.brain.site) != null ? carrier.brain.site : nearSite(1 - t, carrier.x, carrier.y)[0]] || theirs[0];
     b.gx = carrier.x + (ts[0] - carrier.x) * .5; b.gy = clamp(carrier.y + (ts[1] - carrier.y) * .5 + (c.slot % 2 ? 150 : -150), 80, H - 80); return;
   }
-  if (carrier && carrier.smokeT > 0 && carrier.team !== t && carrier.smokeX != null) { b.gx = carrier.smokeX + rand(-170, 170); b.gy = carrier.smokeY + rand(-130, 130); return; } // lost in the smoke
+  if (carrier && carrier.scrT > 0 && carrier.team !== t && carrier.smokeX != null) { b.gx = carrier.smokeX + rand(-170, 170); b.gy = carrier.smokeY + rand(-130, 130); return; } // lost in the smoke
   if (carrier) { // they have it: a keeper parks on the site they're heading for, everyone else hunts the carrier
     const [si, sd] = nearSite(t, carrier.x, carrier.y), keeper = mates.slice().sort((p, q) => dist(p, mine[si][0], mine[si][1]) - dist(q, mine[si][0], mine[si][1]))[0];
     if (keeper === c && mates.length > 1 && sd > 220) { const p = mine[si], a = Math.atan2(carrier.y - p[1], carrier.x - p[0]); b.gx = p[0] + Math.cos(a) * 75; b.gy = p[1] + Math.sin(a) * 75; b.stop = true; return; }
@@ -3438,7 +3438,7 @@ function drawBombTop() {
 function bombMarkers() { // a big floating bomb pin over the carrier (or the loose bomb) that is never hidden by cars
   if (!bombOn() || (state !== 'play' && state !== 'over')) return;
   const B = BOMB, now = performance.now() / 1000; let x, y, col = '#ffb020', me = false;
-  if (B.st === 'carried') { const c = cars.find(o => o.id === B.carrier); if (!c || c.dead) return; if (c.smokeT > 0 && player && player.team !== c.team) return; x = c.x; y = c.y; col = TEAM_COL[c.team | 0]; me = c === player; }
+  if (B.st === 'carried') { const c = cars.find(o => o.id === B.carrier); if (!c || c.dead) return; if (c.scrT > 0 && player && player.team !== c.team) return; x = c.x; y = c.y; col = TEAM_COL[c.team | 0]; me = c === player; }
   else if (B.st === 'ground' || B.st === 'air') { x = B.x; y = B.y; } else return;
   const [sx, sy1] = w2s(x, y), sy0 = sy1 - (B.st === 'air' ? B.lift * ppu * TK : 0), bob = Math.sin(now * 5) * 3, sy = sy0 - 40 - 12 * ppu + bob, r = 19;
   ctx.save();
@@ -3566,8 +3566,8 @@ function modUse(c) { // host / single player
 }
 function modOil(x, y, seed) { oilCv.push({ x, y, r: 40, cv: makeOil(40, seed), life: 11 }); }
 // smoke screen: a cloud stays where you popped it and you vanish from opponents' screens for 4 s
-function smokeOn(c, x, y, n) { c.smokeT = 4; c.smokeX = x; c.smokeY = y; c.smokeN = n; SMOKES.push({ x, y, t: 4.6, n }); for (let i = 0; i < 26; i++) smoke(x + rand(-50, 50), y + rand(-40, 40), false, false); }
-const hiddenFrom = c => c.smokeT > 0 && !c.dead && !!player && c !== player && foeOf(player, c);
+function smokeOn(c, x, y, n) { c.scrT = 4; c.smokeX = x; c.smokeY = y; c.smokeN = n; SMOKES.push({ x, y, t: 4.6, n }); for (let i = 0; i < 26; i++) smoke(x + rand(-50, 50), y + rand(-40, 40), false, false); }
+const hiddenFrom = c => c.scrT > 0 && !c.dead && !!player && c !== player && foeOf(player, c);
 function gooPuddle(g) { if (g.cv) return g.cv; const cv = document.createElement('canvas'), R = rng(g.seed || 1), S = 128; cv.width = cv.height = S; const x = cv.getContext('2d');
   x.fillStyle = 'rgba(120,230,60,.85)'; x.beginPath(); for (let i = 0; i <= 18; i++) { const a = i / 18 * 6.283, r = S * (.36 + R() * .1); x[i ? 'lineTo' : 'moveTo'](S / 2 + Math.cos(a) * r, S / 2 + Math.sin(a) * r); } x.fill();
   for (let i = 0; i < 6; i++) { x.beginPath(); x.arc(S / 2 + (R() - .5) * S * .9, S / 2 + (R() - .5) * S * .9, S * (.04 + R() * .05), 0, 6.283); x.fill(); }
@@ -3592,7 +3592,7 @@ function wantMod() { // local player pressed MOD
 function modTimers(dt) { // runs on host, single player and guests (visual timers)
   for (const c of cars) {
     if (c.modCd > 0) c.modCd -= dt; if (c.modT > 0) c.modT -= dt; if (c.doorT > 0) c.doorT -= dt; if (c.hookT > 0) c.hookT -= dt; if (c.hopT > 0) c.hopT -= dt;
-    if (c.smokeT > 0) c.smokeT -= dt; if (c.gooT > 0) { c.gooT -= dt; if (Math.random() < dt * 6 && !hiddenFrom(c)) spark(c.x + rand(-10, 10), c.y + rand(-8, 8), 1, 40, '#8de04a'); }
+    if (c.scrT > 0) c.scrT -= dt; if (c.gooT > 0) { c.gooT -= dt; if (Math.random() < dt * 6 && !hiddenFrom(c)) spark(c.x + rand(-10, 10), c.y + rand(-8, 8), 1, 40, '#8de04a'); }
   }
   for (const o of oilCv) if (o.life != null) o.life -= dt;
   if (oilCv.some(o => o.life != null && o.life <= 0)) oilCv = oilCv.filter(o => o.life == null || o.life > 0);
@@ -3651,11 +3651,7 @@ function drawModGear(c) { // the fitted mod, drawn on the car (car-local space)
   if (c.doorT > 0) { const k = Math.sin((1 - c.doorT / .35) * Math.PI), sg = c.doorS || 1; ctx.save(); ctx.translate(4, sg * hw); ctx.rotate(sg * k * .9); ctx.fillStyle = c.col ? c.col[0] : '#ccc'; ctx.fillRect(-14, sg > 0 ? 0 : -3, 16, 3); ctx.restore(); }
 }
 function drawHooks() {
-  for (const c of cars) if (c.smokeT > 0 && !c.dead) { // smoke screen cloud over the car
-    const k = Math.min(1, c.smokeT / .6, (4 - c.smokeT) / .4 + .2), r = 78, g = ctx.createRadialGradient(c.x, c.y, 6, c.x, c.y, r);
-    const a0 = (c === player ? .42 : .86) * k; g.addColorStop(0, 'rgba(196,202,212,' + a0 + ')'); g.addColorStop(.6, 'rgba(170,176,188,' + a0 * .8 + ')'); g.addColorStop(1, 'rgba(160,166,178,0)');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(c.x, c.y, r, 0, 6.283); ctx.fill();
-  }
+
   for (const c of cars) if (c.hookT > 0) { const t = cars.find(o => o.id === c.hookId); if (!t) continue; ctx.save(); ctx.globalAlpha = Math.min(1, c.hookT * 3); ctx.strokeStyle = '#c9ced6'; ctx.lineWidth = 2; ctx.setLineDash([5, 3]); ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(t.x, t.y); ctx.stroke(); ctx.setLineDash([]); ctx.restore(); }
 }
 function modHud() {
