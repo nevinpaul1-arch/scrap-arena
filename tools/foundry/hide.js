@@ -246,7 +246,8 @@ function hrOver(quit) {
   const h1 = $('overlay').querySelector('#card h1');
   h1.innerHTML = quit ? 'ROUND <span>ABANDONED</span>' : HR.solo ? (me && me.r && !me.r.caught ? 'YOU <span>ESCAPED</span>' : 'YOU WERE <span>CAUGHT</span>') : win ? 'YOU <span>WIN</span>' : 'HIDE &amp; <span>RUN</span>';
   $('final').innerHTML = quit ? '' : hrResultsHtml(rows);
-  $('card').classList.add('over'); $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
+  $('card').classList.add('over'); $('card').classList.remove('teamRes', 'spBomb'); $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
+  showAgain('hide', '👀 Hide & Run · ' + HR.bots + ' seeker' + (HR.bots > 1 ? 's' : '') + ' · same car');
   $('overlay').classList.remove('hidden'); $('hrHud').classList.add('hidden'); renderHub();
 }
 // ---- solo: you hide, bots seek ----
@@ -287,7 +288,7 @@ function hrLeave() { document.body.classList.remove('hr', 'hrHider'); VIEW_K = 1
 /* ================= HUD: timer, role, clue, minimap, seeker blackout ================= */
 let hrMiniT = 0;
 function hrHud(dt) {
-  if (!hideOn() || (state !== 'play' && state !== 'over')) { if (!$('hrHud').classList.contains('hidden')) { $('hrHud').classList.add('hidden'); $('hrCover').classList.add('hidden'); } return; }
+  if (!hideOn() || state !== 'play') { if (!$('hrHud').classList.contains('hidden')) { $('hrHud').classList.add('hidden'); $('hrCover').classList.add('hidden'); } return; }
   $('hrHud').classList.remove('hidden');
   const me = player, role = me ? me.hr : '', ph = HR.phase;
   const cover = role === 'seeker' && (ph === 'head' || ph === 'intro');

@@ -130,7 +130,9 @@
   button#goOnline:hover{background:#33b56b}
   button#goBomb{background:#e08a00;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:800;letter-spacing:.06em;cursor:pointer} button#goBomb:hover{background:#f59e0b}
   #card.teamRes #dailyBox,#card.teamRes #board,#card.teamRes #go,#card.teamRes #goCont,#card.teamRes #goDaily,#card.teamRes #goOnline{display:none!important}
-  #card.teamRes:not(.spBomb) #goBomb{display:none!important}
+  #card.teamRes:not(.spBomb) #goBomb{display:none!important} #card.spBomb #goBomb{display:none!important}
+  #goAgain{background:linear-gradient(180deg,#ffffff,#dfe4ec)!important;color:#11151c!important;box-shadow:0 6px 18px rgba(0,0,0,.35);order:-2} #goAgain small{color:#3a4250} #modes #goAgain{grid-column:1/-1;max-width:none}
+  #goAgain.hidden{display:none!important}
   body.phone #card.teamRes #final{overflow:auto;min-height:0} body.phone #clubAwardBox .clubAward{margin:0;font-size:12px} body.phone #card.teamRes #modes button{padding:10px 12px}
   #goHome{background:none;border:1px solid #3a4150;color:#cfd6e2;border-radius:8px;padding:7px 12px;font-weight:800;font-size:13px;cursor:pointer;margin:10px 6px 0 0}
   #mpBack{display:block;margin:6px auto 2px;background:#2a9d5c;color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:800;letter-spacing:.06em;cursor:pointer}
@@ -878,6 +880,7 @@
     <div id="clubAwardBox"></div>
     <input id="pname" maxlength="14" placeholder="Your name" autocomplete="off" spellcheck="false">
     <div id="modes">
+      <button id="goAgain" class="hidden">↻ PLAY AGAIN<small id="againSub"></small></button>
       <button id="go">WAVES<small>Endless waves · unlock cars</small></button>
       <button id="goCont" class="hidden">CONTINUE</button>
       <button id="goDaily">DAILY<small id="dailySub">Same challenge for everyone today</small></button>
@@ -2994,6 +2997,7 @@ function endGameInner(won, quit) {
   $('card').classList.add('over'); $('banner').classList.remove('show');
   { const ag = isD ? 'goDaily' : (getCheckpoint() && !quit && !$('goCont').classList.contains('hidden') ? 'goCont' : 'go'); for (const id of ['go', 'goCont', 'goDaily', 'goBomb', 'goOnline']) $(id).classList.toggle('again', id === ag); }
   $('overlay').querySelector('#card h1').innerHTML = won ? 'DAILY <span>DONE</span>' : quit ? 'RUN <span>ENDED</span>' : 'YOU’RE <span>SCRAP</span>';
+  if (!wasDev) showAgain(isD ? 'daily' : 'waves', isD ? 'Today’s daily again' : 'Waves from wave 1 · ' + ((CAR_BY_ID[selId] || {}).name || 'same car')); else showAgain('');
   $('overlay').classList.remove('hidden');
 }
 
@@ -3919,7 +3923,7 @@ function bombSpOverInner(quit) {
   $('final').innerHTML = bombResultsHtml(r); $('clubAwardBox').innerHTML = quit ? '' : clubAwardHtml(award); if (!quit) achTeam(r, true);
   lastPod = null; podBtn(); if (!quit && r.pod) setTimeout(() => showPodium(r.pod), 400);
   if (!quit && w === myT) { SFX.win && SFX.win(); }
-  $('card').classList.add('over', 'teamRes', 'spBomb'); $('goBomb').innerHTML = 'PLAY AGAIN<small>💣 Bomb Run · same car and bots</small>'; $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
+  $('card').classList.add('over', 'teamRes', 'spBomb'); showAgain('bomb', '💣 Bomb Run · same car and bots'); $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
   $('overlay').classList.remove('hidden'); renderHub();
 }
 function vsTick(dt) { // host / single player: match clock, boss arrival, respawns
@@ -4446,6 +4450,7 @@ function bombResultsHtml(r) {
 }
 function netShowResults(r) { try { netShowResultsInner(r); } catch (e) { resultsFailSafe(e); } }
 function netShowResultsInner(r) {
+  showAgain('');
   if (NET.role === 'host' && NET.started && !r.hostLeft) {
     const hs = cars.filter(c => c.isPlayer);
     if (VS.kind === 'hide') for (const c of cars) c.score = HR.res[c.pid] ? Math.round(HR.res[c.pid].t * 10) : 0;
@@ -4733,7 +4738,7 @@ function setPause(on) {
   if (on) $('pmNote').textContent = gameMode === 'daily' && !dailyPractice ? 'Leaving now ends today\'s counted daily run with your current score.' : 'Leaving now ends this run. Your score is still saved.';
 }
 function goMenu() {
-  hrLeave();
+  hrLeave(); showAgain('');
   setPause(false); openSheet(null);
   if (NET.role) { netLeave(); if (state === 'play' || state === 'over') { state = 'menu'; } }
   if (!runActive() && devRun) { devRun = false; document.body.classList.remove('dev'); gameMode = 'waves'; daily = null; todayDaily(); } $('pauseMenu').classList.add('hidden');
@@ -4773,6 +4778,12 @@ $('go').addEventListener('click', () => begin('waves'));
 $('goCont').addEventListener('click', continueRun); renderContinue();
 $('goDaily').addEventListener('click', () => begin('daily'));
 $('goBomb').addEventListener('click', () => startBombSP());
+// one tap to replay whatever just finished, same car and settings
+function showAgain(kind, sub) {
+  const b = $('goAgain'); b.dataset.kind = kind || ''; b.classList.toggle('hidden', !kind); $('againSub').textContent = sub || '';
+  if (kind) for (const id of ['go', 'goCont', 'goDaily', 'goBomb', 'goOnline']) $(id).classList.remove('again');
+}
+$('goAgain').addEventListener('click', () => { const k = $('goAgain').dataset.kind; showAgain(''); if (k === 'bomb') startBombSP(); else if (k === 'hide') startHideSP(); else { begin(k === 'daily' ? 'daily' : 'waves'); if (state === 'select') confirmSel(); } });
 $('goHome').addEventListener('click', () => goMenu());
 if (matchMedia('(pointer:coarse)').matches) { $('touch').classList.add('on'); document.body.classList.add('touch'); $('mute').style.display = 'none'; }
 document.querySelectorAll('#touch button').forEach(b => {
@@ -6501,7 +6512,8 @@ function hrOver(quit) {
   const h1 = $('overlay').querySelector('#card h1');
   h1.innerHTML = quit ? 'ROUND <span>ABANDONED</span>' : HR.solo ? (me && me.r && !me.r.caught ? 'YOU <span>ESCAPED</span>' : 'YOU WERE <span>CAUGHT</span>') : win ? 'YOU <span>WIN</span>' : 'HIDE &amp; <span>RUN</span>';
   $('final').innerHTML = quit ? '' : hrResultsHtml(rows);
-  $('card').classList.add('over'); $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
+  $('card').classList.add('over'); $('card').classList.remove('teamRes', 'spBomb'); $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
+  showAgain('hide', '👀 Hide & Run · ' + HR.bots + ' seeker' + (HR.bots > 1 ? 's' : '') + ' · same car');
   $('overlay').classList.remove('hidden'); $('hrHud').classList.add('hidden'); renderHub();
 }
 // ---- solo: you hide, bots seek ----
@@ -6542,7 +6554,7 @@ function hrLeave() { document.body.classList.remove('hr', 'hrHider'); VIEW_K = 1
 /* ================= HUD: timer, role, clue, minimap, seeker blackout ================= */
 let hrMiniT = 0;
 function hrHud(dt) {
-  if (!hideOn() || (state !== 'play' && state !== 'over')) { if (!$('hrHud').classList.contains('hidden')) { $('hrHud').classList.add('hidden'); $('hrCover').classList.add('hidden'); } return; }
+  if (!hideOn() || state !== 'play') { if (!$('hrHud').classList.contains('hidden')) { $('hrHud').classList.add('hidden'); $('hrCover').classList.add('hidden'); } return; }
   $('hrHud').classList.remove('hidden');
   const me = player, role = me ? me.hr : '', ph = HR.phase;
   const cover = role === 'seeker' && (ph === 'head' || ph === 'intro');
