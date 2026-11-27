@@ -131,8 +131,9 @@
   button#goBomb{background:#e08a00;color:#fff;border:0;border-radius:10px;font-size:18px;font-weight:800;letter-spacing:.06em;cursor:pointer} button#goBomb:hover{background:#f59e0b}
   #card.teamRes #dailyBox,#card.teamRes #board,#card.teamRes #go,#card.teamRes #goCont,#card.teamRes #goDaily,#card.teamRes #goOnline{display:none!important}
   #card.teamRes:not(.spBomb) #goBomb{display:none!important} #card.spBomb #goBomb{display:none!important}
-  #goAgain{background:linear-gradient(180deg,#ffffff,#dfe4ec)!important;color:#11151c!important;box-shadow:0 6px 18px rgba(0,0,0,.35);order:-2} #goAgain small{color:#3a4250} #modes #goAgain{grid-column:1/-1;max-width:none}
-  #goAgain.hidden{display:none!important}
+  #goAgain{background:#e63946;border:1px solid #e63946;color:#fff;border-radius:8px;padding:7px 14px;font-weight:800;font-size:13px;cursor:pointer;margin:10px 6px 0 0;box-shadow:none;text-transform:none;letter-spacing:0;min-height:0} #goAgain.hidden{display:none!important} #card.over.again #menuLinks{align-items:center}
+  #card.over.again #modes,#card.over.again #howBtn,#card.over.again #installBtn,#card.over.again #dailyBox{display:none!important}
+  #card.over.again #menuLinks{justify-content:center} body:not(.phone) #card.over.again #menuLinks{justify-content:flex-start}
   body.phone #card.teamRes #final{overflow:auto;min-height:0} body.phone #clubAwardBox .clubAward{margin:0;font-size:12px} body.phone #card.teamRes #modes button{padding:10px 12px}
   #goHome{background:none;border:1px solid #3a4150;color:#cfd6e2;border-radius:8px;padding:7px 12px;font-weight:800;font-size:13px;cursor:pointer;margin:10px 6px 0 0}
   #mpBack{display:block;margin:6px auto 2px;background:#2a9d5c;color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:800;letter-spacing:.06em;cursor:pointer}
@@ -880,7 +881,6 @@
     <div id="clubAwardBox"></div>
     <input id="pname" maxlength="14" placeholder="Your name" autocomplete="off" spellcheck="false">
     <div id="modes">
-      <button id="goAgain" class="hidden">↻ PLAY AGAIN<small id="againSub"></small></button>
       <button id="go">WAVES<small>Endless waves · unlock cars</small></button>
       <button id="goCont" class="hidden">CONTINUE</button>
       <button id="goDaily">DAILY<small id="dailySub">Same challenge for everyone today</small></button>
@@ -888,7 +888,7 @@
       <button id="goOnline">ONLINE<small>Co-op · Team Derby · Bomb Run</small></button>
     </div>
     <div id="dailyBox"></div>
-    <div id="menuLinks"><button id="goHome">🏠 Home</button><button id="howBtn">❓ How to play</button><button id="installBtn" class="hidden">📲 Install app</button></div>
+    <div id="menuLinks"><button id="goAgain" class="hidden">↻ Restart</button><button id="goHome">🏠 Home</button><button id="howBtn">❓ How to play</button><button id="installBtn" class="hidden">📲 Install app</button></div>
     <button id="mpBack" style="display:none">BACK TO LOBBY</button>
     <div id="board"></div>
   </div>
@@ -4780,8 +4780,7 @@ $('goDaily').addEventListener('click', () => begin('daily'));
 $('goBomb').addEventListener('click', () => startBombSP());
 // one tap to replay whatever just finished, same car and settings
 function showAgain(kind, sub) {
-  const b = $('goAgain'); b.dataset.kind = kind || ''; b.classList.toggle('hidden', !kind); $('againSub').textContent = sub || '';
-  if (kind) for (const id of ['go', 'goCont', 'goDaily', 'goBomb', 'goOnline']) $(id).classList.remove('again');
+  const b = $('goAgain'); b.dataset.kind = kind || ''; b.title = sub || ''; b.classList.toggle('hidden', !kind); $('card').classList.toggle('again', !!kind);
 }
 $('goAgain').addEventListener('click', () => { const k = $('goAgain').dataset.kind; showAgain(''); if (k === 'bomb') startBombSP(); else if (k === 'hide') startHideSP(); else { begin(k === 'daily' ? 'daily' : 'waves'); if (state === 'select') confirmSel(); } });
 $('goHome').addEventListener('click', () => goMenu());
