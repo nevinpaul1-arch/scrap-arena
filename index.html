@@ -628,6 +628,23 @@
   .svBox{text-align:center;padding:12px;border-radius:14px;border:1px solid rgba(61,220,132,.35);background:linear-gradient(180deg,rgba(61,220,132,.1),#11141a);margin-bottom:10px} .svBox small{font:800 10px system-ui,sans-serif;letter-spacing:.2em;color:#8fe3b0} .svCode{font:900 34px ui-monospace,Menlo,monospace;letter-spacing:.12em;margin:4px 0 8px;color:#fff} .svBox .mBtn{min-width:150px} .svBox p{margin:8px 0 0;font-size:12px;color:#cfd6e2}
   .svRestore{display:flex;gap:8px} .svRestore input{flex:1;min-width:0;background:#0d1015;border:1px solid #3a4150;border-radius:10px;color:#fff;font:900 18px ui-monospace,Menlo,monospace;letter-spacing:.1em;padding:8px 12px;text-transform:uppercase} .svRestore .mBtn{min-width:120px} .svMsg{font-size:12px;color:#ffd166;min-height:1em}
   body.phone .svCode{font-size:26px;margin:2px 0 6px} body.phone .plR{padding:4px 9px;min-height:40px} body.phone .svBox{padding:8px}
+  /* Club HQ (phone-first) */
+  .cqHead{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:14px;background:linear-gradient(110deg,color-mix(in srgb,var(--cc) 28%,#14171d),#11141a 70%);border:1px solid color-mix(in srgb,var(--cc) 50%,#2d3340);margin-bottom:8px}
+  .cqHead img{width:64px;height:64px;flex:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.6))} .cqHead .txt{flex:1;min-width:0} .cqHead small{font:800 9.5px system-ui,sans-serif;letter-spacing:.18em;color:#aab3c2} .cqHead h3{margin:0;font:900 italic 20px system-ui,sans-serif}
+  .cqHead .rank{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-top:2px} .cqHead .rank b{color:#ffd166} .cqHead .rank span{color:#aab3c2}
+  .cqHead .rbar{height:6px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:4px} .cqHead .rbar b{display:block;height:100%;background:linear-gradient(90deg,var(--cc),#ffd166)}
+  .cqHead .nums{display:flex;gap:12px;flex:none} .cqHead .nums span{display:flex;flex-direction:column;align-items:center;font-size:9.5px;color:#8d97a8;font-weight:700} .cqHead .nums b{font:900 16px system-ui,sans-serif;color:#fff}
+  #cqTabs{display:flex;gap:6px;margin-bottom:8px} #cqTabs button{flex:1;min-height:36px;border:1px solid #2d3340;background:#12151b;color:#aab3c2;border-radius:10px;font:900 11.5px system-ui,sans-serif;letter-spacing:.06em;cursor:pointer} #cqTabs button.on{border-color:#ffae00;color:#fff;background:linear-gradient(180deg,rgba(255,174,0,.2),#12151b)}
+  .cqRow{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:8px;margin:8px 0} .cqRow .clEvent{margin:0}
+  .cqNext{border:1px solid rgba(255,209,102,.35);border-radius:14px;padding:8px 10px;background:linear-gradient(160deg,rgba(255,209,102,.1),#11141a);display:flex;flex-direction:column;gap:3px} .cqNext small{font:800 9.5px system-ui,sans-serif;letter-spacing:.16em;color:#d9b45a} .cqNext b{font:900 15px system-ui,sans-serif} .cqNext span{font-size:11.5px;color:#cfd6e2;line-height:1.35;flex:1}
+  .cqLink{align-self:flex-start;border:0;background:none;color:#ffd166;font:900 12px system-ui,sans-serif;padding:4px 0;cursor:pointer}
+  .cqLadder{display:flex;flex-direction:column;gap:6px}
+  .cqLv{display:grid;grid-template-columns:40px minmax(110px,.8fr) minmax(0,2fr) 22px;align-items:center;gap:10px;padding:7px 10px;border-radius:12px;border:1px solid #232833;background:#11141a;opacity:.7} .cqLv.done{opacity:1;border-color:rgba(125,255,176,.35);background:linear-gradient(90deg,rgba(125,255,176,.07),#11141a)} .cqLv.cur{opacity:1;border-color:#ffae00;box-shadow:0 0 0 1px rgba(255,174,0,.4)}
+  .lvI{font-size:24px;text-align:center} .lvT b{display:block;font:900 italic 15px system-ui,sans-serif} .lvT small{font-size:11px;color:#8d97a8} .lvT .ap{display:block;height:4px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:4px;overflow:hidden} .lvT .ap b{display:block;height:100%;background:#ffae00}
+  .lvP{display:flex;flex-wrap:wrap;gap:5px} .lvP span{font-size:11px;padding:3px 8px;border-radius:999px;background:#1a1e26;color:#dfe5ee} .lvP .gpR{background:rgba(255,190,11,.14);color:#ffd166;font-weight:800} .lvP .soonG{background:rgba(157,107,255,.14);color:#c4a8ff}
+  .lvS{color:#7dffb0;font:900 16px system-ui,sans-serif;text-align:center}
+  .cqTop .tm{display:flex;justify-content:space-between;padding:5px 10px;border-bottom:1px solid #1d222b;font-size:13px} .cqTop .tm.me{color:#ffd166}
+  body.phone .cqHead{padding:6px 10px} body.phone .cqHead img{width:52px;height:52px} body.phone .cqHead h3{font-size:17px} body.phone .cqLv{grid-template-columns:32px minmax(96px,.7fr) minmax(0,2fr) 18px;padding:5px 8px;gap:8px} body.phone .lvI{font-size:20px}
   .clSoon{display:flex;gap:12px;align-items:center;margin:10px 0;padding:10px 12px;border-radius:14px;border:1px dashed rgba(157,107,255,.55);background:linear-gradient(90deg,rgba(157,107,255,.14),rgba(157,107,255,.03))} .clSoon .si{font-size:28px} .clSoon small{font:800 10.5px system-ui,sans-serif;letter-spacing:.16em;color:#c4a8ff} .clSoon b{display:block;font:900 italic 17px system-ui,sans-serif} .clSoon p{margin:2px 0 0;font-size:12.5px;color:#cfd6e2;line-height:1.4}
   /* achievement toast + mod controls */
   #achToast{position:fixed;left:50%;top:max(10px,calc(env(safe-area-inset-top) + 6px));transform:translate(-50%,-30px);z-index:45;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:14px;background:linear-gradient(90deg,rgba(40,30,8,.95),rgba(16,18,24,.95));border:1px solid rgba(255,209,102,.6);box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;color:#fff}
@@ -1102,7 +1119,7 @@ const MAXP = 6, COOP_MAX = 2;
 const TEAM_COL = ['#3a86ff', '#ff4d5a'], TEAM_NAME = ['BLUE', 'RED'], VS_LEN = 180, VS_BOSS_AT = 120, VS_RESPAWN = 3, VS_KILL = 5, VS_BOSS_PTS = 25;
 const VS = { matchT: VS_LEN, score: [0, 0], boss: 'none', bossState: 0, warned: false, kind: 'derby' };
 let BLAST = false; // true while a barrel blast is dealing damage (team-mates can hurt each other that way)
-const NET = { vs: { slots: ['', '', '', '', '', ''], votes: {}, kind: 'derby' }, clubs: {}, mods: {}, role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [], away: {}, acc: 0, jpk: 0, lastSnapAt: 0 };
+const NET = { vs: { slots: ['', '', '', '', '', ''], votes: {}, kind: 'derby' }, clubs: {}, mods: {}, cranks: {}, role: null, inHist: [], buf: [], evq: [], off: null, jit: 0, interp: .1, rtt: .12, inT: {}, ws: null, room: '', lobby: null, mode: 'coop', inputs: {}, emoSeen: {}, snapT: 0, sendT: 0, ev: [], metaSent: new Set(), metaT: 0, byId: new Map(), started: false, overArmed: false, vsArena: 0, lastIn: '', emo: 0, forceSend: false, myLost: null, players: [], away: {}, acc: 0, jpk: 0, lastSnapAt: 0 };
 let RTC_ICE = [{ urls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'] }];
 const RTC = { peers: new Map(), me: null, lastRx: 0, rpT: 0 };
 const rtcOk = p => !!(p && p.u && p.u.readyState === 'open' && p.r && p.r.readyState === 'open');
@@ -1154,11 +1171,12 @@ const PAINTS = [
   { id: 'stock', name: 'Stock', need: 0 },
   { id: 'gold', name: 'Gold', need: 3, col: ['#e8b923', '#9c7a08', '#ffe27a'] },
   { id: 'teal', name: 'Pearl teal', need: 7, col: ['#19b5a5', '#0d7a6f', '#7fe6da'] },
-  { id: 'flame', name: 'Hot pink', need: 14, col: ['#ff3d8b', '#b0215c', '#ff9cc4'] }
+  { id: 'flame', name: 'Hot pink', need: 14, col: ['#ff3d8b', '#b0215c', '#ff9cc4'] },
+  { id: 'club', name: 'Club colours', need: 0, club: true, get col() { const c = CLUB_BY[myClubId()]; return c ? [c.c1, c.c2, c.c3 || c.c1] : null; } }
 ];
 let streak = lsGet('scrapArenaStreak', { last: '', n: 0, best: 0 }), paintId = lsGet('scrapArenaPaint', 'stock');
 const streakNow = () => { const t = torontoDay(), y = torontoDay(Date.now() - 864e5); return streak.last === t || streak.last === y ? streak.n : 0; };
-const paintOk = p => Math.max(streakNow(), streak.best || 0) >= p.need;
+const paintOk = p => p.club ? myClubRank() >= 1 : Math.max(streakNow(), streak.best || 0) >= p.need;
 function bumpStreak() {
   const t = torontoDay(), y = torontoDay(Date.now() - 864e5);
   if (streak.last === t) return null;
@@ -1229,15 +1247,25 @@ const CLUB_URL = {}, CLUB_IMG = {};
 // mod and daily-modifier artwork as <img>, emoji as fallback
 function ico(kind, m, cls) { const u = m && ASSET && ASSET.icon && ASSET.icon[kind] && ASSET.icon[kind][m.id]; return u ? '<img class="aIco' + (cls ? ' ' + cls : '') + '" src="' + u + '" alt="">' : (m ? m.icon : ''); }
 function clubBadgeUrl(id, opt) { const art = ASSET && ASSET.icon && ASSET.icon.club && ASSET.icon.club[id]; if (art) return art[(opt && opt.champ ? 'C' : '') + (opt && opt.chrome ? 'R' : '')] || art['']; const k = id + (opt && opt.champ ? 'C' : '') + (opt && opt.chrome ? 'R' : ''); if (!CLUB_URL[k]) CLUB_URL[k] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(clubBadgeSvg(id, opt)); return CLUB_URL[k]; }
-function clubImg(id) { // canvas copy for painting onto cars
-  if (!CLUB_BY[id]) return null; if (CLUB_IMG[id]) return CLUB_IMG[id].ok ? CLUB_IMG[id].cv : null;
-  const im = new Image(), rec = CLUB_IMG[id] = { ok: false, cv: null };
+function clubImg(id, rk) { // canvas copy for painting onto cars (Enforcer+ chrome, President champion)
+  if (!CLUB_BY[id]) return null; const v = rk >= 5 ? 'CR' : rk >= 3 ? 'R' : '', key = id + v; if (CLUB_IMG[key]) return CLUB_IMG[key].ok ? CLUB_IMG[key].cv : null;
+  const im = new Image(), rec = CLUB_IMG[key] = { ok: false, cv: null };
   im.onload = () => { const cv = document.createElement('canvas'); cv.width = cv.height = 64; cv.getContext('2d').drawImage(im, 0, 0, 64, 64); rec.cv = cv; rec.ok = true; };
-  im.src = clubBadgeUrl(id); return null;
+  im.src = clubBadgeUrl(id, { champ: v === 'CR', chrome: !!v }); return null;
 }
 /* club membership, ranks, weekly events and points (saved in this browser; standings shared through the server when it has them) */
 const CLUB_KEY = 'scrapArenaClub';
 const CLUB_RANKS = [['Prospect', 0], ['Member', 300], ['Road Captain', 1500], ['Enforcer', 5000], ['Vice President', 12000], ['President', 25000]];
+// what each club level gives you: a one-time Garage Points reward plus perks that stay while you're in that club
+const CLUB_LV = [
+  { icon: '🔰', gp: 0, perks: ['Club badge on your roof and hood', 'Club name on your profile and in Players'], gear: '' },
+  { icon: '🎖️', gp: 150, perks: ['Club colours paint job for your car'], gear: 'Club bandana' },
+  { icon: '🛣️', gp: 300, perks: ['+5% club points from every game'], gear: '' },
+  { icon: '🛡️', gp: 500, perks: ['Chrome club badge on your car (everyone sees it)', '+5% club points'], gear: 'Club helmet' },
+  { icon: '⭐', gp: 800, perks: ['★ Gold star on your name in online matches', '+10% club points'], gear: '' },
+  { icon: '👑', gp: 1500, perks: ['Champion club badge on your car', '+15% club points'], gear: 'Club jacket' }
+];
+const CLUB_BONUS = [0, 0, .05, .05, .10, .15];
 const CLUB_EVENTS = [
   { id: 'bomb', icon: '💣', name: 'Bomb Squad', desc: 'Bases you blow up earn 3× club points', mult: { plants: 3 } },
   { id: 'wreck', icon: '💥', name: 'Wrecking Week', desc: 'Every KO earns 2× club points', mult: { kos: 2 } },
@@ -1261,7 +1289,7 @@ function joinClub(id) {
   if (!CLUB_BY[id] || id === CLUB.id) return;
   CLUB.id = id; CLUB.since = Date.now(); if (CLUB.week.w !== clubWeek() || CLUB.week.club !== id) CLUB.week = { w: clubWeek(), pts: 0, club: id };
   clubSave(); SFX.cheer && SFX.cheer(.8); clubPush(0); renderClubAll();
-  if (NET.role === 'guest') netSend({ club: id }); else if (NET.role === 'host') vsSync();
+  if (NET.role === 'guest') netSend({ club: id, crank: myClubRank() }); else if (NET.role === 'host') vsSync();
   for (const c of cars) if (c === player) { c.club = id; c._key = ''; }
 }
 // points for a finished game. kind: waves | daily | bomb | versus | coop
@@ -1277,11 +1305,19 @@ function clubPoints(kind, st) {
   return { pts, br, ev };
 }
 function clubAddPts(pts) {
-  if (!myClubId() || !(pts > 0)) return;
+  if (!myClubId() || !(pts > 0)) return 0;
+  pts = Math.round(pts * (1 + CLUB_BONUS[clubRank(myClubPts()).i])); // rank perk
   CLUB.life[CLUB.id] = (CLUB.life[CLUB.id] || 0) + pts;
   if (CLUB.week.w !== clubWeek() || CLUB.week.club !== CLUB.id) CLUB.week = { w: clubWeek(), pts: 0, club: CLUB.id };
   CLUB.week.pts += pts; CLUB.pend = (CLUB.pend || 0) + pts;
-  clubSave(); clubPush();
+  clubSave(); clubPush(); setTimeout(clubClaim, 50); if (player) player.crank = myClubRank();
+  return pts;
+}
+const myClubRank = () => myClubId() ? clubRank(myClubPts()).i : -1;
+function clubClaim() { // one-time Garage Points for every level reached (also credits levels reached before this existed)
+  if (typeof gpGive !== 'function' || devRun) return; CLUB.claim = CLUB.claim || {}; let hit = false;
+  for (const id in CLUB.life) { if (!CLUB_BY[id]) continue; const r = clubRank(CLUB.life[id]).i; for (let i = (CLUB.claim[id] | 0) + 1; i <= r; i++) { if (CLUB_LV[i].gp) gpGive(CLUB_LV[i].gp, CLUB_RANKS[i][0] + ' · ' + CLUB_BY[id].name, CLUB_LV[i].icon); CLUB.claim[id] = i; hit = true; } }
+  if (hit) clubSave();
 }
 // award from a team results payload (online versus / co-op / single-player Bomb Run)
 function clubAward(r, sp) {
@@ -1292,13 +1328,13 @@ function clubAward(r, sp) {
   else st = { run: Math.floor((r.score || 0) / 15), kos: me[3] };
   const res = clubPoints(r.vs && r.vs.kind === 'bomb' ? 'bomb' : r.mode, st);
   if (sp && r.vs && r.vs.kind === 'bomb') res.pts = Math.round(res.pts * .6); // bots are easier than people
-  const before = myClubPts(); clubAddPts(res.pts); res.rankUp = clubRank(myClubPts()).i > clubRank(before).i ? clubRank(myClubPts()).name : null;
+  const before = myClubPts(); res.pts = clubAddPts(res.pts); res.rankUp = clubRank(myClubPts()).i > clubRank(before).i ? clubRank(myClubPts()).name : null;
   return res;
 }
 function clubAwardRun(kind, sc, kos, boss) { // single-player Waves / Daily
   if (!myClubId() || devRun) return null;
   const res = clubPoints(kind, { run: Math.floor(sc / 20), kos: 0, boss: boss || 0 });
-  const before = myClubPts(); clubAddPts(res.pts); res.rankUp = clubRank(myClubPts()).i > clubRank(before).i ? clubRank(myClubPts()).name : null;
+  const before = myClubPts(); res.pts = clubAddPts(res.pts); res.rankUp = clubRank(myClubPts()).i > clubRank(before).i ? clubRank(myClubPts()).name : null;
   return res;
 }
 function clubAwardHtml(res) {
@@ -1334,7 +1370,7 @@ function clubStandings() { // [{id, pts, members}] sorted
 const champClub = () => (CLUB_BOARD && CLUB_BOARD.last) || '';
 function badgeFor(id, big) { return clubBadgeUrl(id, { champ: champClub() === id, chrome: big && clubStandings().find(x => x.id === id)?.pts >= CLUB_GOAL }); }
 // ---- the club sheet ----
-let clubView = '';
+let clubView = '', clubTab = 'home';
 function fmtLeft(ms) { const h = Math.floor(ms / 36e5), d = Math.floor(h / 24); return d ? d + 'd ' + (h % 24) + 'h' : h + 'h ' + Math.floor(ms / 6e4) % 60 + 'm'; }
 function renderClubSheet() {
   const el = $('clubBody'); if (!el) return;
@@ -1349,22 +1385,39 @@ function renderClubSheet() {
     return;
   }
   const c = CLUB_BY[id], p = myClubPts(), rk = clubRank(p), mine = st.find(x => x.id === id) || { pts: 0 };
-  const topM = (CLUB_BOARD && CLUB_BOARD.top) || [];
-  el.innerHTML = '<div class="clHead" style="--cc:' + c.c1 + '"><img src="' + badgeFor(id, true) + '" alt=""><div class="txt"><small>YOUR MOTOR CLUB</small><h3>' + c.name + '</h3><em>"' + c.motto + '"</em>' +
-    '<div class="rank"><b>' + rk.name + '</b>' + (rk.next ? '<span>' + (rk.need - p).toLocaleString() + ' to ' + rk.next + '</span>' : '<span>top rank</span>') + '</div><div class="rbar"><b style="width:' + (rk.k * 100).toFixed(1) + '%"></b></div>' +
-    '<div class="nums"><span><b>' + p.toLocaleString() + '</b>lifetime pts</span><span><b>' + weekPts().toLocaleString() + '</b>this week</span><span><b>' + mine.pts.toLocaleString() + '</b>club this week</span></div></div></div>' +
-    '<div class="clGoal"><small>WEEKLY CLUB GOAL</small><div class="gbar"><b style="width:' + Math.min(100, mine.pts / CLUB_GOAL * 100).toFixed(1) + '%;background:' + c.c1 + '"></b><span>' + mine.pts.toLocaleString() + ' / ' + CLUB_GOAL.toLocaleString() + (mine.pts >= CLUB_GOAL ? ' · CHROME BADGE UNLOCKED ✨' : '') + '</span></div></div>' +
-    evCard + soon + stand +
-    (topM.length ? '<div class="clTop"><h4>TOP ' + c.name.toUpperCase() + ' THIS WEEK</h4>' + topM.slice(0, 8).map((m2, i) => '<div class="tm' + (m2.me ? ' me' : '') + '"><span>' + (i + 1) + '. ' + esc(m2.name) + '</span><b>' + (m2.pts | 0).toLocaleString() + '</b></div>').join('') + '</div>' : '') +
-    '<div class="clHow"><h4>HOW TO EARN</h4><ul><li>💣 Blow up a base: 60 (Bomb Run) / 80 (online)</li><li>💥 KO a player: 8–10 · 🛑 stop a carrier: 25</li><li>🏆 Team win: 80–120</li><li>🛣️ Waves &amp; Daily: 1 per 20 score</li><li>' + ev.icon + ' ' + ev.name + ': ' + ev.desc.toLowerCase() + '</li></ul></div>' +
-    '<button class="clSwitch" data-cv="pick">Switch club</button>';
+  const head = '<div class="cqHead" style="--cc:' + c.c1 + '"><img src="' + badgeFor(id, true) + '" alt=""><div class="txt"><small>YOUR MOTOR CLUB</small><h3>' + c.name + '</h3>' +
+    '<div class="rank"><b>' + CLUB_LV[rk.i].icon + ' ' + rk.name + '</b>' + (rk.next ? '<span>' + (rk.need - p).toLocaleString() + ' pts to ' + rk.next + '</span>' : '<span>top level</span>') + '</div><div class="rbar"><b style="width:' + (rk.k * 100).toFixed(1) + '%"></b></div></div>' +
+    '<div class="nums"><span><b>' + p.toLocaleString() + '</b>your pts</span><span><b>' + weekPts().toLocaleString() + '</b>you this week</span><span><b>' + mine.pts.toLocaleString() + '</b>club this week</span></div></div>';
+  const tabs = '<div id="cqTabs">' + [['home', '🏠 CLUB'], ['levels', '🎖️ LEVELS'], ['members', '👥 MEMBERS'], ['stand', '📊 STANDINGS']].map(([k, n]) => '<button data-cq="' + k + '" class="' + (clubTab === k ? 'on' : '') + '">' + n + '</button>').join('') + '</div>';
+  let body = '';
+  if (clubTab === 'levels') {
+    body = '<p class="gNote">Earn club points by playing; each level pays a one-time Garage Points reward and unlocks perks while you ride with ' + esc(c.name) + '.</p><div class="cqLadder">' + CLUB_RANKS.map(([n, need], i) => {
+      const done = rk.i >= i, cur = rk.i + 1 === i, L = CLUB_LV[i];
+      return '<div class="cqLv' + (done ? ' done' : '') + (cur ? ' cur' : '') + '"><div class="lvI">' + (done ? L.icon : '🔒') + '</div><div class="lvT"><b>' + n + '</b><small>' + (need ? need.toLocaleString() + ' pts' : 'when you join') + (cur ? ' · ' + (need - p).toLocaleString() + ' to go' : '') + '</small>' + (cur ? '<i class="ap"><b style="width:' + (rk.k * 100).toFixed(0) + '%"></b></i>' : '') + '</div>' +
+        '<div class="lvP">' + (L.gp ? '<span class="gpR">🔩 +' + L.gp + ' GP</span>' : '') + L.perks.map(t => '<span>' + t + '</span>').join('') + (L.gear ? '<span class="soonG">🧢 ' + L.gear + ' · with driver avatars, soon</span>' : '') + '</div><div class="lvS">' + (done ? '✓' : '') + '</div></div>';
+    }).join('') + '</div>';
+  } else if (clubTab === 'members') {
+    const mem = (PL.players || []).filter(q => q.club === id).sort((x, y) => (y.on - x.on) || y.cpts - x.cpts), topM = (CLUB_BOARD && CLUB_BOARD.top) || [];
+    body = (mem.length ? '<h4 class="gH">MEMBERS SEEN THIS WEEK · ' + mem.filter(q => q.on).length + ' ONLINE</h4><div class="plList">' + mem.map(plRow).join('') + '</div>' : '<p class="gNote">' + (PL.at ? 'No other members seen this week yet. Invite friends and get them to join ' + esc(c.name) + '.' : 'Loading members…') + '</p>') +
+      (topM.length ? '<h4 class="gH">TOP POINTS THIS WEEK</h4><div class="cqTop">' + topM.slice(0, 10).map((m2, i) => '<div class="tm' + (m2.me ? ' me' : '') + '"><span>' + (i + 1) + '. ' + esc(m2.name) + '</span><b>' + (m2.pts | 0).toLocaleString() + '</b></div>').join('') + '</div>' : '');
+    if (!PL.at || Date.now() - PL.at > 15000) fetchPlayers().then(() => { if (clubTab === 'members') renderClubSheet(); });
+  } else if (clubTab === 'stand') {
+    body = stand;
+  } else {
+    body = '<div class="clGoal"><small>WEEKLY CLUB GOAL · everyone\'s badge goes chrome when the club hits it</small><div class="gbar"><b style="width:' + Math.min(100, mine.pts / CLUB_GOAL * 100).toFixed(1) + '%;background:' + c.c1 + '"></b><span>' + mine.pts.toLocaleString() + ' / ' + CLUB_GOAL.toLocaleString() + (mine.pts >= CLUB_GOAL ? ' · CHROME ✨' : '') + '</span></div></div>' +
+      '<div class="cqRow">' + evCard + '<div class="cqNext"><small>NEXT LEVEL</small>' + (rk.next ? '<b>' + CLUB_LV[rk.i + 1].icon + ' ' + rk.next + '</b><span>' + (CLUB_LV[rk.i + 1].gp ? '🔩 +' + CLUB_LV[rk.i + 1].gp + ' GP · ' : '') + CLUB_LV[rk.i + 1].perks[0] + '</span>' : '<b>👑 Top level</b><span>You run this club.</span>') + '<button class="cqLink" data-cq="levels">All levels ›</button></div></div>' +
+      '<div class="clHow"><h4>HOW TO EARN</h4><ul><li>💣 Blow up a base: 60 (Bomb Run) / 80 (online)</li><li>💥 KO a player: 8–10 · 🛑 stop a carrier: 25</li><li>🏆 Team win: 80–120</li><li>🛣️ Waves &amp; Daily: 1 per 20 score</li>' + (CLUB_BONUS[rk.i] ? '<li>🎖️ Your level bonus: +' + Math.round(CLUB_BONUS[rk.i] * 100) + '% on everything</li>' : '') + '</ul></div>' + soon +
+      '<button class="clSwitch" data-cv="pick">Switch club</button>';
+  }
+  el.innerHTML = head + tabs + '<div class="cqBody">' + body + '</div>';
 }
 function renderClubAll() { try { renderClubSheet(); renderHubClub(); renderHubProfile(); } catch (e) {} }
 document.addEventListener('click', e => {
   const j = e.target.closest('[data-join]'); if (j) { joinClub(j.dataset.join); clubView = ''; renderClubAll(); return; }
   const v = e.target.closest('[data-cv]'); if (v) { clubView = v.dataset.cv; renderClubSheet(); }
+  const q = e.target.closest('[data-cq]'); if (q) { clubTab = q.dataset.cq; renderClubSheet(); const bs = $('clubSheet').querySelector('.bs'); if (bs) bs.scrollTop = 0; }
 });
-function openClub() { $('clubSheet').classList.remove('hidden'); clubView = myClubId() ? '' : 'pick'; renderClubSheet(); clubLoad(); }
+function openClub(tab) { $('clubSheet').classList.remove('hidden'); clubView = myClubId() ? '' : 'pick'; clubTab = typeof tab === 'string' ? tab : 'home'; renderClubSheet(); clubLoad(); }
 window.__openClub = openClub;
 function todayDaily() { const day = (dailyMeta && dailyMeta.day) || torontoDay(); if (!daily || daily.day !== day) daily = makeDaily(day); return daily; }
 const dailyDone = () => { const r = lsGet('scrapArenaDaily', null); return r && r.day === todayDaily().day ? r : null; };
@@ -1583,12 +1636,13 @@ function previewCar(cn, d, locked) {
 }
 function renderPaints() {
   const el = $('paints'); el.innerHTML = '<span>PAINT</span>';
-  if (!PAINTS.some(p => p.need && paintOk(p))) { el.innerHTML += '<span>Play the daily 3 days in a row to unlock gold paint' + (streakNow() ? ' (streak: ' + streakNow() + ')' : '') + '</span>'; return; }
+  if (!PAINTS.some(p => (p.need || p.club) && paintOk(p))) { el.innerHTML += '<span>Play the daily 3 days in a row to unlock gold paint' + (streakNow() ? ' (streak: ' + streakNow() + ')' : '') + '</span>'; return; }
   for (const p of PAINTS) {
     const b = document.createElement('button'), ok = paintOk(p), col = p.col ? p.col[0] : CAR_BY_ID[selId].col[0];
-    b.innerHTML = '<i style="background:' + col + '"></i>' + p.name + (ok ? '' : ' 🔒' + p.need + 'd');
+    if (p.club && !myClubId()) continue;
+    b.innerHTML = '<i style="background:' + col + '"></i>' + p.name + (ok ? '' : p.club ? ' 🔒 Member' : ' 🔒' + p.need + 'd');
     b.disabled = !ok; b.className = paintId === p.id ? 'on' : '';
-    b.title = ok ? '' : 'Unlock with a ' + p.need + '-day daily streak';
+    b.title = ok ? '' : p.club ? 'Reach Member in your club' : 'Unlock with a ' + p.need + '-day daily streak';
     b.addEventListener('click', () => { paintId = p.id; lsSet('scrapArenaPaint', paintId); renderPaints(); });
     el.appendChild(b);
   }
@@ -1915,7 +1969,7 @@ function newGame() {
     runT0 = performance.now() - (ck.ms || 0); seenTypes = new Set(ck.seen || []);
   }
   player = makeCar(W / 2, H / 2 + 150, -Math.PI / 2, PLAYER_COL, true, 1);
-  applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player); player.club = myClubId(); player.mod = devRun ? DEV.cmod : (modsAllowed() ? GAR.equip : ''); SPIKES = [];
+  applyCar(player, CAR_BY_ID[selId]); applyUpgrades(player); player.club = myClubId(); player.crank = myClubRank(); player.mod = devRun ? DEV.cmod : (modsAllowed() ? GAR.equip : ''); SPIKES = [];
   cars.push(player);
   state = 'play'; $('overlay').classList.add('hidden');
   snapCamera();
@@ -2866,7 +2920,7 @@ function drawCar(c) {
   ctx.globalAlpha = a;
   const D = SD(c.styleId); ctx.drawImage(getCarImage(c), -D.fwu / 2, -D.fhu / 2, D.fwu, D.fhu);
   ctx.globalAlpha = fade;
-  if (c.club && !c.boss) { const bi = clubImg(c.club); if (bi) { ctx.save(); ctx.globalAlpha = fade * (c.dead ? .5 : .95); ctx.rotate(Math.PI / 2); ctx.drawImage(bi, -6, -3, 12, 12); if (c.parts.hood !== false) { ctx.globalAlpha = fade * .8; ctx.drawImage(bi, -4.5, -(c.cL || L) * .33 - 4.5, 9, 9); } ctx.restore(); } }
+  if (c.club && !c.boss) { const bi = clubImg(c.club, c.crank | 0); if (bi) { ctx.save(); ctx.globalAlpha = fade * (c.dead ? .5 : .95); ctx.rotate(Math.PI / 2); ctx.drawImage(bi, -6, -3, 12, 12); if (c.parts.hood !== false) { ctx.globalAlpha = fade * .8; ctx.drawImage(bi, -4.5, -(c.cL || L) * .33 - 4.5, 9, 9); } ctx.restore(); } }
   drawModGear(c);
   if (!c.dead) {
     if (c.type === 'rammer' && c.parts.bumper) { ctx.fillStyle = '#3a3e45'; ctx.fillRect(25, -13, 4, 26); ctx.fillStyle = '#d0d5dc'; for (const y of [-9, -3, 3, 9]) { ctx.beginPath(); ctx.moveTo(29, y - 2.2); ctx.lineTo(34, y); ctx.lineTo(29, y + 2.2); ctx.fill(); } }
@@ -2994,7 +3048,7 @@ function render() {
   ctx.globalAlpha = 1;
   if (state === 'play') { drawArrows(); bombArrows(); drawBossBar(); }
   if (state === 'play' || state === 'over') drawEmotes();
-  if (mpOn() || teamOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname && !(c.scrT > 0 && player && c !== player && foeOf(player, c))) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); ctx.strokeText(c.pname, sx, ny); ctx.fillStyle = teamOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(c.pname, sx, ny); }
+  if (mpOn() || teamOn()) for (const c of cars) if (c.isPlayer && !c.dead && c.pname && !(c.scrT > 0 && player && c !== player && foeOf(player, c))) { const [sx, sy] = w2s(c.x, c.y); ctx.font = '800 12px system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.7)'; const ny = sy + (16 + 14 * ppu); const nm = (c.crank >= 4 ? '★ ' : '') + c.pname; ctx.strokeText(nm, sx, ny); ctx.fillStyle = teamOn() && c.team != null ? (c === player ? '#ffd166' : TEAM_COL[c.team]) : c === player ? '#ffd166' : '#8fe3ff'; ctx.fillText(nm, sx, ny); }
   bombMarkers();
   if (flashA > .01) { ctx.fillStyle = 'rgba(255,240,220,' + flashA.toFixed(3) + ')'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
   if (hurtA > .02) {
@@ -3731,7 +3785,7 @@ function startBombSP(dev) {
   mctx.clearRect(0, 0, W, H); clearSkids();
   player = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); player.pid = PID; player.pname = pname;
   applyCar(player, CAR_BY_ID[SPB.car] || CAR_BY_ID.cruiser);
-  Object.assign(player, { team: 0, slot: 0, score: 0, kos: 0, deaths: 0, dmg: 0, bossDmg: 0, plants: 0, stops: 0, carries: 0, picks: 0, club: myClubId(), mod: DEV.bombRun ? DEV.cmod : GAR.equip }); SPIKES = [];
+  Object.assign(player, { team: 0, slot: 0, score: 0, kos: 0, deaths: 0, dmg: 0, bossDmg: 0, plants: 0, stops: 0, carries: 0, picks: 0, club: myClubId(), crank: myClubRank(), mod: DEV.bombRun ? DEV.cmod : GAR.equip }); SPIKES = [];
   cars.push(player);
   let bi = (Math.random() * 12) | 0;
   for (const [t, s] of [[0, 1], [0, 2], [1, 0], [1, 1], [1, 2]]) cars.push(makeBot(t, s, bi++));
@@ -3855,7 +3909,7 @@ function netBroadcast(snap, ev) {
 function netSend(o) { try { if (NET.ws && NET.ws.readyState === 1) NET.ws.send(typeof o === 'string' ? o : JSON.stringify(o)); } catch (e) {} }
 const FLAG = { dead: 1, braking: 2, reversing: 4, boost: 8, rage: 16, slam: 32, windup: 64, armor: 128, hb: 256 };
 const P4 = ['hood', 'trunk', 'doorL', 'doorR'];
-function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '', Math.round(c.accel || 0), Math.round(c.maxSpeed || 0), +(c.turnRate || 0).toFixed(3), +(c.nitroEff || 1).toFixed(2), c.team == null ? -1 : c.team, c.bot ? 1 : 0, c.club || '', c.mod || '']; }
+function carMeta(c) { return [c.id, c.type, c.styleId, c.col, c.isPlayer ? 1 : 0, c.pid || '', c.pname || '', c.boss ? 1 : 0, c.bossKind || '', c.cL || 0, c.cW || 0, c.phpMax || 0, c.twinIdx || 0, c.maxLost || 5, c.carName || '', Math.round(c.accel || 0), Math.round(c.maxSpeed || 0), +(c.turnRate || 0).toFixed(3), +(c.nitroEff || 1).toFixed(2), c.team == null ? -1 : c.team, c.bot ? 1 : 0, c.club || '', c.mod || '', c.crank | 0]; }
 function netSnapshot() {
   NET.metaT -= 1; if (NET.metaT <= 0) { NET.metaT = 30; NET.metaSent.clear(); }
   const metas = [], cs = [];
@@ -3883,7 +3937,7 @@ function netApplyLayout(ai, L2) {
   const hz = HAZ[arena.id] || {}; crusher = hz.crusher ? Object.assign({ phase: 'idle', t: 4.5, e: 1, bt: 0 }, hz.crusher) : null;
 }
 function netGuestCar(m) {
-  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName, acc, ms, tr, ne, tm, bot, club, mod] = m;
+  const [id, type, styleId, col, isP, pid, pname, boss, bossKind, cL, cW, phpMax, twinIdx, maxLost, carName, acc, ms, tr, ne, tm, bot, club, mod, crank] = m;
   let c = NET.byId.get(id);
   if (!c) { c = makeCar(0, 0, 0, col, !!isP, 1); c.id = id; c.init = false; NET.byId.set(id, c); }
   Object.assign(c, { type, styleId, col, isPlayer: !!isP, pid, pname, boss: !!boss, bossKind, cL: cL || undefined, cW: cW || undefined, phpMax, twinIdx, maxLost, carName });
@@ -3891,7 +3945,7 @@ function netGuestCar(m) {
   if (bossKind === 'crane' && !c.arm) c.arm = { ang: 0, w: 1, len: 150, r: 19, cd: new Map() };
   if (acc) { c.accel = acc; c.maxSpeed = ms; c.turnRate = tr; c.nitroEff = ne; }
   if (isP) { const d = CAR_BY_ID[styleId]; c.perk = (d && d.perk) || ''; c.boostK = c.perk === 'burn' ? 1.5 : 1; c.driftK = c.perk === 'drift' ? 2.5 : 1; }
-  c.team = tm >= 0 ? tm : undefined; c.bot = !!bot; c.club = club || ''; c.mod = mod || '';
+  c.team = tm >= 0 ? tm : undefined; c.bot = !!bot; c.club = club || ''; c.mod = mod || ''; c.crank = crank | 0;
   if (isP && pid === PID) player = c;
   return c;
 }
@@ -4119,7 +4173,7 @@ function netTick(rdt, raw) {
 }
 function netOnMessage(raw) {
   let m; try { m = JSON.parse(raw); } catch (e) { return; }
-  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.role === 'guest' && NET.clubSent !== myClubId() + NET.room) { NET.clubSent = myClubId() + NET.room; netSend({ club: myClubId() }); netSend({ mod: GAR.equip }); } if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
+  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.role === 'guest' && NET.clubSent !== myClubId() + NET.room) { NET.clubSent = myClubId() + NET.room; netSend({ club: myClubId(), crank: myClubRank() }); netSend({ mod: GAR.equip }); } if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
   if (m.c === 'denied' && NET.recon) { netGiveUp(m.why === 'started' || m.why === 'gone' ? 'Lost connection to the room.' : null); return; }
   if (m.c === 'denied') { setTimeout(fetchPlayers, 300); mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full.', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
   if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
@@ -4135,7 +4189,7 @@ function netOnMessage(raw) {
   if (m.c === 'hostleft') return;
   if (NET.role === 'guest' && !rtcDirect()) netGuestData(m); // when the direct link is flowing, ignore the relay copy
 }
-function netHostFrom(pid, d) { if (d.vq) { vsRequest(pid, d.vq); return; } if (d.club != null) { NET.clubs[pid] = CLUB_BY[d.club] ? d.club : ''; vsSync(); return; } if (d.mod != null) { NET.mods[pid] = CMOD_BY[d.mod] ? d.mod : ''; return; } if (d.i) { NET.inputs[pid] = d.i; NET.inT[pid] = [+d.i[5] || 0, performance.now()]; } }
+function netHostFrom(pid, d) { if (d.vq) { vsRequest(pid, d.vq); return; } if (d.club != null) { NET.clubs[pid] = CLUB_BY[d.club] ? d.club : ''; NET.cranks[pid] = clamp(d.crank | 0, 0, 5); vsSync(); return; } if (d.mod != null) { NET.mods[pid] = CMOD_BY[d.mod] ? d.mod : ''; return; } if (d.i) { NET.inputs[pid] = d.i; NET.inT[pid] = [+d.i[5] || 0, performance.now()]; } }
 function netGuestData(m) {
   if (m.s && NET.started) netApplySnap(m.s);
   const t = (m.s && m.s.t) || m.t;
@@ -4226,7 +4280,7 @@ function netStartGame() {
     const ps = NET.lobby.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
     ps.forEach((p, i) => {
       const c = makeCar(W / 2, H / 2, 0, PLAYER_COL, true, 1); c.pid = p.pid; c.pname = p.name;
-      applyCar(c, CAR_BY_ID[p.car] || CAR_BY_ID.cruiser); c.score = 0; c.kos = 0; c.deaths = 0; c.dmg = 0; c.bossDmg = 0; c.plants = 0; c.stops = 0; c.carries = 0; c.picks = 0; c.club = p.pid === PID ? myClubId() : (NET.clubs[p.pid] || ''); c.mod = p.pid === PID ? GAR.equip : (NET.mods[p.pid] || ''); SPIKES = [];
+      applyCar(c, CAR_BY_ID[p.car] || CAR_BY_ID.cruiser); c.score = 0; c.kos = 0; c.deaths = 0; c.dmg = 0; c.bossDmg = 0; c.plants = 0; c.stops = 0; c.carries = 0; c.picks = 0; c.club = p.pid === PID ? myClubId() : (NET.clubs[p.pid] || ''); c.crank = p.pid === PID ? myClubRank() : (NET.cranks[p.pid] | 0); c.mod = p.pid === PID ? GAR.equip : (NET.mods[p.pid] || ''); SPIKES = [];
       if (NET.lobby.mode === 'versus') { const si = NET.vs.slots.indexOf(p.pid); c.slot = si < 0 ? 0 : si % 3; c.team = si >= 3 ? 1 : 0; }
       cars.push(c);
       if (p.pid === PID) player = c;
@@ -4995,7 +5049,7 @@ if (DEV_BUILD) $('hubDev').addEventListener('click', openDev); else { $('hubDev'
 document.addEventListener('keydown', e => { if (!document.body.classList.contains('atHub') || e.target.tagName === 'INPUT') return; if (e.code === 'ArrowLeft') $('hubPrev').click(); if (e.code === 'ArrowRight') $('hubNext').click(); });
 setInterval(() => { if (document.body.classList.contains('atHub')) { renderHubClub(); renderHubTicker(); } }, 30000);
 if (!CARS.some(c => c.id === HUB.car)) HUB.car = 'cruiser';
-syncHub(); renderHub(); setTimeout(() => { achCheckStatic(); renderHubGarage(); }, 1200);
+syncHub(); renderHub(); setTimeout(() => { achCheckStatic(); clubClaim(); renderHubGarage(); }, 1200);
 
 window.__sa = { get state() { return state; }, get wave() { return wave; }, get score() { return score; }, get cars() { return cars; }, get player() { return player; },
   get pickups() { return pickups; }, get arena() { return arena.id; }, combo, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { if (c.boss) { killCar(c, player); continue; } c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x + 26 * Math.cos(c.a), c.y + 26 * Math.sin(c.a)], player, 300, Math.cos(c.a), Math.sin(c.a)); } },
