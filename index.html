@@ -621,7 +621,7 @@
   .plR{display:flex;align-items:center;gap:9px;padding:6px 10px;border-radius:12px;background:#11141a;border:1px solid #232833;min-height:44px} .plR.me{border-color:rgba(255,190,11,.45)} .plR .dot,.pcM .dot{width:8px;height:8px;border-radius:50%;background:#4a5160;flex:none} .plR.on .dot,.pcM .on .dot{background:#3ddc84;box-shadow:0 0 8px #3ddc84}
   .plR .cb{width:30px;height:30px;flex:none} .plR .cb.none{display:grid;place-items:center;font-size:18px;opacity:.5} .plR .pn{flex:1;min-width:0} .plR .pn b{display:block;font:900 14px system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .plR .pn b em{font-style:normal;font-size:10px;color:#ffd166;margin-left:4px} .plR .pn small{display:block;font-size:11px;color:#8d97a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .plR .pa{flex:none;max-width:42%;text-align:right} .plR .pa small{font-size:11.5px;color:#cfd6e2;font-weight:700} .plR .pa small.off{color:#6f7888;font-weight:600} .plR .pc{width:60px;height:30px;object-fit:contain;flex:none}
-  .plJoin{flex:none;border:0;border-radius:10px;background:#2a9d4a;color:#fff;font:900 12px system-ui,sans-serif;padding:0 14px;min-height:36px;cursor:pointer}
+  .plJoin{flex:none;border:0;border-radius:10px;background:#2a9d4a;color:#fff;font:900 12px system-ui,sans-serif;padding:3px 14px;min-height:38px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1} .plJoin small{font-size:9px;font-weight:800;opacity:.85} .plFull{flex:none;font:900 10.5px system-ui,sans-serif;color:#8d97a8;border:1px solid #3a4150;border-radius:10px;padding:6px 10px}
   .plClub{border:1px solid #232833;border-left:4px solid var(--cc);border-radius:12px;background:#11141a;padding:8px 10px;margin-bottom:7px} .plClub.mine{background:linear-gradient(90deg,rgba(255,255,255,.05),#11141a)}
   .pcH{display:flex;align-items:center;gap:10px} .pcH img{width:38px;height:38px} .pcH b{display:block;font:900 italic 15px system-ui,sans-serif} .pcH small{color:#8d97a8;font-size:11px}
   .pcM{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px} .pcM span{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:#1a1e26;font:800 12px system-ui,sans-serif;color:#dfe5ee} .pcM span.me{outline:1px solid rgba(255,190,11,.6)} .pcM em{font-style:normal;color:#8d97a8;font-weight:700;font-size:10.5px} .pcM.empty{color:#6f7888;font-size:12px}
@@ -4121,7 +4121,7 @@ function netOnMessage(raw) {
   let m; try { m = JSON.parse(raw); } catch (e) { return; }
   if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.role === 'guest' && NET.clubSent !== myClubId() + NET.room) { NET.clubSent = myClubId() + NET.room; netSend({ club: myClubId() }); netSend({ mod: GAR.equip }); } if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
   if (m.c === 'denied' && NET.recon) { netGiveUp(m.why === 'started' || m.why === 'gone' ? 'Lost connection to the room.' : null); return; }
-  if (m.c === 'denied') { mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full.', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
+  if (m.c === 'denied') { setTimeout(fetchPlayers, 300); mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full.', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
   if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
   if (m.c === 'left') { delete NET.away[m.pid]; const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c) c.gone = true; if (c && !c.dead && NET.started) { killCar(c, null); addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' LEFT', '#cfd6e2'); } delete NET.inputs[m.pid]; return; }
   if (m.c === 'away') { NET.away[m.pid] = 1; const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c && NET.started) addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' RECONNECTING...', '#ffd166'); return; }
@@ -4772,7 +4772,8 @@ function presMode() {
   return 'menu';
 }
 const clubLife = () => (CLUB.life && CLUB.id && CLUB.life[CLUB.id]) || 0;
-function presInfo() { const m = presMode(); return { pid: PID, key: PKEY, name: pname, club: myClubId(), cpts: clubLife(), car: HUB.car, wave: maxWave, mode: m, room: m === 'lobby' ? NET.room || '' : '' }; }
+const roomInfo = () => { const L = NET.lobby, n = L && L.players ? L.players.length : 1, v = NET.mode === 'versus'; return (v ? 'v' : 'c') + n + '/' + (v ? 6 : 2); };
+function presInfo() { const m = presMode(); return { pid: PID, key: PKEY, name: pname, club: myClubId(), cpts: clubLife(), car: HUB.car, wave: maxWave, mode: m, room: m === 'lobby' ? NET.room || '' : '', rinfo: m === 'lobby' ? roomInfo() : '' }; }
 let cloudBusy = false;
 async function cloudSync(final) { // saves progress when it changed, and tells the server "I'm here"
   if (cloudBusy || devRun) return;
@@ -4833,7 +4834,7 @@ async function cloudRestore(code) {
   lsSet('scrapArenaCloudMsg', 'Progress restored · welcome back!'); location.reload(); return '';
 }
 let presLast = '';
-setInterval(() => { if (document.visibilityState !== 'visible') return; const js = JSON.stringify(cloudData()), m = presMode() + (NET.room || ''); if (strHash(js) !== CLOUD.hash || m !== presLast || Date.now() - (CLOUD.last || 0) > 30000) { presLast = m; cloudSync(); } }, 4000);
+setInterval(() => { if (document.visibilityState !== 'visible') return; const js = JSON.stringify(cloudData()), m = presMode() + (NET.room || '') + (NET.lobby ? roomInfo() : ''); if (strHash(js) !== CLOUD.hash || m !== presLast || Date.now() - (CLOUD.last || 0) > 30000) { presLast = m; cloudSync(); } }, 4000);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') cloudSync(true); });
 setTimeout(cloudBoot, 1200);
 { const m = lsGet('scrapArenaCloudMsg', ''); if (m) { try { localStorage.removeItem('scrapArenaCloudMsg'); } catch (e) {} setTimeout(() => { achQ.push({ icon: '☁️', name: m, gp: 0, rep: true, msg: true }); achToast(); }, 1500); } }
@@ -4843,13 +4844,17 @@ const ACT = { menu: '🏠 In the garage menu', garage: '🔧 In the Garage', wav
 const agoTxt = s => s < 90 ? 'just now' : s < 3600 ? Math.round(s / 60) + ' min ago' : s < 86400 ? Math.round(s / 3600) + ' h ago' : Math.round(s / 86400) + ' d ago';
 async function fetchPlayers() { try { const r = await fetch(API + '/api/players?pid=' + PID); const j = await r.json(); if (j.players) { PL = Object.assign(j, { at: Date.now() }); renderPlayers(); renderHubOnline(); } } catch (e) {} }
 function renderHubOnline() { const n = PL.players.filter(p => p.on && !p.me).length, el = $('hubOnline'); if (el) { el.textContent = n; el.classList.toggle('zero', !n); } }
-function openPlayers(tab) { $('playersSheet').classList.remove('hidden'); plTab = tab || plTab || 'online'; renderPlayers(); fetchPlayers(); clearInterval(plTimer); plTimer = setInterval(() => { if ($('playersSheet').classList.contains('hidden')) { clearInterval(plTimer); plTab = ''; return; } fetchPlayers(); }, 12000); }
+function openPlayers(tab) { $('playersSheet').classList.remove('hidden'); plTab = tab || plTab || 'online'; renderPlayers(); fetchPlayers(); clearInterval(plTimer); plTimer = setInterval(() => { if ($('playersSheet').classList.contains('hidden')) { clearInterval(plTimer); plTab = ''; return; } fetchPlayers(); }, 6000); }
+function plJoinBtn(p) { // room size comes with presence: never offer a full room
+  const m = /^([cv])(\d)\/(\d)$/.exec(p.rinfo || ''), full = m && +m[2] >= +m[3], lbl = m ? (m[1] === 'v' ? 'VERSUS ' : 'CO-OP ') + m[2] + '/' + m[3] : '';
+  return full ? '<span class="plFull">' + lbl + ' · FULL</span>' : '<button class="plJoin" data-pjoin="' + esc(p.room) + '"><b>JOIN</b>' + (lbl ? '<small>' + lbl + '</small>' : '') + '</button>';
+}
 function plRow(p) {
   const c = CLUB_BY[p.club], rk = c ? clubRank(p.cpts) : null;
   return '<div class="plR' + (p.on ? ' on' : '') + (p.me ? ' me' : '') + '"><i class="dot"></i>' + (c ? '<img class="cb" src="' + clubBadgeUrl(p.club) + '" alt="">' : '<span class="cb none">🏁</span>') +
     '<div class="pn"><b>' + esc(p.name) + (p.me ? ' <em>you</em>' : '') + '</b><small>' + (c ? esc(c.name) + ' · ' + rk.name : 'No club') + (p.wave > 1 ? ' · best wave ' + p.wave : '') + '</small></div>' +
     '<div class="pa">' + (p.on ? '<small>' + (ACT[p.mode] || ACT.menu) + '</small>' : '<small class="off">' + agoTxt(p.ago) + '</small>') + '</div>' +
-    (p.room && !p.me && !NET.role ? '<button class="plJoin" data-pjoin="' + esc(p.room) + '">JOIN</button>' : (CAR_BY_ID[p.car] ? '<img class="pc" src="' + tileUrl(p.car) + '" alt="">' : '')) + '</div>';
+    (p.room && !p.me && !NET.role ? plJoinBtn(p) : (CAR_BY_ID[p.car] ? '<img class="pc" src="' + tileUrl(p.car) + '" alt="">' : '')) + '</div>';
 }
 function renderPlayers() {
   const el = $('plBody'); if (!el || $('playersSheet').classList.contains('hidden')) return;

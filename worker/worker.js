@@ -94,6 +94,7 @@ async function profInit(env) {
   if (PROF_READY) return;
   await env.DB.prepare('CREATE TABLE IF NOT EXISTS profiles (pid TEXT PRIMARY KEY, pkey TEXT NOT NULL, code TEXT UNIQUE NOT NULL, name TEXT, club TEXT, cpts INTEGER DEFAULT 0, car TEXT, wave INTEGER DEFAULT 0, data TEXT, updated INTEGER, created INTEGER, seen INTEGER, mode TEXT, room TEXT)').run();
   await env.DB.prepare('CREATE INDEX IF NOT EXISTS profiles_seen ON profiles (seen)').run();
+  try { await env.DB.prepare('ALTER TABLE profiles ADD COLUMN rinfo TEXT').run(); } catch (e) {} // room size, e.g. v2/6 (column may already exist)
   PROF_READY = true;
 }
 const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -105,8 +106,8 @@ async function prof(req, env, url, p) {
   const now = Date.now();
   if (p === '/api/players') { // who is around: online now (seen in the last 75 s) and the last 7 days
     const me = cleanId(url.searchParams.get('pid'), 40);
-    const rows = (await env.DB.prepare('SELECT pid, name, club, cpts, car, wave, seen, mode, room FROM profiles WHERE seen > ?1 ORDER BY seen DESC LIMIT 300').bind(now - 7 * 864e5).all()).results;
-    const list = rows.map(r => ({ name: r.name || 'Driver', club: r.club || '', cpts: r.cpts || 0, car: r.car || '', wave: r.wave || 0, ago: Math.max(0, Math.round((now - r.seen) / 1000)), on: now - r.seen < 75000, mode: now - r.seen < 75000 ? (r.mode || 'menu') : '', room: now - r.seen < 75000 && r.mode === 'lobby' ? (r.room || '') : '', me: r.pid === me || undefined }));
+    const rows = (await env.DB.prepare('SELECT pid, name, club, cpts, car, wave, seen, mode, room, rinfo FROM profiles WHERE seen > ?1 ORDER BY seen DESC LIMIT 300').bind(now - 7 * 864e5).all()).results;
+    const list = rows.map(r => ({ name: r.name || 'Driver', club: r.club || '', cpts: r.cpts || 0, car: r.car || '', wave: r.wave || 0, ago: Math.max(0, Math.round((now - r.seen) / 1000)), on: now - r.seen < 75000, mode: now - r.seen < 75000 ? (r.mode || 'menu') : '', room: now - r.seen < 75000 && r.mode === 'lobby' ? (r.room || '') : '', rinfo: now - r.seen < 75000 && r.mode === 'lobby' ? (r.rinfo || '') : '', me: r.pid === me || undefined }));
     const tot = await env.DB.prepare('SELECT club, COUNT(*) AS n FROM profiles WHERE club != \'\' GROUP BY club').all();
     return json({ now, players: list, clubSizes: Object.fromEntries(tot.results.map(r => [r.club, r.n])) });
   }
@@ -123,7 +124,7 @@ async function prof(req, env, url, p) {
   if (row && row.pkey !== key) return json({ error: 'key' }, 403);
   const name = cleanName(b.name) || 'Driver', club = ['reapers', 'vipers', 'bulls', 'owls', 'kings', 'wolves'].includes(b.club) ? b.club : '';
   const car = cleanId(b.car, 12), cpts = Math.max(0, Math.min(1e7, Math.floor(+b.cpts || 0))), wave = Math.max(0, Math.min(999, Math.floor(+b.wave || 0)));
-  const mode = MODES.includes(b.mode) ? b.mode : 'menu', room = cleanId(b.room, 8).toUpperCase();
+  const mode = MODES.includes(b.mode) ? b.mode : 'menu', room = cleanId(b.room, 8).toUpperCase(), rinfo = String(b.rinfo || '').replace(/[^a-z0-9\/]/gi, '').slice(0, 8);
   if (p === '/api/profile/me' && req.method === 'POST') { // what the cloud holds for this player
     if (!row) return json({ none: true });
     const r = await env.DB.prepare('SELECT code, data, updated FROM profiles WHERE pid = ?1').bind(pid).first();
@@ -138,8 +139,8 @@ async function prof(req, env, url, p) {
         .bind(pid, key, code, name, club, cpts, car, wave, data || '{}', now, mode, room).run();
       return json({ ok: true, code, updated: now });
     }
-    if (data) await env.DB.prepare('UPDATE profiles SET name = ?2, club = ?3, cpts = ?4, car = ?5, wave = ?6, data = ?7, updated = ?8, seen = ?8, mode = ?9, room = ?10 WHERE pid = ?1').bind(pid, name, club, cpts, car, wave, data, now, mode, room).run();
-    else await env.DB.prepare('UPDATE profiles SET name = ?2, club = ?3, cpts = ?4, car = ?5, wave = ?6, seen = ?7, mode = ?8, room = ?9 WHERE pid = ?1').bind(pid, name, club, cpts, car, wave, now, mode, room).run();
+    if (data) await env.DB.prepare('UPDATE profiles SET name = ?2, club = ?3, cpts = ?4, car = ?5, wave = ?6, data = ?7, updated = ?8, seen = ?8, mode = ?9, room = ?10, rinfo = ?11 WHERE pid = ?1').bind(pid, name, club, cpts, car, wave, data, now, mode, room, rinfo).run();
+    else await env.DB.prepare('UPDATE profiles SET name = ?2, club = ?3, cpts = ?4, car = ?5, wave = ?6, seen = ?7, mode = ?8, room = ?9, rinfo = ?10 WHERE pid = ?1').bind(pid, name, club, cpts, car, wave, now, mode, room, rinfo).run();
     return json({ ok: true, code: row.code, updated: data ? now : row.updated });
   }
   return json({ error: 'not found' }, 404);
