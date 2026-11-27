@@ -88,6 +88,62 @@ async function club(req, env, url, p) {
   }
   return json({ error: 'not found' }, 404);
 }
+// ---------- cloud save + who's online (one row per player) ----------
+let PROF_READY = false;
+async function profInit(env) {
+  if (PROF_READY) return;
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS profiles (pid TEXT PRIMARY KEY, pkey TEXT NOT NULL, code TEXT UNIQUE NOT NULL, name TEXT, club TEXT, cpts INTEGER DEFAULT 0, car TEXT, wave INTEGER DEFAULT 0, data TEXT, updated INTEGER, created INTEGER, seen INTEGER, mode TEXT, room TEXT)').run();
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS profiles_seen ON profiles (seen)').run();
+  PROF_READY = true;
+}
+const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const newCode = () => { const b = crypto.getRandomValues(new Uint8Array(8)); let c = ''; for (const x of b) c += CODE_ABC[x % CODE_ABC.length]; return c.slice(0, 4) + '-' + c.slice(4); };
+const cleanId = (v, n) => String(v || '').replace(/[^a-z0-9]/gi, '').slice(0, n);
+const MODES = ['menu', 'waves', 'daily', 'bomb', 'garage', 'lobby', 'coop', 'derby', 'bombmp'];
+async function prof(req, env, url, p) {
+  await profInit(env);
+  const now = Date.now();
+  if (p === '/api/players') { // who is around: online now (seen in the last 75 s) and the last 7 days
+    const me = cleanId(url.searchParams.get('pid'), 40);
+    const rows = (await env.DB.prepare('SELECT pid, name, club, cpts, car, wave, seen, mode, room FROM profiles WHERE seen > ?1 ORDER BY seen DESC LIMIT 300').bind(now - 7 * 864e5).all()).results;
+    const list = rows.map(r => ({ name: r.name || 'Driver', club: r.club || '', cpts: r.cpts || 0, car: r.car || '', wave: r.wave || 0, ago: Math.max(0, Math.round((now - r.seen) / 1000)), on: now - r.seen < 75000, mode: now - r.seen < 75000 ? (r.mode || 'menu') : '', room: now - r.seen < 75000 && r.mode === 'lobby' ? (r.room || '') : '', me: r.pid === me || undefined }));
+    const tot = await env.DB.prepare('SELECT club, COUNT(*) AS n FROM profiles WHERE club != \'\' GROUP BY club').all();
+    return json({ now, players: list, clubSizes: Object.fromEntries(tot.results.map(r => [r.club, r.n])) });
+  }
+  let b; try { b = await req.json(); } catch { return json({ error: 'bad json' }, 400); }
+  if (p === '/api/profile/restore' && req.method === 'POST') {
+    const code = String(b.code || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); if (code.length !== 8) return json({ error: 'code' }, 400);
+    const r = await env.DB.prepare('SELECT pid, pkey, code, data, updated FROM profiles WHERE code = ?1').bind(code.slice(0, 4) + '-' + code.slice(4)).first();
+    if (!r) return json({ error: 'not found' }, 404);
+    return json({ pid: r.pid, key: r.pkey, code: r.code, data: r.data, updated: r.updated });
+  }
+  const pid = cleanId(b.pid, 40), key = cleanId(b.key, 48);
+  if (pid.length < 12 || key.length < 16) return json({ error: 'id' }, 400);
+  const row = await env.DB.prepare('SELECT pkey, code, updated FROM profiles WHERE pid = ?1').bind(pid).first();
+  if (row && row.pkey !== key) return json({ error: 'key' }, 403);
+  const name = cleanName(b.name) || 'Driver', club = ['reapers', 'vipers', 'bulls', 'owls', 'kings', 'wolves'].includes(b.club) ? b.club : '';
+  const car = cleanId(b.car, 12), cpts = Math.max(0, Math.min(1e7, Math.floor(+b.cpts || 0))), wave = Math.max(0, Math.min(999, Math.floor(+b.wave || 0)));
+  const mode = MODES.includes(b.mode) ? b.mode : 'menu', room = cleanId(b.room, 8).toUpperCase();
+  if (p === '/api/profile/me' && req.method === 'POST') { // what the cloud holds for this player
+    if (!row) return json({ none: true });
+    const r = await env.DB.prepare('SELECT code, data, updated FROM profiles WHERE pid = ?1').bind(pid).first();
+    return json({ code: r.code, data: r.data, updated: r.updated });
+  }
+  if (p === '/api/profile/sync' && req.method === 'POST') { // save progress (data) and/or say "I'm here" (presence)
+    const data = typeof b.data === 'string' && b.data.length <= 80000 ? b.data : null;
+    if (!row) {
+      let code = newCode();
+      for (let i = 0; i < 4; i++) { const hit = await env.DB.prepare('SELECT 1 FROM profiles WHERE code = ?1').bind(code).first(); if (!hit) break; code = newCode(); }
+      await env.DB.prepare('INSERT INTO profiles (pid, pkey, code, name, club, cpts, car, wave, data, updated, created, seen, mode, room) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10, ?10, ?11, ?12)')
+        .bind(pid, key, code, name, club, cpts, car, wave, data || '{}', now, mode, room).run();
+      return json({ ok: true, code, updated: now });
+    }
+    if (data) await env.DB.prepare('UPDATE profiles SET name = ?2, club = ?3, cpts = ?4, car = ?5, wave = ?6, data = ?7, updated = ?8, seen = ?8, mode = ?9, room = ?10 WHERE pid = ?1').bind(pid, name, club, cpts, car, wave, data, now, mode, room).run();
+    else await env.DB.prepare('UPDATE profiles SET name = ?2, club = ?3, cpts = ?4, car = ?5, wave = ?6, seen = ?7, mode = ?8, room = ?9 WHERE pid = ?1').bind(pid, name, club, cpts, car, wave, now, mode, room).run();
+    return json({ ok: true, code: row.code, updated: data ? now : row.updated });
+  }
+  return json({ error: 'not found' }, 404);
+}
 let ICE_CACHE = null;
 async function api(req, env, url) {
   const p = url.pathname;
@@ -105,6 +161,7 @@ async function api(req, env, url) {
     } catch (e) { return json({ iceServers: stun }); }
   }
   if (p.startsWith('/api/club/')) return club(req, env, url, p);
+  if (p.startsWith('/api/profile/') || p === '/api/players') return prof(req, env, url, p);
   if (p === '/api/daily') {
     const day = dayStr(), y = dayStr(Date.now() - 864e5);
     const yt = (await env.DB.prepare('SELECT name, MAX(score) AS score FROM scores WHERE mode=\'daily\' AND day=?1 GROUP BY pid ORDER BY score DESC LIMIT 1').bind(y).first()) || null;
