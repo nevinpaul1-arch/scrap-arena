@@ -662,6 +662,19 @@
   .podSkip{position:absolute;right:14px;bottom:max(10px,env(safe-area-inset-bottom));z-index:2;color:#8d97a8;font:800 11px system-ui,sans-serif;letter-spacing:.12em} .podLoad{position:absolute;inset:0;display:grid;place-items:center;color:#aab3c2;font-weight:800;z-index:2}
   .podLab{position:absolute;z-index:2;transform:translate(-50%,-100%);display:flex;align-items:center;gap:5px;background:rgba(10,12,16,.78);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:3px 10px 3px 6px;white-space:nowrap;pointer-events:none} .podLab .pm{font-size:16px} .podLab img{width:18px;height:18px} .podLab b{font:900 12.5px system-ui,sans-serif;color:#fff} .podLab em{font-style:normal;font:800 11px system-ui,sans-serif;color:#ffd166}
   #podReplay{margin-left:6px}
+  /* chat */
+  #chatSheet{z-index:60} .chatBs{position:relative} .chX{position:absolute!important;top:8px!important;right:8px!important;left:auto!important;transform:none!important} #chatTabs{padding-right:44px}
+  .chatBs{display:flex;flex-direction:column;max-height:100%;overflow:hidden!important} #chatTabs{display:flex;gap:6px;margin-bottom:6px} #chatTabs button{flex:1;min-height:34px;border:1px solid #2d3340;background:#12151b;color:#aab3c2;border-radius:10px;font:900 11.5px system-ui,sans-serif;letter-spacing:.06em;cursor:pointer} #chatTabs button.on{border-color:#4da3ff;color:#fff;background:linear-gradient(180deg,rgba(77,163,255,.2),#12151b)} #chatTabs em{font-style:normal;background:#e63946;color:#fff;border-radius:999px;padding:0 5px;font-size:10px}
+  #chatBody{flex:1;min-height:110px;overflow-y:auto;background:#0d1015;border:1px solid #232833;border-radius:12px;padding:6px 8px;display:flex;flex-direction:column;gap:4px;-webkit-overflow-scrolling:touch}
+  .chL{display:flex;gap:7px;align-items:flex-start} .chL img,.chL .nb{width:22px;height:22px;flex:none;margin-top:2px} .chL .nb{font-size:14px;opacity:.5;text-align:center} .chL div{min-width:0;flex:1} .chL b{font:900 12.5px system-ui,sans-serif;cursor:pointer} .chL small{margin-left:6px;color:#6f7888;font-size:10px} .chL p{margin:1px 0 0;font-size:13.5px;color:#e6eaf0;word-wrap:break-word;line-height:1.35} .chL.me p{color:#ffe6a8}
+  .chJoin{border:0;background:#2a9d4a;color:#fff;font:900 11px system-ui,sans-serif;border-radius:8px;padding:2px 8px;cursor:pointer} .chEmpty{margin:auto;text-align:center}
+  #chatQuick{display:flex;gap:5px;overflow-x:auto;padding:6px 0 4px;flex:none;-webkit-overflow-scrolling:touch} #chatQuick button{flex:none;border:1px solid #3a4150;background:#1a1e26;color:#dfe5ee;border-radius:999px;padding:5px 11px;font:800 12px system-ui,sans-serif;cursor:pointer;min-height:32px;white-space:nowrap}
+  .chatRow{display:flex;gap:6px;flex:none} .chatRow input{flex:1;min-width:0;background:#0d1015;border:1px solid #3a4150;border-radius:10px;color:#fff;font:600 15px system-ui,sans-serif;padding:9px 12px} .chatRow button{min-width:80px;border:0;border-radius:10px;background:#2a7bd8;color:#fff;font:900 13px system-ui,sans-serif;cursor:pointer}
+  .chatFoot{display:flex;gap:10px;align-items:center;flex:none;font-size:11px;color:#6f7888;padding-top:4px;flex-wrap:wrap} #chatErr{color:#ffb070;font-weight:700} #chatMuted button{border:0;background:none;color:#4da3ff;font:inherit;cursor:pointer;padding:0}
+  body.phone .chatBs{padding:8px 10px} body.phone #chatBody{min-height:80px} body.phone .chL p{font-size:12.5px} body.phone .chatRow input{padding:7px 10px;font-size:15px}
+  #chatBtn{position:fixed;top:12px;left:calc(50% + 76px);z-index:6;display:none;background:rgba(14,16,21,.72);color:#dfe5ee;border:1px solid #3a4150;border-radius:8px;width:42px;height:34px;font-size:15px;cursor:pointer} body.playing.mp #chatBtn,body.playing.vs #chatBtn{display:block} #chatBtn em,.lobChatBtn em{position:absolute;top:-6px;right:-6px;font-style:normal;background:#e63946;color:#fff;border-radius:999px;font:900 10px system-ui,sans-serif;padding:1px 5px} #chatBtn em.zero,.lobChatBtn em.zero{display:none}
+  #chatFeed{position:fixed;left:50%;top:54px;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;max-width:70vw} #chatFeed div{background:rgba(10,12,16,.78);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:3px 10px;font-size:12.5px;color:#fff;transition:opacity .8s} #chatFeed div.out{opacity:0}
+  #lobChat{display:flex;align-items:center;gap:8px;margin:6px 0} #lobChat:empty{display:none} .lobChatBtn{position:relative;flex:none;width:40px;height:36px;border:1px solid #3a4150;border-radius:10px;background:#1a1e26;font-size:16px;cursor:pointer} .lobChatTxt{flex:1;min-width:0;display:flex;flex-direction:column;font-size:12px;color:#cfd6e2} .lobChatTxt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .lobChatTxt .dim{color:#6f7888}
   .clSoon{display:flex;gap:12px;align-items:center;margin:10px 0;padding:10px 12px;border-radius:14px;border:1px dashed rgba(157,107,255,.55);background:linear-gradient(90deg,rgba(157,107,255,.14),rgba(157,107,255,.03))} .clSoon .si{font-size:28px} .clSoon small{font:800 10.5px system-ui,sans-serif;letter-spacing:.16em;color:#c4a8ff} .clSoon b{display:block;font:900 italic 17px system-ui,sans-serif} .clSoon p{margin:2px 0 0;font-size:12.5px;color:#cfd6e2;line-height:1.4}
   /* achievement toast + mod controls */
   #achToast{position:fixed;left:50%;top:max(10px,calc(env(safe-area-inset-top) + 6px));transform:translate(-50%,-30px);z-index:45;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:14px;background:linear-gradient(90deg,rgba(40,30,8,.95),rgba(16,18,24,.95));border:1px solid rgba(255,209,102,.6);box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;color:#fff}
@@ -768,7 +781,7 @@
     <small>Click a car, then DRIVE (or use the left/right arrow keys and Enter).</small>
   </div>
 </div>
-<button id="pauseBtn" aria-label="Pause">❚❚</button>
+<button id="pauseBtn" aria-label="Pause">❚❚</button><button id="chatBtn" aria-label="Chat" data-openchat="r">💬<em id="chatBtnN" class="zero">0</em></button><div id="chatFeed"></div>
 <div id="pauseMenu" class="hidden"><div class="pm"><h2>PAUSED</h2><button id="pmResume">RESUME</button><button id="pmMenu">MAIN MENU</button><small id="pmNote"></small></div></div>
 <div id="devPanel" class="hidden"><div class="dp">
   <h2>🛠 DEVELOPER MODE</h2><div class="sub">Jump straight into any wave. Dev runs are never saved or sent to the leaderboard, and don't unlock cars.</div>
@@ -788,7 +801,7 @@
       <header class="hubTop">
         <div class="logo"><span class="l1">SCRAP</span><span class="l2">ARENA</span><small>DEMOLITION DERBY</small></div>
         <div class="profile" id="hubProfile"><button class="pBadge" id="hubPBadge" title="Motor club"></button><div class="pTxt"><span class="pNameSlot" id="pnameSlot"></span><small id="hubRank"></small></div></div>
-        <div class="topBtns"><button id="hubPlayers" class="plBtn" title="Players">👥<span>PLAYERS</span><em id="hubOnline" class="zero">0</em></button><button id="hubGarage" class="garBtn" title="Garage">🔧<span>GARAGE</span><em>🔩 <b id="hubGp">0</b></em></button><button id="hubBoard" title="Leaderboard">🏆<span>RANKS</span></button><button id="hubHow" title="How to play">❓<span>HOW</span></button><button id="hubInstall" class="hidden" title="Install">📲<span>APP</span></button><button id="hubFs" title="Fullscreen">⛶</button><button id="hubDev" title="Dev">🛠</button></div>
+        <div class="topBtns"><button id="hubChat" class="plBtn" title="Chat" data-openchat="">💬<span>CHAT</span><em id="hubChatN" class="zero">0</em></button><button id="hubPlayers" class="plBtn" title="Players">👥<span>PLAYERS</span><em id="hubOnline" class="zero">0</em></button><button id="hubGarage" class="garBtn" title="Garage">🔧<span>GARAGE</span><em>🔩 <b id="hubGp">0</b></em></button><button id="hubBoard" title="Leaderboard">🏆<span>RANKS</span></button><button id="hubHow" title="How to play">❓<span>HOW</span></button><button id="hubInstall" class="hidden" title="Install">📲<span>APP</span></button><button id="hubFs" title="Fullscreen">⛶</button><button id="hubDev" title="Dev">🛠</button></div>
       </header>
       <div class="hubMain">
         <nav class="modes">
@@ -875,6 +888,12 @@
   <div class="garHead"><h2>🔧 GARAGE</h2><span class="gpChip">🔩 <b id="garGp">0</b> GP</span></div>
   <div id="garTabs"><button data-gt="cars">🚗 CARS</button><button data-gt="driver">🧑‍🚀 DRIVER</button><button data-gt="mods">⚙️ MODS</button><button data-gt="ach">🏆 ACHIEVEMENTS</button></div>
   <div id="garBody"></div></div></div>
+<div id="chatSheet" class="bigSheet hidden"><div class="bs chatBs"><button class="shClose chX" data-close="chatSheet">✕</button>
+  <div id="chatTabs"></div>
+  <div id="chatBody"></div>
+  <div id="chatQuick"></div>
+  <div class="chatRow"><input id="chatIn" maxlength="140" placeholder="Message… (be nice)" autocomplete="off" enterkeyhint="send"><button id="chatSend">SEND</button></div>
+  <div class="chatFoot"><span id="chatErr"></span><span id="chatMuted"></span><small>Tap a name to mute. Swearing is filtered.</small></div></div></div>
 <div id="playersSheet" class="bigSheet hidden"><div class="bs"><button class="shClose" data-close="playersSheet">✕</button>
   <div class="garHead"><h2>👥 PLAYERS</h2><span class="gpChip plChip" id="plCount">0 online</span></div>
   <div id="plTabs"><button data-pt="online">🟢 ONLINE</button><button data-pt="clubs">🏁 CLUBS</button><button data-pt="save">☁️ MY SAVE</button></div>
@@ -896,6 +915,7 @@
     <div class="code">ROOM CODE <b id="mpRoom"></b> <button id="mpShare">Invite link</button></div>
     <div class="mode"><span id="mpModeTxt"></span> <button id="mpModeSw"></button></div>
     <div id="mpPlayers"></div>
+    <div id="lobChat"></div>
     <div class="lobBottom"><div class="lobCar"><h4>YOUR CAR</h4><div class="opt" id="mpCars2"></div></div>
     <div class="row2"><button id="mpLeave">LEAVE</button><button id="mpStart">START MATCH</button></div></div>
     <div class="msg" id="mpWait">Waiting for the host to start...</div>
@@ -3118,6 +3138,7 @@ requestAnimationFrame(frame);
 const block = new Set(['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
 addEventListener('keydown', e => {
   if (e.target && e.target.id === 'pname') { if (e.code === 'Enter') begin(); return; }
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
   if (block.has(e.code)) e.preventDefault();
   keys[e.code] = true;
   if (e.code === 'KeyM') muted = !muted;
@@ -4198,13 +4219,14 @@ function netTick(rdt, raw) {
 }
 function netOnMessage(raw) {
   let m; try { m = JSON.parse(raw); } catch (e) { return; }
-  if (m.c === 'lobby') { NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.role === 'guest' && NET.clubSent !== myClubId() + NET.room) { NET.clubSent = myClubId() + NET.room; netSend({ club: myClubId(), crank: myClubRank() }); netSend({ mod: GAR.equip }); netSend({ av: myAv() }); } if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
+  if (m.c === 'lobby') { if (CH.room !== NET.room) { CH.room = NET.room; CH.msgs.r = []; CH.unread.r = 0; } lobChatPreview(); NET.lobby = m; NET.mode = m.mode; NET.joined = true; if (NET.role === 'guest' && NET.clubSent !== myClubId() + NET.room) { NET.clubSent = myClubId() + NET.room; netSend({ club: myClubId(), crank: myClubRank() }); netSend({ mod: GAR.equip }); netSend({ av: myAv() }); } if (NET.recon) { NET.recon = null; NET.hostAway = false; if (NET.role === 'guest' && !rtcOk(RTC.me)) rtcGuestKick(); } if (NET.role === 'host') vsSync(); renderMpLobby(); if (NET.role === 'guest' && !RTC.me) rtcGuestKick(); if (NET.role === 'host') for (const pid of [...RTC.peers.keys()]) if (!m.players.some(p => p.pid === pid)) { try { RTC.peers.get(pid).pc.close(); } catch (e) {} RTC.peers.delete(pid); } if (m.go && !NET.started) netStartGame(); return; }
   if (m.c === 'denied' && NET.recon) { netGiveUp(m.why === 'started' || m.why === 'gone' ? 'Lost connection to the room.' : null); return; }
   if (m.c === 'denied') { setTimeout(fetchPlayers, 300); mpMsg({ 'no-room': 'No room with that code. Check it and try again.', taken: 'That code is in use. Try again.', full: 'That room is full.', started: 'That match already started.' }[m.why] || 'Could not join.'); netLeave(true); return; }
   if (m.c === 'hostleft') { netLeave(true); if (state === 'play' || state === 'over') netShowResults({ hostLeft: true }); else mpMsg('The host left the room.'); return; }
   if (m.c === 'left') { delete NET.away[m.pid]; const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c) c.gone = true; if (c && !c.dead && NET.started) { killCar(c, null); addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' LEFT', '#cfd6e2'); } delete NET.inputs[m.pid]; return; }
   if (m.c === 'away') { NET.away[m.pid] = 1; const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c && NET.started) addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' RECONNECTING...', '#ffd166'); return; }
   if (m.c === 'back') { delete NET.away[m.pid]; const c = cars.find(o => o.pid === m.pid && o.isPlayer); if (c) { c.gone = false; if (NET.started) addText(c.x, c.y - 60, (c.pname || 'PLAYER').toUpperCase() + ' IS BACK', '#3ddc84'); } NET.metaSent.clear(); return; }
+  if (m.c === 'chat') { chatRoomIn(m); return; }
   if (m.c === 'hostaway') { NET.hostAway = true; return; }
   if (m.c === 'hostback') { NET.hostAway = false; return; }
   if (m.c === 'pong') { if (rtcDirect()) return; const r = performance.now() - m.t; NET.ping = Math.round(r); NET.rtt += (r / 1000 - NET.rtt) * (NET.rtt > .5 ? 1 : .3); return; }
@@ -5400,6 +5422,82 @@ document.addEventListener('click', async e => {
   }
 });
 setInterval(() => { if (state === 'menu' && document.visibilityState === 'visible') fetchPlayers(); }, 45000); setTimeout(fetchPlayers, 2500);
+/* ---------- chat: global + club (server), room (through the game room) ---------- */
+const CH = { tab: 'g', msgs: { g: [], c: [], r: [] }, last: { g: 0, c: 0 }, me: '', seen: Object.assign({ g: 0, c: 0 }, lsGet('scrapArenaChatSeen', {})), unread: { g: 0, c: 0, r: 0 }, muted: lsGet('scrapArenaMuted', []), timer: 0, busy: false, err: '' };
+const QUICK = ['GG 🤝', 'Rematch? 🔁', 'Nice hit! 💥', 'Who wants a game?', '😂', '🔥🔥', 'Watch the bomb! 💣', 'Pass it! 🏈'];
+const chatOpen = () => !$('chatSheet').classList.contains('hidden');
+async function chatPull(ch) {
+  try {
+    const r = await fetch(API + '/api/chat?ch=' + ch + '&pid=' + PID + '&after=' + (CH.last[ch] || 0)); const j = await r.json();
+    if (j.me) CH.me = j.me;
+    if (j.msgs && j.msgs.length) { CH.msgs[ch] = CH.msgs[ch].concat(j.msgs).slice(-120); CH.last[ch] = j.msgs[j.msgs.length - 1].id;
+      const fresh = j.msgs.filter(m => m.id > (CH.seen[ch] || 0) && m.u !== CH.me && !CH.muted.includes(m.u)).length;
+      if (chatOpen() && CH.tab === ch) chatMarkSeen(); else CH.unread[ch] = Math.min(99, fresh + (CH.seen[ch] ? 0 : 0)); }
+  } catch (e) {}
+  chatBadge(); if (chatOpen() && CH.tab === ch) renderChat();
+}
+function chatMarkSeen() { if (CH.tab === 'r') { CH.unread.r = 0; } else { CH.seen[CH.tab] = CH.last[CH.tab] || 0; CH.unread[CH.tab] = 0; lsSet('scrapArenaChatSeen', CH.seen); } chatBadge(); }
+function chatBadge() { const n = CH.unread.g + CH.unread.c + CH.unread.r, el = $('hubChatN'); if (el) { el.textContent = n > 9 ? '9+' : n; el.classList.toggle('zero', !n); }
+  const rb = $('lobChatN'); if (rb) { rb.textContent = CH.unread.r; rb.classList.toggle('zero', !CH.unread.r); } const mb = $('chatBtnN'); if (mb) { mb.textContent = CH.unread.r; mb.classList.toggle('zero', !CH.unread.r); } }
+function openChat(tab) {
+  for (const k in keys) keys[k] = false;
+  $('chatSheet').classList.remove('hidden'); CH.tab = tab || (NET.role ? 'r' : CH.tab === 'r' ? 'g' : CH.tab); CH.err = '';
+  if (CH.tab === 'c' && !myClubId()) CH.tab = 'g';
+  renderChat(true); chatMarkSeen(); if (CH.tab !== 'r') chatPull(CH.tab);
+  clearInterval(CH.timer); CH.timer = setInterval(() => { if (!chatOpen()) { clearInterval(CH.timer); return; } if (CH.tab !== 'r') chatPull(CH.tab); }, 3000);
+}
+function chatLine(m) {
+  const c = CLUB_BY[m.club], mine = m.u === CH.me, muted = CH.muted.includes(m.u);
+  if (muted) return '';
+  const txt = esc(m.t).replace(/#([A-Z]{4})\b/g, (a, code) => '<button class="chJoin" data-pjoin="' + code + '">JOIN #' + code + '</button>');
+  const ago = Math.max(0, Math.round((Date.now() - m.ts) / 1000));
+  return '<div class="chL' + (mine ? ' me' : '') + '">' + (c ? '<img src="' + clubBadgeUrl(m.club) + '" alt="">' : '<span class="nb">🏁</span>') + '<div><b' + (mine ? '' : ' data-cu="' + esc(m.u) + '" data-cn="' + esc(m.name || m.n || '') + '"') + ' style="color:' + (c ? c.c1 : '#cfd6e2') + '">' + esc(m.name || m.n || 'Driver') + '</b><small>' + (ago < 60 ? 'now' : ago < 3600 ? Math.round(ago / 60) + 'm' : Math.round(ago / 3600) + 'h') + '</small><p>' + txt + '</p></div></div>';
+}
+function renderChat(scroll) {
+  const el = $('chatBody'); if (!el || !chatOpen()) return;
+  const inRoom = !!NET.role, tabs = [['g', '🌍 GLOBAL'], ['c', '🏁 CLUB'], ...(inRoom ? [['r', '🚪 ROOM']] : [])];
+  $('chatTabs').innerHTML = tabs.map(([k, n]) => '<button data-cht="' + k + '" class="' + (CH.tab === k ? 'on' : '') + '">' + n + (CH.unread[k] && CH.tab !== k ? ' <em>' + CH.unread[k] + '</em>' : '') + '</button>').join('');
+  const list = CH.msgs[CH.tab] || [], wasBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+  let empty = CH.tab === 'c' && !myClubId() ? 'Join a club to chat with your crew.' : CH.tab === 'r' ? 'Room chat: only players in this room see it.' : 'No messages yet. Say hi!';
+  el.innerHTML = list.length ? list.map(chatLine).join('') : '<p class="gNote chEmpty">' + empty + '</p>';
+  if (scroll || wasBottom) el.scrollTop = el.scrollHeight;
+  const q = QUICK.slice(); if (NET.role && NET.room && !NET.started) q.unshift('Join my room #' + NET.room);
+  $('chatQuick').innerHTML = q.map(t => '<button data-chq="' + esc(t) + '">' + esc(t) + '</button>').join('');
+  $('chatErr').textContent = CH.err; $('chatMuted').innerHTML = CH.muted.length ? CH.muted.length + ' muted · <button data-chunmute="all">unmute all</button>' : '';
+}
+async function chatSend(text) {
+  const t = String(text || '').trim().slice(0, 140); if (!t || CH.busy) return;
+  if (CH.tab === 'r') { if (!NET.role) return; netSend({ c: 'chat', t, club: myClubId() }); $('chatIn').value = ''; return; }
+  CH.busy = true; CH.err = '';
+  try {
+    const r = await fetch(API + '/api/chat/send', { method: 'POST', body: JSON.stringify({ pid: PID, key: PKEY, ch: CH.tab, t, name: (($('pname') || {}).value || '').trim() || pname }) }); const j = await r.json().catch(() => ({}));
+    if (r.ok && j.msg) { $('chatIn').value = ''; if (j.msg.id > (CH.last[CH.tab] || 0) + 1) await chatPull(CH.tab); else { CH.msgs[CH.tab].push(j.msg); CH.last[CH.tab] = j.msg.id; } CH.me = j.msg.u; chatMarkSeen(); }
+    else CH.err = r.status === 429 ? (j.error === 'repeat' ? 'Same message again? Say something new.' : 'Slow down a little' + (j.wait ? ' (' + j.wait + ' s)' : '') + '.') : r.status === 403 ? 'Setting up your profile, try again in a moment.' : j.error === 'no club' ? 'Join a club first.' : 'Could not send. Check your connection.';
+    if (r.status === 403) cloudSync();
+  } catch (e) { CH.err = 'Could not send. Check your connection.'; }
+  CH.busy = false; renderChat(true);
+}
+function chatRoomIn(m) { // a room message arrived (lobby or match)
+  CH.msgs.r.push({ u: m.u, n: m.n, name: m.n, club: m.club, t: m.t, ts: m.ts || Date.now() }); CH.msgs.r = CH.msgs.r.slice(-80);
+  if (CH.muted.includes(m.u)) return;
+  if (chatOpen() && CH.tab === 'r') { renderChat(); } else if (m.u !== CH.me && m.n !== pname) CH.unread.r++;
+  chatBadge(); lobChatPreview();
+  if (state === 'play' && !chatOpen()) chatFeed(m);
+}
+function chatFeed(m) { const box = $('chatFeed'); if (!box) return; const d = document.createElement('div'); const c = CLUB_BY[m.club]; d.innerHTML = '<b style="color:' + (c ? c.c1 : '#ffd166') + '">' + esc(m.n) + '</b> ' + esc(m.t); box.appendChild(d); while (box.children.length > 4) box.firstChild.remove(); setTimeout(() => d.classList.add('out'), 5200); setTimeout(() => d.remove(), 6000); }
+function lobChatPreview() { const el = $('lobChat'); if (!el) return; const last = CH.msgs.r.filter(m => !CH.muted.includes(m.u)).slice(-2); el.innerHTML = '<button class="lobChatBtn" data-openchat="r">💬<em id="lobChatN" class="' + (CH.unread.r ? '' : 'zero') + '">' + CH.unread.r + '</em></button><div class="lobChatTxt">' + (last.length ? last.map(m => '<span><b>' + esc(m.n) + ':</b> ' + esc(m.t) + '</span>').join('') : '<span class="dim">Room chat: say hi to the room</span>') + '</div>'; }
+document.addEventListener('click', e => {
+  const o = e.target.closest('[data-openchat]'); if (o) { openChat(o.dataset.openchat); return; }
+  const t = e.target.closest('[data-cht]'); if (t) { CH.tab = t.dataset.cht; CH.err = ''; renderChat(true); chatMarkSeen(); if (CH.tab !== 'r') chatPull(CH.tab); return; }
+  const q = e.target.closest('[data-chq]'); if (q) { chatSend(q.dataset.chq); return; }
+  if (e.target.closest('#chatSend')) { chatSend($('chatIn').value); return; }
+  const n = e.target.closest('[data-cu]'); if (n) { const u = n.dataset.cu; if (n.dataset.sure === '1') { CH.muted.push(u); lsSet('scrapArenaMuted', CH.muted); renderChat(); } else { n.dataset.sure = '1'; const old = n.textContent; n.textContent = 'Tap again to mute ' + old; setTimeout(() => { if (n.isConnected) { n.dataset.sure = ''; n.textContent = old; } }, 2500); } return; }
+  if (e.target.closest('[data-chunmute]')) { CH.muted = []; lsSet('scrapArenaMuted', CH.muted); renderChat(); return; }
+});
+document.addEventListener('keydown', e => { if (e.target && e.target.id === 'chatIn' && e.key === 'Enter') { e.preventDefault(); chatSend(e.target.value); } });
+setInterval(() => { if (document.visibilityState !== 'visible' || chatOpen() || state === 'play') return; chatPull('g'); if (myClubId()) chatPull('c'); }, 30000);
+setTimeout(() => { chatPull('g'); if (myClubId()) chatPull('c'); }, 4000);
+if (typeof DEV_BUILD !== 'undefined' && DEV_BUILD) window.__chat = { CH, pull: chatPull, send: chatSend, room: t => netSend({ c: 'chat', t, club: myClubId() }) };
 /* ---------- main menu hub ---------- */
 const HUB = { car: lsGet('scrapArenaHubCar', 'cruiser') };
 const carLocked = d => d.unlock > Math.max(maxWave, 1);
