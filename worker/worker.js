@@ -150,7 +150,7 @@ const BAD_IN = ['fuck', 'shit', 'bitch', 'cunt', 'asshole', 'bastard', 'whore', 
 const BAD_EQ = ['ass', 'dick', 'cock', 'fag', 'fags', 'cum', 'tit', 'tits', 'kike', 'spic', 'chink', 'rape', 'porn', 'piss', 'kys', 'wtf', 'stfu', 'cuck', 'coon', 'paki', 'dyke', 'tranny', 'homo', 'gook', 'fk', 'fu', 'sht', 'stfu', 'mf'];
 const LEET = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '7': 't', '@': 'a', '$': 's', '!': 'i', '|': 'i', '+': 't' };
 function cleanChat(raw) {
-  let t = String(raw || '').replace(/[\u0000-\u001f\u007f​-‏‪-‮]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140);
+  let t = String(raw || '').replace(/[\u0000-\u001f\u007f\u200b-\u200f\u202a-\u202e]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140);
   t = t.replace(/(https?:\/\/|www\.)\S+/gi, '[link]').replace(/(.)\1{5,}/g, '$1$1$1$1');
   return t.split(' ').map(w => { const n = w.toLowerCase().split('').map(ch => LEET[ch] || ch).join('').replace(/[^a-z]/g, '').replace(/(.)\1+/g, '$1');
     return n && (BAD_IN.some(b => n.includes(b.replace(/(.)\1+/g, '$1'))) || BAD_EQ.includes(n)) ? '*'.repeat(Math.min(8, w.length)) : w; }).join(' ');
