@@ -88,6 +88,111 @@ async function club(req, env, url, p) {
   }
   return json({ error: 'not found' }, 404);
 }
+// ---------- cloud save + who's online (one row per player) ----------
+let PROF_READY = false;
+async function profInit(env) {
+  if (PROF_READY) return;
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS profiles (pid TEXT PRIMARY KEY, pkey TEXT NOT NULL, code TEXT UNIQUE NOT NULL, name TEXT, club TEXT, cpts INTEGER DEFAULT 0, car TEXT, wave INTEGER DEFAULT 0, data TEXT, updated INTEGER, created INTEGER, seen INTEGER, mode TEXT, room TEXT)').run();
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS profiles_seen ON profiles (seen)').run();
+  try { await env.DB.prepare('ALTER TABLE profiles ADD COLUMN rinfo TEXT').run(); } catch (e) {} // room size, e.g. v2/6 (column may already exist)
+  PROF_READY = true;
+}
+const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const newCode = () => { const b = crypto.getRandomValues(new Uint8Array(8)); let c = ''; for (const x of b) c += CODE_ABC[x % CODE_ABC.length]; return c.slice(0, 4) + '-' + c.slice(4); };
+const cleanId = (v, n) => String(v || '').replace(/[^a-z0-9]/gi, '').slice(0, n);
+const MODES = ['menu', 'waves', 'daily', 'bomb', 'garage', 'lobby', 'coop', 'derby', 'bombmp'];
+async function prof(req, env, url, p) {
+  await profInit(env);
+  const now = Date.now();
+  if (p === '/api/players') { // who is around: online now (seen in the last 75 s) and the last 7 days
+    const me = cleanId(url.searchParams.get('pid'), 40);
+    const rows = (await env.DB.prepare('SELECT pid, name, club, cpts, car, wave, seen, mode, room, rinfo FROM profiles WHERE seen > ?1 ORDER BY seen DESC LIMIT 300').bind(now - 7 * 864e5).all()).results;
+    const list = rows.map(r => ({ name: r.name || 'Driver', club: r.club || '', cpts: r.cpts || 0, car: r.car || '', wave: r.wave || 0, ago: Math.max(0, Math.round((now - r.seen) / 1000)), on: now - r.seen < 75000, mode: now - r.seen < 75000 ? (r.mode || 'menu') : '', room: now - r.seen < 75000 && r.mode === 'lobby' ? (r.room || '') : '', rinfo: now - r.seen < 75000 && r.mode === 'lobby' ? (r.rinfo || '') : '', me: r.pid === me || undefined }));
+    const tot = await env.DB.prepare('SELECT club, COUNT(*) AS n FROM profiles WHERE club != \'\' GROUP BY club').all();
+    return json({ now, players: list, clubSizes: Object.fromEntries(tot.results.map(r => [r.club, r.n])) });
+  }
+  let b; try { b = await req.json(); } catch { return json({ error: 'bad json' }, 400); }
+  if (p === '/api/profile/restore' && req.method === 'POST') {
+    const code = String(b.code || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); if (code.length !== 8) return json({ error: 'code' }, 400);
+    const r = await env.DB.prepare('SELECT pid, pkey, code, data, updated FROM profiles WHERE code = ?1').bind(code.slice(0, 4) + '-' + code.slice(4)).first();
+    if (!r) return json({ error: 'not found' }, 404);
+    return json({ pid: r.pid, key: r.pkey, code: r.code, data: r.data, updated: r.updated });
+  }
+  const pid = cleanId(b.pid, 40), key = cleanId(b.key, 48);
+  if (pid.length < 12 || key.length < 16) return json({ error: 'id' }, 400);
+  const row = await env.DB.prepare('SELECT pkey, code, updated FROM profiles WHERE pid = ?1').bind(pid).first();
+  if (row && row.pkey !== key) return json({ error: 'key' }, 403);
+  const name = cleanName(b.name) || 'Driver', club = ['reapers', 'vipers', 'bulls', 'owls', 'kings', 'wolves'].includes(b.club) ? b.club : '';
+  const car = cleanId(b.car, 12), cpts = Math.max(0, Math.min(1e7, Math.floor(+b.cpts || 0))), wave = Math.max(0, Math.min(999, Math.floor(+b.wave || 0)));
+  const mode = MODES.includes(b.mode) ? b.mode : 'menu', room = cleanId(b.room, 8).toUpperCase(), rinfo = String(b.rinfo || '').replace(/[^a-z0-9\/]/gi, '').slice(0, 8);
+  if (p === '/api/profile/me' && req.method === 'POST') { // what the cloud holds for this player
+    if (!row) return json({ none: true });
+    const r = await env.DB.prepare('SELECT code, data, updated FROM profiles WHERE pid = ?1').bind(pid).first();
+    return json({ code: r.code, data: r.data, updated: r.updated });
+  }
+  if (p === '/api/profile/sync' && req.method === 'POST') { // save progress (data) and/or say "I'm here" (presence)
+    const data = typeof b.data === 'string' && b.data.length <= 80000 ? b.data : null;
+    if (!row) {
+      let code = newCode();
+      for (let i = 0; i < 4; i++) { const hit = await env.DB.prepare('SELECT 1 FROM profiles WHERE code = ?1').bind(code).first(); if (!hit) break; code = newCode(); }
+      await env.DB.prepare('INSERT INTO profiles (pid, pkey, code, name, club, cpts, car, wave, data, updated, created, seen, mode, room) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10, ?10, ?11, ?12)')
+        .bind(pid, key, code, name, club, cpts, car, wave, data || '{}', now, mode, room).run();
+      return json({ ok: true, code, updated: now });
+    }
+    if (data) await env.DB.prepare('UPDATE profiles SET name = ?2, club = ?3, cpts = ?4, car = ?5, wave = ?6, data = ?7, updated = ?8, seen = ?8, mode = ?9, room = ?10, rinfo = ?11 WHERE pid = ?1').bind(pid, name, club, cpts, car, wave, data, now, mode, room, rinfo).run();
+    else await env.DB.prepare('UPDATE profiles SET name = ?2, club = ?3, cpts = ?4, car = ?5, wave = ?6, seen = ?7, mode = ?8, room = ?9, rinfo = ?10 WHERE pid = ?1').bind(pid, name, club, cpts, car, wave, now, mode, room, rinfo).run();
+    return json({ ok: true, code: row.code, updated: data ? now : row.updated });
+  }
+  return json({ error: 'not found' }, 404);
+}
+// ---------- chat: global + club (stored), room chat goes through the Room object ----------
+const BAD_IN = ['fuck', 'shit', 'bitch', 'cunt', 'asshole', 'bastard', 'whore', 'nigg', 'faggot', 'retard', 'wanker', 'motherf', 'pussy', 'dickhead', 'slut', 'twat', 'bollock', 'nazi', 'hitler', 'fck', 'fuk', 'fuq', 'phuck', 'biatch', 'btch', 'azzhole', 'cnt'];
+const BAD_EQ = ['ass', 'dick', 'cock', 'fag', 'fags', 'cum', 'tit', 'tits', 'kike', 'spic', 'chink', 'rape', 'porn', 'piss', 'kys', 'wtf', 'stfu', 'cuck', 'coon', 'paki', 'dyke', 'tranny', 'homo', 'gook', 'fk', 'fu', 'sht', 'stfu', 'mf'];
+const LEET = { '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '7': 't', '@': 'a', '$': 's', '!': 'i', '|': 'i', '+': 't' };
+function cleanChat(raw) {
+  let t = String(raw || '').replace(/[\u0000-\u001f\u007f\u200b-\u200f\u202a-\u202e]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140);
+  t = t.replace(/(https?:\/\/|www\.)\S+/gi, '[link]').replace(/(.)\1{5,}/g, '$1$1$1$1');
+  return t.split(' ').map(w => { const n = w.toLowerCase().split('').map(ch => LEET[ch] || ch).join('').replace(/[^a-z]/g, '').replace(/(.)\1+/g, '$1');
+    return n && (BAD_IN.some(b => n.includes(b.replace(/(.)\1+/g, '$1'))) || BAD_EQ.includes(n)) ? '*'.repeat(Math.min(8, w.length)) : w; }).join(' ');
+}
+const pubId = pid => { let h = 2166136261; for (const ch of String(pid)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0).toString(36).slice(0, 6); };
+let CHAT_READY = false;
+async function chatInit(env) {
+  if (CHAT_READY) return;
+  await env.DB.prepare('CREATE TABLE IF NOT EXISTS chat (id INTEGER PRIMARY KEY AUTOINCREMENT, ch TEXT NOT NULL, u TEXT, name TEXT, club TEXT, t TEXT, ts INTEGER)').run();
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS chat_ch ON chat (ch, id)').run();
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS chat_u ON chat (u, id)').run();
+  CHAT_READY = true;
+}
+async function chat(req, env, url, p) {
+  await profInit(env); await chatInit(env);
+  const now = Date.now();
+  if (p === '/api/chat' && req.method === 'GET') {
+    const pid = cleanId(url.searchParams.get('pid'), 40), which = url.searchParams.get('ch') === 'c' ? 'c' : 'g', after = Math.max(0, +url.searchParams.get('after') || 0);
+    let ch = 'g';
+    if (which === 'c') { const pr = await env.DB.prepare('SELECT club FROM profiles WHERE pid = ?1').bind(pid).first(); if (!pr || !pr.club) return json({ msgs: [], club: '' }); ch = 'c:' + pr.club; }
+    const rows = (await env.DB.prepare('SELECT id, u, name, club, t, ts FROM chat WHERE ch = ?1 AND id > ?2 ORDER BY id DESC LIMIT 60').bind(ch, after).all()).results.reverse();
+    return json({ msgs: rows, me: pubId(pid), now });
+  }
+  if (p === '/api/chat/send' && req.method === 'POST') {
+    let b; try { b = await req.json(); } catch { return json({ error: 'bad json' }, 400); }
+    const pid = cleanId(b.pid, 40), key = cleanId(b.key, 48);
+    const pr = await env.DB.prepare('SELECT pkey, name, club FROM profiles WHERE pid = ?1').bind(pid).first();
+    if (!pr || pr.pkey !== key) return json({ error: 'key' }, 403);
+    const which = b.ch === 'c' ? 'c' : 'g'; if (which === 'c' && !pr.club) return json({ error: 'no club' }, 400);
+    const t = cleanChat(b.t); if (!t) return json({ error: 'empty' }, 400);
+    const u = pubId(pid), recent = (await env.DB.prepare('SELECT ts, t FROM chat WHERE u = ?1 ORDER BY id DESC LIMIT 6').bind(u).all()).results;
+    if (recent[0] && now - recent[0].ts < 1500) return json({ error: 'slow', wait: 2 }, 429);
+    if (recent.length >= 6 && now - recent[5].ts < 30000) return json({ error: 'slow', wait: Math.ceil((30000 - (now - recent[5].ts)) / 1000) }, 429);
+    if (recent[0] && recent[0].t === t && now - recent[0].ts < 20000) return json({ error: 'repeat' }, 429);
+    const ch = which === 'c' ? 'c:' + pr.club : 'g';
+    const nm = cleanChat(String(b.name || '')).slice(0, 16).trim() || pr.name || 'Driver';
+    const r = await env.DB.prepare('INSERT INTO chat (ch, u, name, club, t, ts) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(ch, u, nm, pr.club || '', t, now).run();
+    if (Math.random() < .02) await env.DB.prepare('DELETE FROM chat WHERE ts < ?1').bind(now - 7 * 864e5).run();
+    return json({ ok: true, msg: { id: r.meta.last_row_id, u, name: nm, club: pr.club || '', t, ts: now } });
+  }
+  return json({ error: 'not found' }, 404);
+}
 let ICE_CACHE = null;
 async function api(req, env, url) {
   const p = url.pathname;
@@ -105,6 +210,8 @@ async function api(req, env, url) {
     } catch (e) { return json({ iceServers: stun }); }
   }
   if (p.startsWith('/api/club/')) return club(req, env, url, p);
+  if (p.startsWith('/api/profile/') || p === '/api/players') return prof(req, env, url, p);
+  if (p === '/api/chat' || p === '/api/chat/send') return chat(req, env, url, p);
   if (p === '/api/daily') {
     const day = dayStr(), y = dayStr(Date.now() - 864e5);
     const yt = (await env.DB.prepare('SELECT name, MAX(score) AS score FROM scores WHERE mode=\'daily\' AND day=?1 GROUP BY pid ORDER BY score DESC LIMIT 1').bind(y).first()) || null;
@@ -246,6 +353,9 @@ export class Room {
     if (msg.charCodeAt(0) === 123 && msg.indexOf('"c":') > 0 && msg.length < 400) { // small control messages
       let m; try { m = JSON.parse(msg); } catch (e) { return; }
       if (m.c === 'ping') { ws.send('{"c":"pong","t":' + (+m.t || 0) + '}'); return; }
+      if (m.c === 'chat') { const now = Date.now(), ct = (me.ct || []).filter(x => now - x < 20000); if (ct.length >= 6 || (ct.length && now - ct[ct.length - 1] < 1000)) return; ct.push(now); me.ct = ct; ws.serializeAttachment(me);
+        const t = cleanChat(m.t); if (!t) return; const club = String(m.club || '').replace(/[^a-z]/g, '').slice(0, 10), out = JSON.stringify({ c: 'chat', n: me.name || 'Driver', u: pubId(me.pid), club, t, ts: now });
+        for (const p of this.peers()) { try { p.ws.send(out); } catch (e) {} } return; }
       if (m.c === 'car') { me.car = String(m.car || '').replace(/[^a-z]/g, '').slice(0, 12); ws.serializeAttachment(me); if (isHost) { R.hostCar = me.car; await this.save(); } this.lobby(); return; }
       if (m.c === 'mode' && isHost) { if (m.mode !== 'versus' && R.cmax && this.peers().length + Object.keys(R.away).length > R.cmax) { this.lobby(); return; }
         R.mode = m.mode === 'versus' ? 'versus' : 'coop'; await this.save(); this.lobby(); return; }
