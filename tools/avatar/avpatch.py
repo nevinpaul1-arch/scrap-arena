@@ -35,3 +35,12 @@ print('framing patched')
 s=open(sys.argv[2]).read()
 rep("{ id: 'curls', name: 'Short curls', icon: '↟',","{ id: 'curls', name: 'Short curls', icon: '🧑‍🦱',")
 open(sys.argv[2],'w').write(s)
+# more free gear (Nov 2026): the rest stays for GP
+import re
+s=open(sys.argv[2]).read()
+FREE=['Short curls','Beanie','Badass bandana','Moustache','Goggles','Tank top','Hoodie','Cargo shorts','Cowboy boots','Scarf']
+for nm in FREE:
+    pat=re.compile(r"(name: '"+re.escape(nm)+r"', icon: '[^']*', price: )\d+")
+    s,n=pat.subn(r"\g<1>0",s); assert n==1,(nm,n)
+open(sys.argv[2],'w').write(s)
+print('free gear patched')
