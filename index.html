@@ -291,10 +291,11 @@
   #vsBar{display:none;position:fixed;top:max(8px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:5;background:rgba(10,12,16,.78);border:1px solid #2d3340;border-radius:12px;padding:4px 6px;gap:6px;align-items:center;font:800 18px system-ui,sans-serif;pointer-events:none}
   body.vs.playing #vsBar{display:flex}
   #vsBar b{min-width:38px;text-align:center;border-radius:8px;padding:2px 8px;color:#fff} #vsBar .b{background:#3a86ff} #vsBar .r{background:#ff4d5a}
+  #vsBar .ap{display:flex;gap:3px} #vsBar .ap:empty{display:none} #vsBar .ap i{width:8px;height:8px;border-radius:50%;background:#fff} #vsBar .ap i.x{background:rgba(255,255,255,.18)}
   #vsBar .t{min-width:54px;text-align:center;color:#fff;font-variant-numeric:tabular-nums} #vsBar .t.low{color:#ffd166}
   body.vs #hud .stats{display:none}
-  #respawnMsg{display:none;position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:5;font:900 26px system-ui,sans-serif;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8);pointer-events:none;text-align:center}
-  #respawnMsg small{display:block;font-size:13px;font-weight:700;color:#cfd6e2}
+  #respawnMsg{display:none;position:fixed;left:50%;top:34%;transform:translate(-50%,-50%);z-index:5;font:900 20px system-ui,sans-serif;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8);pointer-events:none;text-align:center}
+  #respawnMsg small{display:block;font-size:12px;font-weight:700;color:#cfd6e2}
   #mpPlayers .pl img{aspect-ratio:1.6;object-fit:cover}
   #mpPanel #mpPlayers.vsMode{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:12px;align-items:start}
   body.phone #mpPanel .mp{width:100%}
@@ -696,6 +697,9 @@
   #drArrow{position:absolute;left:50%;top:50%;font:900 30px system-ui;color:#7ae582;text-shadow:0 2px 6px #000;margin-left:0} #drArrow.hidden{display:none}
   body.dr #hud,body.dr .hpWrap{display:none!important}
   body.phone #drHud .drTop{top:6px;left:8px;padding:3px 10px} body.phone #drTime{font-size:17px;min-width:80px} body.phone #drPk{top:44px;left:8px}
+  .dsLv{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none} .dsLv::-webkit-scrollbar{display:none}
+  .dsLv button{flex:none;min-width:36px;height:34px;border-radius:10px;border:1px solid #2d3340;background:#12151b;color:#cfd6e2;font:800 14px system-ui,sans-serif;cursor:pointer} .dsLv button.on{border-color:#f08c2e;background:rgba(240,140,46,.18);color:#fff}
+  .dsLvInfo{margin:2px 0 8px;font:600 12px system-ui,sans-serif;color:#8d97a8}
   .drRes{display:flex;flex-direction:column;gap:3px;margin:8px auto;max-width:460px} .drRow{display:flex;justify-content:space-between;padding:5px 12px;border-radius:9px;background:rgba(255,255,255,.04);font:700 14px system-ui,sans-serif;color:#dfe5ee} .drRow b{color:#fff} .drRow.plus b{color:#7ae582} .drRow.minus b{color:#ff9f9f} .drRow.bank{background:rgba(240,140,46,.16);outline:1px solid rgba(240,140,46,.45)} .drRow em{font-style:normal;background:#ffd166;color:#1a1300;border-radius:6px;padding:0 6px;font-size:11px;margin-left:6px} .drRow small{color:#8d97a8;font-weight:600} .drBest{text-align:center;color:#ffc58a;font-weight:800}
   /* Hide & Run */
   .hsBots{display:flex;gap:8px} .hsBots button{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px;border:1px solid #2d3340;background:#12151b;color:#e6eaf0;border-radius:12px;font:900 20px system-ui,sans-serif;cursor:pointer} .hsBots button small{font:700 11px system-ui,sans-serif;color:#8d97a8} .hsBots button.on{border-color:#8a5cf6;background:linear-gradient(180deg,rgba(138,92,246,.25),#12151b)}
@@ -794,12 +798,61 @@
   body.phone .clPick{grid-template-columns:repeat(3,minmax(0,1fr))} body.phone .clCard img{width:56px} body.phone .clCard small{display:none}
   @media (max-height:500px){ .bigSheet .bs{padding:12px 14px} .bigSheet h2{font-size:18px;margin-bottom:6px} .bsCar img{aspect-ratio:2.4/1} .bsCar{padding:4px} .bsRules{font-size:11.5px;line-height:1.35} #bsGo{padding:10px;font-size:17px} #bsDiff{margin:4px 0 8px} #bsDiff button{padding:6px 4px} }
   @media (max-width:700px){ .bsGrid{grid-template-columns:1fr} #bsCars,#hsCars{grid-template-columns:repeat(4,minmax(0,1fr))} .clPick{grid-template-columns:repeat(2,minmax(0,1fr))} .clHead img{width:72px} }
+
+  /* ---------- type scale: one set of sizes for every menu screen (phone landscape) ----------
+     11 caption/labels · 12 secondary · 13 body · 14 buttons/rows · 16 card titles · 18 headings · 22 screen titles */
+  :root{--fs-cap:11px;--fs-sm:12px;--fs-body:13px;--fs-btn:14px;--fs-title:16px;--fs-h:18px;--fs-xl:22px}
+  /* hub */
+  .logo small{font-size:var(--fs-cap)!important;letter-spacing:.3em!important}
+  body.atHub #pname{font-size:var(--fs-btn)!important} .pTxt small,#hubRank{font-size:var(--fs-sm)!important}
+  .topBtns button em,.topBtns button b{font-size:var(--fs-cap)!important}
+  .pl1 b{font-size:var(--fs-h)!important} .pl1 small{font-size:var(--fs-sm)!important} #hubStats>div,.pstats div,.pstats em{font-size:var(--fs-cap)!important} .perkline,#hubMod{font-size:var(--fs-sm)!important}
+  .cc1 small,.ccEv small,.ccStand h4{font-size:var(--fs-cap)!important;letter-spacing:.08em!important} .cc1 h3{font-size:var(--fs-h)!important} .cc1 em{font-size:var(--fs-sm)!important}
+  .ccNo p{font-size:var(--fs-body)!important;line-height:1.4!important} .ccRank,.ccStand div{font-size:var(--fs-sm)!important} .ccEv b{font-size:var(--fs-btn)!important} .ccGo{font-size:var(--fs-btn)!important}
+  .tick{font-size:var(--fs-sm)!important}
+  /* mode tiles: an even 2 x 3 grid, same size and type for every mode */
+  .hubMain{grid-template-columns:minmax(0,1.2fr) minmax(0,1.1fr) minmax(0,.9fr)!important}
+  .modes{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:minmax(0,1fr);gap:8px!important;align-content:stretch}
+  .modes .tile{flex:none!important;min-height:0!important;max-height:none!important;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:4px!important;padding:10px 12px!important;border-radius:14px!important;clip-path:none!important}
+  .modes .tile .ico{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;font-size:16px!important}
+  .modes .tile .ico svg,.modes .tile .ico img{width:20px;height:20px}
+  .modes .tile .tt{width:100%}
+  .modes .tile b{font-size:var(--fs-title)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .modes .tile small{font-size:var(--fs-cap)!important;line-height:1.3!important;margin-top:2px!important;white-space:normal!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .modes .tile .tag{top:9px!important;right:9px!important;font-size:10px!important;padding:3px 6px!important;letter-spacing:.08em!important}
+  .modes .tile:hover{transform:translateY(-2px) scale(1.02)}
+  @media (max-width:700px) and (orientation:landscape){ .modes .tile{padding:8px 9px!important} .modes .tile b{font-size:var(--fs-btn)!important} .modes .tile .ico{width:26px!important;height:26px!important;min-width:26px!important;min-height:26px!important;font-size:14px!important} }
+  @media (orientation:portrait){ .modes .tile{min-height:92px!important} }
+  @media (min-height:560px) and (orientation:landscape){ .modes{grid-auto-rows:minmax(0,124px);align-content:center} .modes .tile{padding:14px 16px!important;gap:6px!important} .modes .tile b{font-size:var(--fs-xl)!important} .modes .tile small{font-size:var(--fs-body)!important} .modes .tile .ico{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;font-size:20px!important} }
+  /* mode sheets */
+  .bigSheet h2{font-size:var(--fs-h)!important} .bigSheet h2 small{font-size:var(--fs-sm)!important}
+  .bsH4,.gH{font-size:var(--fs-cap)!important} .bsH4 small{font-size:var(--fs-cap)!important}
+  .bsRules{font-size:var(--fs-sm)!important;line-height:1.4!important}
+  .bsCar b{font-size:var(--fs-body)!important} .bsCar small{font-size:var(--fs-cap)!important}
+  #bsDiff button,#hsBots button{font-size:var(--fs-body)!important} #bsDiff button small,#hsBots button small{font-size:var(--fs-cap)!important}
+  #bsGo,#dsGo,#hsGo{font-size:var(--fs-title)!important;padding:11px!important}
+  .dsStats{font-size:var(--fs-body)!important} .backBtn{font-size:var(--fs-sm)!important}
+  #garTabs button{font-size:var(--fs-sm)!important} .gPerk{font-size:var(--fs-sm)!important}
+  .clIntro{font-size:var(--fs-body)!important} .clCard b{font-size:var(--fs-title)!important} .clCard em,.clCard small{font-size:var(--fs-sm)!important} .clHead h3{font-size:var(--fs-xl)!important} .clHead em{font-size:var(--fs-body)!important}
+  #howSheet .hs{font-size:var(--fs-body)!important} #howSheet h2,.shTitle{font-size:var(--fs-h)!important}
+  #mpPanel h2,body.phone #mpPanel h2{font-size:var(--fs-h)!important} #mpTabSub{font-size:var(--fs-sm)!important} #mpPanel .mpTabs button,body.phone #mpPanel .mpTabs button{font-size:var(--fs-body)!important}
+  #mpCreateCoop,#mpCreateVs,#mpJoin{font-size:var(--fs-btn)!important}
+  /* car pick */
+  #selTitle,body.phone #selTitle{font-size:var(--fs-h)!important} #selSub,body.phone #selSub{font-size:var(--fs-sm)!important} .car .role,body.phone #selInfo .role{font-size:var(--fs-sm)!important}
+  body.phone #selInfo .nm{font-size:var(--fs-h)!important} #openGarage,#openRoad{font-size:var(--fs-body)!important} button#selGo,body.phone #selGo{font-size:var(--fs-h)!important}
+  /* results, pause */
+  #card.over h1,body.phone #card.over h1{font-size:var(--fs-xl)!important;line-height:1.1!important} #final{font-size:var(--fs-body)!important}
+  #pauseMenu h2{font-size:var(--fs-xl)!important} #pmResume,#pmMenu{font-size:var(--fs-title)!important}
+  .drRow{font-size:var(--fs-body)!important;padding:4px 12px!important} .drBest{font-size:var(--fs-sm)!important;margin:6px 0!important}
+  #respawnMsg{font-size:var(--fs-xl)!important} #respawnMsg small{font-size:var(--fs-sm)!important}
+  #achToast small,body.phone #achToast small{font-size:var(--fs-cap)!important;letter-spacing:.12em!important} #achToast b,#achToast em,body.phone #achToast b,body.phone #achToast em{font-size:var(--fs-btn)!important}
+  #mpCars button,#mpCars2 button{font-size:var(--fs-sm)!important} .garBs small{font-size:var(--fs-sm)}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="netInfo" style="display:none"></div><div id="netStatus" style="display:none"></div>
-<div id="vsBar"><b class="b">0</b><span class="t">3:00</span><b class="r">0</b></div>
+<div id="vsBar"><span class="ap b"></span><b class="b">0</b><span class="t">3:00</span><b class="r">0</b><span class="ap r"></span></div>
 <div id="respawnMsg"></div><div id="bombMsg"></div><div id="achToast"></div><div id="modHud"></div>
 <div id="hud">
   <div class="stats"><span>WAVE <b id="hw">1</b></span><span>SCORE <b id="hs">0</b></span><span>BEST <b id="hb">0</b></span><span>SCRAP <b id="hsc" style="color:#ffd166">0</b></span><span>CAR <b id="hc" style="font-size:14px">-</b></span></div>
@@ -866,10 +919,11 @@
       <div class="hubMain">
         <nav class="modes">
           <button class="tile t-waves" id="tWaves"><span class="ico">🔥</span><span class="tt"><b>WAVES</b><small id="tWavesSub">Endless waves · unlock cars</small></span><em class="tag" id="tCont"></em></button>
-          <button class="tile t-bomb" id="tBomb"><span class="ico">💣</span><span class="tt"><b>BOMB RUN</b><small>3v3 · The Depot · pass &amp; plant</small></span><em class="tag new">NEW</em></button>
-          <div class="tileRow"><button class="tile t-hide" id="tHide"><span class="ico">👀</span><span class="tt"><b>HIDE &amp; RUN</b><small>Hide or hunt</small></span></button><button class="tile t-drive" id="tDeliver"><span class="ico">📦</span><span class="tt"><b>DELIVERY</b><small>Drive from memory</small></span></button></div>
           <button class="tile t-daily" id="tDaily"><span class="ico" id="tDailyIco">📅</span><span class="tt"><b>DAILY</b><small id="tDailySub">Same challenge for everyone</small></span><em class="tag" id="tStreak"></em></button>
-          <button class="tile t-online" id="tOnline"><span class="ico">🌐</span><span class="tt"><b>ONLINE</b><small>Co-op · Derby · Bomb Run · Hide &amp; Run</small></span><em class="tag live">LIVE</em></button>
+          <button class="tile t-bomb" id="tBomb"><span class="ico">💣</span><span class="tt"><b>BOMB RUN</b><small>3v3 rounds · one life each</small></span></button>
+          <button class="tile t-hide" id="tHide"><span class="ico">👀</span><span class="tt"><b>HIDE &amp; RUN</b><small>Hide or hunt</small></span></button>
+          <button class="tile t-drive" id="tDeliver"><span class="ico">📦</span><span class="tt"><b>DELIVERY</b><small>Drive from memory</small></span><em class="tag new">NEW</em></button>
+          <button class="tile t-online" id="tOnline"><span class="ico">🌐</span><span class="tt"><b>ONLINE</b><small>Co-op · Derby · Bomb · Hide</small></span><em class="tag live">LIVE</em></button>
         </nav>
         <section class="stage" id="hubStage">
           <div class="cone"></div><div class="floor"><i></i></div>
@@ -935,13 +989,13 @@
 </div></div>
 <div id="bombSheet" class="bigSheet hidden"><div class="bs">
   <div class="modeHead"><button class="backBtn" data-close="bombSheet">&larr; MENU</button>
-  <h2>💣 BOMB RUN <small style="font:700 13px system-ui;color:#8d97a8;letter-spacing:.08em">3v3 · THE DEPOT · YOU + 2 BOTS vs 3 BOTS · 3:00</small></h2></div>
+  <h2>💣 BOMB RUN <small style="font:700 13px system-ui;color:#8d97a8;letter-spacing:.08em">3v3 · THE DEPOT · YOU + 2 BOTS vs 3 BOTS · FIRST TO 3</small></h2></div>
   <div class="bsGrid">
     <div><h4 class="bsH4">YOUR CAR</h4><div id="bsCars"></div></div>
     <div><h4 class="bsH4">BOTS</h4><div id="bsDiff"><button data-d="0">ROOKIE<small>slow, forgiving</small></button><button data-d="1">PRO<small>a fair fight</small></button><button data-d="2">LEGEND<small>fast and mean</small></button></div>
       <button id="bsGo">START MATCH</button>
       <h4 class="bsH4">HOW IT WORKS</h4>
-      <ol class="bsRules"><li>A bomb drops in the first 10 s, marked by an <b>amber ring</b>.</li><li>Drive over it to pick it up, then take it to one of the <b>other team's two sites (A or B)</b> on The Depot.</li><li>Stop inside their ring and <b>stay still for 5 s</b>. Getting shoved drains the timer; leaving the ring resets it. Base destroyed: <b>+1 point</b>, everyone respawns.</li><li><b>Pass</b> it with <b>F</b> or the <b>PASS</b> button: it's lobbed to a team-mate in front of you (or straight ahead) and flies over the low barriers. Anyone can catch it, so watch for interceptions.</li><li>Wreck the carrier and the bomb drops. Your team-mates can't hurt you.</li><li>Most points after 3:00 wins.</li></ol>
+      <ol class="bsRules"><li><b>One life per round.</b> Wrecked cars sit out until the next one, so pick your fights.</li><li>Take the round by parking the bomb (<b>amber ring</b>) in one of <b>their sites (A or B)</b> for <b>5 s</b>, or by wrecking their whole team.</li><li>After <b>75 s</b>, more cars left wins it. <b>Pass</b> with <b>F</b> / <b>PASS</b>; anyone can catch.</li><li><b>🔧 Repair kits</b> turn up now and then (damaged cars only). <b>First to 3</b> wins.</li></ol>
       </div>
   </div>
 </div></div>
@@ -950,9 +1004,9 @@
   <h2>📦 DELIVERY RUN <small style="font:700 13px system-ui;color:#8d97a8;letter-spacing:.08em">FOUNDRY DISTRICT · LEARN THE CITY</small></h2></div>
   <div class="bsGrid">
     <div><h4 class="bsH4">YOUR CAR <small style="color:#8d97a8;font-weight:700;letter-spacing:0">(same tune for everyone)</small></h4><div id="dsCars"></div><div id="dsStats" class="dsStats"></div></div>
-    <div><button id="dsGo">START SHIFT</button>
+    <div><h4 class="bsH4">LEVEL</h4><div id="dsLv" class="dsLv"></div><p id="dsLvInfo" class="dsLvInfo"></p><button id="dsGo">START LEVEL 1</button>
       <h4 class="bsH4">HOW IT WORKS</h4>
-      <ol class="bsRules"><li>Load up at the <b>depot</b>. The addresses show <b>once, for 4 seconds</b>. Remember them.</li><li>Stop in the right curb or bay for a moment to drop each package, in any order. <b>$30</b> each.</li><li>Beat the clock, then head back to the depot for a bigger batch.</li><li>Traffic honks if you hit it. Some cars hit back. Damage carries over; missing parts cost <b>$15</b> each at the end.</li></ol>
+      <ol class="bsRules"><li>Load up at the <b>depot</b>. The addresses show <b>once</b>; bigger batches get longer to look.</li><li>Stop in the right curb or bay for a moment to drop each package, in any order. <b>$30</b> each.</li><li>Beat the clock, then head back to the depot for the next level. Lose and you can start again <b>from the level you reached</b>.</li><li>Traffic honks if you hit it. Some cars hit back. Damage carries over; missing parts cost <b>$15</b> each at the end.</li></ol>
     </div>
   </div>
 </div></div>
@@ -1043,7 +1097,7 @@ const w2s = (x, y) => [innerWidth / 2 + (x - camX) * ppu + shX, innerHeight / 2 
 function worldTf() { ctx.setTransform(dpr * ppu, 0, 0, dpr * ppu * TK, dpr * (innerWidth / 2 - camX * ppu + shX), dpr * (innerHeight / 2 - camY * ppu * TK + shY)); }
 function updateCamera(dt) {
   let tx, ty;
-  const fc = player && player.dead && mpOn() ? (cars.find(c => c.isPlayer && !c.dead) || player) : player;
+  const fc = specTarget() || player;
   if (drOn() && DR.phase === 'preview' && DR.cam) { tx = DR.cam[0]; ty = DR.cam[1]; }
   else if (fc && (state === 'play' || state === 'over')) { tx = fc.x + fc.vx * .28; ty = fc.y + fc.vy * .28; }
   else { const t = performance.now() / 1000; tx = W / 2 + Math.sin(t * .12) * 300; ty = H / 2 + Math.sin(t * .09) * 140; }
@@ -1051,6 +1105,10 @@ function updateCamera(dt) {
   const x0 = CB.x0 + hw, x1 = CB.x1 - hw, y0 = CB.y0 + hh, y1 = CB.y1 - hh;
   tx = x0 > x1 ? (CB.x0 + CB.x1) / 2 : clamp(tx, x0, x1); ty = y0 > y1 ? (CB.y0 + CB.y1) / 2 : clamp(ty, y0, y1);
   const k = 1 - Math.exp(-(state === 'play' ? 5 : 1.2) * dt); camX += (tx - camX) * k; camY += (ty - camY) * k;
+}
+function specTarget() { // who the camera watches while you're wrecked: a team-mate first
+  if (!player || !player.dead || !(mpOn() || (bombOn() && performance.now() - (player._deadAt || 0) > 1400))) return null;
+  return (teamOn() && cars.find(c => c.isPlayer && !c.dead && !c.gone && c.team === player.team)) || cars.find(c => c.isPlayer && !c.dead && !c.gone) || null;
 }
 function snapCamera() { if (player) { camX = player.x; camY = player.y; } updateCamera(1); }
 
@@ -1257,7 +1315,7 @@ const mpOn = () => !!NET.role && NET.started;
 const isHost = () => NET.role === 'host' && NET.started;
 const isGuest = () => NET.role === 'guest' && NET.started;
 const versusOn = () => mpOn() && NET.mode === 'versus' && VS.kind !== 'hide';
-const BOMB_PLANT = 5, BOMB_R = 34, BOMB_IDLE = 45, BOMB_PICK = 30, BOMB_ST = ['off', 'wait', 'fall', 'ground', 'carried', 'boom', 'air'];
+const BOMB_PLANT = 5, BOMB_R = 34, BOMB_IDLE = 45, BOMB_PICK = 30, BOMB_ST = ['off', 'wait', 'fall', 'ground', 'carried', 'boom', 'air', 'end'], BOMB_WIN = 3, BOMB_RT = 75, BOMB_MAXR = 7, BOMB_HOW = ['', 'plant', 'wipe', 'time'];
 const BOMB = { st: 'off', x: W / 2, y: H / 2, t: 0, fall: 0, carrier: 0, plant: 0, cool: 0, round: 0, resetT: 0, sites: [[[250, H / 2]], [[W - 250, H / 2]]], site: -1, air: null, lift: 0, noPick: 0, noPickT: 0, lastTeam: -1 };
 let LOCAL_TEAM = false; const SPB = { diff: 1, car: 'cruiser' };
 const teamOn = () => versusOn() || (LOCAL_TEAM && !NET.role);
@@ -2072,7 +2130,7 @@ function startWave() {
   if (fresh) introT = 2.4;
   const hz = (ai !== arenaIdxPrev) ? HAZ_TXT[arena.id] : '';
   arenaIdxPrev = ai;
-  if (teamOn() && VS.kind === 'bomb') { introT = 2.6; banner('💣 BOMB RUN', 'Two sites each (A and B)  /  park the bomb in one for 5 s  /  F or PASS to lob it  /  ' + arena.name, 3000); beep(440, .1); updateHud(); return; }
+  if (teamOn() && VS.kind === 'bomb') { introT = 2.6; banner('💣 BOMB RUN · ROUND 1', 'One life per round  /  plant the bomb or wreck their team  /  first to ' + BOMB_WIN, 3000); beep(440, .1); updateHud(); return; }
   if (teamOn()) { introT = 2.6; banner('TEAM DERBY', 'Most points in 3:00 wins  /  kill +' + VS_KILL + (VS.boss !== 'none' ? '  /  boss +' + VS_BOSS_PTS : '') + '  /  ' + arena.name, 2800); beep(440, .1); updateHud(); return; }
   if (isBossWave(wave)) { const bi = BOSS_INFO[bossKind(wave)]; introT = 2.8; banner('BOSS WAVE', bi.name + '<br>' + bi.hint + (hz ? '<br>' + hz : ''), 3200); }
   else banner(gameMode === 'daily' ? 'DAILY ' + wave : 'WAVE ' + wave, sub + n + ' cars' + (fresh ? '<br>NEW: ' + TYPES[fresh].name.toUpperCase() + ' - ' + TYPES[fresh].desc : '') + (hz ? '<br>' + hz : ''), fresh || hz ? 2800 : 1600);
@@ -2882,8 +2940,8 @@ function step(dt) {
   // pickups
   if (state === 'play' && waveMode === 'fight' && introT <= 0 && cars.some(h => h.isPlayer && !h.dead)) {
     pickT -= dt;
-    if (pickT <= 0) { if (pickups.length < 2) spawnPickup(); pickT = rand(6, 10); }
-    for (const p of pickups) { p.t += dt; const h = cars.find(h => h.isPlayer && !h.dead && Math.hypot(p.x - h.x, p.y - h.y) < 28); if (h && p.t < 90) { p.t = 99; collectPickup(p, h); } }
+    if (pickT <= 0) { if (bombOn()) { if (!pickups.length && BOMB.st !== 'boom' && BOMB.st !== 'end') bombKit(); pickT = rand(16, 24); } else { if (pickups.length < 2) spawnPickup(); pickT = rand(6, 10); } }
+    for (const p of pickups) { p.t += dt; const h = cars.find(h => h.isPlayer && !h.dead && Math.hypot(p.x - h.x, p.y - h.y) < 28 && !(bombOn() && p.k === 'wrench' && !h.lost)); if (h && p.t < 90) { p.t = 99; collectPickup(p, h); } }
     pickups = pickups.filter(p => p.t < p.life);
   }
   // debris with a little height so parts tumble and bounce
@@ -2910,7 +2968,7 @@ function step(dt) {
   else if (state === 'play' && hideOn()) { hrTick(dt); if (mpOn() && NET.overArmed) { gameOverT -= dt; if (gameOverT <= 0) endGame(); } }
   else if (state === 'play') {
     if (teamHost()) vsTick(dt);
-    const over = LOCAL_TEAM && !NET.role ? VS.matchT <= 0 : mpOn() ? netRoundOver() : player.dead;
+    const over = LOCAL_TEAM && !NET.role ? vsMatchOver() : mpOn() ? netRoundOver() : player.dead;
     if (over) {
       if ((mpOn() || teamOn()) && !NET.overArmed) { NET.overArmed = true; gameOverT = teamOn() ? 2.6 : 2.2; }
       gameOverT -= dt;
@@ -3148,9 +3206,13 @@ function vsHud() {
   const t = Math.ceil(VS.matchT), txt = Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'), bar = $('vsBar');
   if (bar._t !== txt) { bar._t = txt; bar.querySelector('.t').textContent = txt; bar.querySelector('.t').classList.toggle('low', t <= 30); }
   if (bar._s !== VS.score.join()) { bar._s = VS.score.join(); bar.querySelector('.b').textContent = VS.score[0]; bar.querySelector('.r').textContent = VS.score[1]; }
-  const rm = $('respawnMsg'), dead = player && player.dead && VS.matchT > 0;
-  if (dead) { const left = Math.max(0, VS_RESPAWN - (performance.now() - (player._deadAt || performance.now())) / 1000); rm.innerHTML = 'WRECKED<small>back in ' + Math.ceil(left) + '...</small>'; }
-  rm.style.display = dead ? '' : 'none';
+  if (bombOn()) { const pip = t => cars.filter(c => c.isPlayer && (c.team | 0) === t).map(c => '<i class="' + (c.dead ? 'x' : '') + '"></i>').join(''), pk = pip(0) + '|' + pip(1);
+    if (bar._p !== pk) { bar._p = pk; bar.querySelector('.ap.b').innerHTML = pip(0); bar.querySelector('.ap.r').innerHTML = pip(1); } }
+  else if (bar._p) { bar._p = ''; bar.querySelectorAll('.ap').forEach(e => e.innerHTML = ''); }
+  const rm = $('respawnMsg'), dead = player && player.dead && (VS.matchT > 0 || bombOn()) && !(bombOn() && BOMB.st === 'end');
+  if (dead && bombOn()) { const w = specTarget(); rm.innerHTML = 'WRECKED<small>out until the next round' + (w ? ' · watching ' + esc(w.pname || '') : '') + '</small>'; }
+  else if (dead) { const left = Math.max(0, VS_RESPAWN - (performance.now() - (player._deadAt || performance.now())) / 1000); rm.innerHTML = 'WRECKED<small>back in ' + Math.ceil(left) + '...</small>'; }
+  rm.style.display = dead ? 'block' : 'none';
 }
 function render() {
   try { vsHud(); modHud(); } catch (e) {}
@@ -3366,9 +3428,10 @@ function bombBases() {
 const siteName = (t, i) => TEAM_NAME[t] + (BOMB.sites[t].length > 1 ? ' ' + 'AB'[i | 0] : ' BASE');
 function nearSite(t, x, y) { let bi = 0, bd = 1e9; BOMB.sites[t].forEach((p, i) => { const d = Math.hypot(p[0] - x, p[1] - y); if (d < bd) { bd = d; bi = i; } }); return [bi, bd]; }
 function bombRound(first) {
-  const B = BOMB; B.round++; B.st = 'wait'; B.t = first ? rand(2, 6) : rand(2, 7); B.carrier = 0; B.plant = 0; B.cool = 0; B.resetT = 0; B.site = -1; B.air = null; B.lift = 0;
+  const B = BOMB; B.round++; B.st = 'wait'; B.t = first ? rand(2, 6) : rand(2, 7); B.carrier = 0; B.plant = 0; B.cool = 0; B.resetT = 0; B.site = -1; B.air = null; B.lift = 0; B.how = '';
+  VS.matchT = BOMB_RT; VS.warned = false; pickups = []; pickT = rand(12, 18); // each round has its own clock; kits come back fresh
   for (const c of cars) if (c.isPlayer) { c.bomb = false; c.bombK = 1; if (c.brain) c.brain.site = null; if (!first && !c.gone) vsRespawn(c, true); }
-  if (!first) { introT = 1.4; banner('ROUND ' + B.round, TEAM_NAME[0] + ' ' + VS.score[0] + '  –  ' + VS.score[1] + ' ' + TEAM_NAME[1] + '  /  bomb drops in a few seconds', 1600); }
+  if (!first) { introT = 1.4; banner('ROUND ' + B.round, TEAM_NAME[0] + ' ' + VS.score[0] + '  –  ' + VS.score[1] + ' ' + TEAM_NAME[1] + '  /  one life each  /  first to ' + BOMB_WIN, 1800); }
 }
 function bombDropSpot() {
   const B = BOMB, drops = arena && arena.drops; let p = null;
@@ -3390,7 +3453,7 @@ function bombLoose(c) {
 function bombBoom(c) {
   const B = BOMB, t = c.team | 0, si = B.site >= 0 ? B.site : nearSite(1 - t, c.x, c.y)[0], base = B.sites[1 - t][si];
   VS.score[t]++; c.plants = (c.plants || 0) + 1; c.score = (c.score || 0) + 300; c.bomb = false; c.bombK = 1;
-  B.st = 'boom'; B.resetT = 3.4; B.carrier = 0; B.plant = 0; B.x = base[0]; B.y = base[1];
+  B.st = 'boom'; B.resetT = 3.4; B.carrier = 0; B.plant = 0; B.x = base[0]; B.y = base[1]; B.how = 'plant';
   for (const o of cars) if (!o.dead) { const dx = o.x - base[0], dy = o.y - base[1], d = Math.hypot(dx, dy); if (d < 220 && d > 1) { const k = (1 - d / 220) * 520; o.vx += dx / d * k; o.vy += dy / d * k; o.spin += rand(-4, 4); } }
   bombFx('boom', base[0], base[1], t);
   banner(TEAM_NAME[t] + ' SCORES!', esc(c.pname || '') + ' blew up ' + siteName(1 - t, si) + '  /  ' + TEAM_NAME[0] + ' ' + VS.score[0] + ' – ' + VS.score[1] + ' ' + TEAM_NAME[1], 2600);
@@ -3432,8 +3495,15 @@ function bombFx(k, x, y, team, id) { // effects only (host and guests)
 function bombTick(dt) { // host / single player
   const B = BOMB;
   if (B.cool > 0) B.cool -= dt; if (B.noPickT > 0) B.noPickT -= dt;
-  if (B.st === 'boom') { B.resetT -= dt; if (B.resetT <= 0 && VS.matchT > 0) bombRound(false); return; }
+  if (B.st === 'end') return;
+  if (B.st === 'boom') { B.resetT -= dt; if (B.resetT <= 0) { if (bombMatchDone()) B.st = 'end'; else bombRound(false); } return; }
   if (introT > 0) return;
+  { // one life per round: a team with nobody left loses it; on the clock, more cars standing (then more parts) wins
+    const up = t => cars.filter(c => c.isPlayer && !c.dead && !c.gone && (c.team | 0) === t), a0 = up(0), a1 = up(1);
+    if (!a0.length || !a1.length) { bombRoundEnd(!a0.length && !a1.length ? -1 : a0.length ? 0 : 1, 'wipe'); return; }
+    if (VS.matchT <= 0) { const hp = l => l.reduce((n, c) => n + PARTS.length - (c.lost | 0), 0); bombRoundEnd(a0.length !== a1.length ? (a0.length > a1.length ? 0 : 1) : hp(a0) !== hp(a1) ? (hp(a0) > hp(a1) ? 0 : 1) : -1, 'time'); return; }
+    if (!VS.warned && VS.matchT <= 20) { VS.warned = true; banner('20 SECONDS', 'No plant? Most cars standing takes the round', 1600); }
+  }
   if (B.st === 'wait') { B.t -= dt; if (B.t <= 0) bombDropSpot(); return; }
   if (B.st === 'fall') { B.fall -= dt; if (B.fall <= 0) { B.st = 'ground'; B.cool = 0; bombFx('land', B.x, B.y); } return; }
   if (B.st === 'air') {
@@ -3471,15 +3541,32 @@ function bombTick(dt) { // host / single player
     if (B.holdT > 0) B.holdT -= dt;
   }
 }
+const bombMatchDone = () => VS.score[0] >= BOMB_WIN || VS.score[1] >= BOMB_WIN || BOMB.round >= BOMB_MAXR;
+const vsMatchOver = () => bombOn() ? BOMB.st === 'end' : VS.matchT <= 0;
+function bombRoundEnd(t, how) { // wipe or clock (a plant goes through bombBoom)
+  const B = BOMB; if (t >= 0) VS.score[t]++;
+  const c = B.st === 'carried' && cars.find(o => o.id === B.carrier); if (c) { c.bomb = false; c.bombK = 1; }
+  B.st = 'boom'; B.resetT = 3; B.carrier = 0; B.plant = 0; B.site = -1; B.air = null; B.lift = 0; B.how = how;
+  const why = how === 'wipe' ? (t < 0 ? 'Both teams wrecked' : TEAM_NAME[1 - t] + ' team wrecked') : t < 0 ? 'Time! Same cars and parts left' : 'Time! More cars still standing';
+  banner(t < 0 ? 'DRAW ROUND' : TEAM_NAME[t] + ' TAKES THE ROUND', why + '  /  ' + TEAM_NAME[0] + ' ' + VS.score[0] + ' – ' + VS.score[1] + ' ' + TEAM_NAME[1], 2400);
+  if (t >= 0) { SFX.horn(); SFX.cheer(1); }
+}
+function bombKit() { // a repair kit somewhere in the open, away from cars: fixes one part, only damaged cars can take it
+  const drops = arena && arena.drops; let p = null;
+  for (let i = 0; i < 30 && !p; i++) { const d = drops && Math.random() < .5 ? drops[(Math.random() * drops.length) | 0] : [rand(W * .22, W * .78), rand(H * .18, H * .82)], q = clearSpot(d[0] + rand(-90, 90), d[1] + rand(-60, 60), 34); if (!cars.some(o => !o.dead && Math.hypot(o.x - q[0], o.y - q[1]) < 120) && !Object.values(B_SITES()).some(s => Math.hypot(s[0] - q[0], s[1] - q[1]) < 90)) p = q; }
+  if (!p) return; pickups.push({ k: 'wrench', x: p[0], y: p[1], t: 0, life: 22 });
+  addText(p[0], p[1] - 30, '🔧 REPAIR KIT', PK.wrench.col); ring(p[0], p[1], 50, PK.wrench.col, .5, 4); nev('s', 'tick');
+}
+const B_SITES = () => BOMB.sites[0].concat(BOMB.sites[1]);
 function bombState() {
   const B = BOMB, s = [BOMB_ST.indexOf(B.st), B.x | 0, B.y | 0, B.carrier || 0, +B.plant.toFixed(2), +Math.max(0, B.fall).toFixed(2), B.round, +Math.max(0, B.t).toFixed(1), B.site, B.lift | 0, B.air ? B.air.tx | 0 : 0, B.air ? B.air.ty | 0 : 0];
   for (const t of [0, 1]) { s.push(B.sites[t].length); for (const p of B.sites[t]) s.push(p[0], p[1]); }
-  return s;
+  s.push(Math.max(0, BOMB_HOW.indexOf(B.how || ''))); return s;
 }
 function bombApply(a) { // guests
   const B = BOMB; B.st = BOMB_ST[a[0]] || 'off'; B.x = a[1]; B.y = a[2]; B.carrier = a[3]; B.plant = a[4]; B.fall = a[5]; B.round = a[6]; B.t = a[7]; B.site = a[8]; B.lift = a[9];
   B.air = B.st === 'air' ? { tx: a[10], ty: a[11] } : null;
-  let i = 12; const sites = []; for (const t of [0, 1]) { const n = a[i++] | 0, l = []; for (let k = 0; k < n; k++) { l.push([a[i], a[i + 1]]); i += 2; } sites.push(l); } if (sites[0].length && sites[1].length) B.sites = sites;
+  let i = 12; const sites = []; for (const t of [0, 1]) { const n = a[i++] | 0, l = []; for (let k = 0; k < n; k++) { l.push([a[i], a[i + 1]]); i += 2; } sites.push(l); } if (sites[0].length && sites[1].length) B.sites = sites; B.how = BOMB_HOW[a[i] | 0] || '';
   for (const c of cars) { c.bomb = c.id === B.carrier && B.st === 'carried'; c.bombK = c.bomb ? .92 : 1; }
 }
 /* bot navigation: a coarse grid with A* so bots drive round the container walls instead of into them */
@@ -3565,7 +3652,7 @@ function botAI(c, dt) {
   const b = c.brain || (c.brain = { t: 0, wt: 0, stuck: 0, rev: 0, rs: 1, gx: c.x, gy: c.y, tgt: null, stop: false, ram: false, site: null, wx: c.x, wy: c.y, last: true });
   c.handbrake = false; c.boost = false;
   const B = BOMB;
-  if (introT > 0 || state !== 'play' || B.st === 'boom') { c.throttle = 0; c.steer = 0; c.handbrake = true; return; }
+  if (introT > 0 || state !== 'play' || B.st === 'boom' || B.st === 'end') { c.throttle = 0; c.steer = 0; c.handbrake = true; return; }
   b.t -= dt; b.wt -= dt;
   if (b.t <= 0) { b.t = [.45, .28, .18][c.diff | 0] + Math.random() * .12; botPlan(c, b); b.wt = 0; if (c.mod) botMod(c); }
   if (b.tgt && !b.tgt.dead) { const lead = Math.min(.5, Math.hypot(b.tgt.x - c.x, b.tgt.y - c.y) / 480) * (c.diff ? 1 : .5); b.gx = b.tgt.x + b.tgt.vx * lead; b.gy = b.tgt.y + b.tgt.vy * lead; }
@@ -3592,6 +3679,8 @@ function botPlan(c, b) {
     }
     return;
   }
+  const hurt = (c.lost | 0) >= 3, kit = (c.lost | 0) >= 2 && pickups.find(p => p.k === 'wrench' && dist(c, p.x, p.y) < 560);
+  if (kit && !(carrier && carrier.team !== t && nearSite(t, carrier.x, carrier.y)[1] < 320)) { b.gx = kit.x; b.gy = kit.y; return; } // patch up first unless our site is about to go
   if (B.st === 'ground' || B.st === 'fall' || B.st === 'air') {
     const bx = B.st === 'air' && B.air ? B.air.tx : B.x, by = B.st === 'air' && B.air ? B.air.ty : B.y;
     const rank = mates.slice().sort((p, q) => dist(p, bx, by) - dist(q, bx, by)).indexOf(c);
@@ -3614,8 +3703,8 @@ function botPlan(c, b) {
   }
   // waiting for the drop: spread over the three lanes near the middle
   const lanes = arena && arena.drops ? arena.drops : [[W / 2, H / 2 - 120], [W / 2, H / 2], [W / 2, H / 2 + 120]], ln = lanes[(c.slot | 0) % lanes.length];
-  b.gx = ln[0] + (t ? 170 : -170); b.gy = ln[1];
-  if (close) { b.tgt = close; b.ram = true; }
+  b.gx = ln[0] + (t ? 170 : -170) * (hurt ? 1.8 : 1); b.gy = ln[1];
+  if (close && !hurt) { b.tgt = close; b.ram = true; }
 }
 /* drawing (world space). Ground: sites + bomb marker under the cars; top: bomb on the carrier, in the air, plant progress */
 function drawBombGround() {
@@ -3708,7 +3797,7 @@ function bombHud() {
       else if (B.plant > 0) { t = '💣 ' + TEAM_NAME[tc] + ' IS PLANTING AT ' + siteName(1 - tc, B.site) + ' ' + Math.max(0, BOMB_PLANT - B.plant).toFixed(1) + 's'; cls = me && me.team !== tc ? 'alarm' : 'hot'; }
       else { t = '💣 ' + esc(carrier.pname || TEAM_NAME[tc]) + ' (' + TEAM_NAME[tc] + ') has the bomb'; cls = me && me.team !== tc ? 'alarm' : ''; }
       el.style.setProperty('--tc', TEAM_COL[tc]);
-    } else if (B.st === 'boom') t = '💥 Site destroyed! Next round...';
+    } else if (B.st === 'boom') t = B.how === 'plant' ? '💥 Site destroyed! Next round...' : B.how === 'wipe' ? '💀 Team wrecked! Next round...' : B.how === 'time' ? '⏱ Time! Next round...' : 'Round over...';
   }
   if (el._t !== t) { el._t = t; el.innerHTML = t; el.style.display = t ? 'block' : 'none'; }
   if (el._c !== cls) { el._c = cls; el.className = cls; }
@@ -3926,7 +4015,7 @@ document.addEventListener('click', e => {
 SPB.car = lsGet('scrapArenaBombCar', 'cruiser'); SPB.diff = lsGet('scrapArenaBombDiff', 1);
 function openBomb() { $('bombSheet').classList.remove('hidden'); renderBombSheet(); }
 function startBombSP(dev) {
-  hrLeave(); drLeave();
+  hrLeave(); drLeave(); podClear();
   DEV.bombRun = dev === true; // dev-panel test run: nothing is saved or awarded
   if (NET.role) netLeave(true);
   if (devRun) { devRun = false; document.body.classList.remove('dev'); }
@@ -3968,16 +4057,16 @@ function bombSpOverInner(quit) {
 function vsTick(dt) { // host / single player: match clock, boss arrival, respawns
   if (bombOn()) bombTick(dt);
   if (introT > 0) return;
-  VS.matchT = Math.max(0, VS.matchT - dt);
+  if (!(bombOn() && (BOMB.st === 'boom' || BOMB.st === 'end'))) VS.matchT = Math.max(0, VS.matchT - dt);
   if (VS.boss !== 'none' && VS.bossState === 0) {
     if (!VS.warned && VS.matchT <= VS_BOSS_AT + 5) { VS.warned = true; banner('BOSS IN 5', BOSS_INFO[VS.boss].name + ' is coming', 1600); }
     if (VS.matchT <= VS_BOSS_AT) spawnVsBoss();
   }
-  for (const c of cars) if (c.isPlayer && c.dead && !c.gone && VS.matchT > 0 && !(bombOn() && BOMB.st === 'boom')) { c.respawnT = (c.respawnT ?? VS_RESPAWN) - dt; if (c.respawnT <= 0) vsRespawn(c); }
+  if (!bombOn()) for (const c of cars) if (c.isPlayer && c.dead && !c.gone && VS.matchT > 0) { c.respawnT = (c.respawnT ?? VS_RESPAWN) - dt; if (c.respawnT <= 0) vsRespawn(c); }
 }
 function netRoundOver() {
   const hs = cars.filter(c => c.isPlayer), alive = hs.filter(c => !c.dead);
-  if (versusOn()) return VS.matchT <= 0;
+  if (versusOn()) return vsMatchOver();
   return alive.length === 0;
 }
 function netDriveRemote(c, dt) {
@@ -4426,7 +4515,7 @@ function netLeave(quiet) {
   if (!quiet) renderMpLobby();
 }
 function netStartGame() {
-  NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null; NET.evq = []; NET.inHist = []; NET.inT = {}; NET.off = null; NET.rt = null; NET.localHit = null; NET.lastT = 0; NET.jit = 0; NET.jpk = 0; NET.acc = 0; NET.lastSnapAt = 0; NET.list = null;
+  podClear(); NET.started = true; NET.overArmed = false; NET.emo = 0; NET.emoSeen = {}; NET.myLost = null; NET.evq = []; NET.inHist = []; NET.inT = {}; NET.off = null; NET.rt = null; NET.localHit = null; NET.lastT = 0; NET.jit = 0; NET.jpk = 0; NET.acc = 0; NET.lastSnapAt = 0; NET.list = null;
   $('mpPanel').classList.add('hidden'); $('overlay').classList.add('hidden'); $('card').classList.remove('over');
   document.body.classList.add('mp'); document.body.classList.toggle('vs', NET.lobby.mode === 'versus');
   LOCAL_TEAM = false; BOMB.round = 0; BOMB.st = 'off'; $('clubAwardBox').innerHTML = '';
@@ -4484,7 +4573,7 @@ function bombResultsHtml(r) {
   const mvp = P.slice().sort((a2, b2) => b2.pts - a2.pts)[0];
   const row = p => '<tr class="' + (p.pid === PID ? 'me' : '') + '"><td><i style="background:' + TEAM_COL[p.team] + '"></i>' + (p.club && CLUB_BY[p.club] ? '<img class="cb" src="' + clubBadgeUrl(p.club) + '" alt="">' : '') + esc(p.name) + (p.bot ? ' <em class="bot">BOT</em>' : '') + (mvp && p === mvp ? ' ⭐' : '') + '<small>' + esc(p.car) + '</small></td><td>' + p.plants + '</td><td>' + p.stops + '</td><td>' + p.k + '</td><td>' + p.d + '</td><td>' + p.pts + '</td></tr>';
   const body = [0, 1].map(t => P.filter(p => p.team === t).sort((a2, b2) => b2.pts - a2.pts).map(row).join('')).join('');
-  return '<div class="vsRes"><div class="sc"><b style="color:' + TEAM_COL[0] + '">BLUE ' + r.vs.score[0] + '</b><span>–</span><b style="color:' + TEAM_COL[1] + '">' + r.vs.score[1] + ' RED</b></div><div class="sub">💣 Bomb Run · 3:00 · each destroyed base = 1 point</div>' +
+  return '<div class="vsRes"><div class="sc"><b style="color:' + TEAM_COL[0] + '">BLUE ' + r.vs.score[0] + '</b><span>–</span><b style="color:' + TEAM_COL[1] + '">' + r.vs.score[1] + ' RED</b></div><div class="sub">💣 Bomb Run · rounds won · first to ' + BOMB_WIN + '</div>' +
     '<table><tr><th>Player</th><th>💣</th><th>🛑</th><th>K</th><th>D</th><th>Pts</th></tr>' + body + '</table><div class="sub" style="margin-top:4px">💣 bases blown up · 🛑 bomb carriers stopped</div></div>';
 }
 function netShowResults(r) { try { netShowResultsInner(r); } catch (e) { resultsFailSafe(e); } }
@@ -4560,9 +4649,9 @@ function vsLobbyHtml(L2) {
   const n = { dozer: 0, crane: 0, twin: 0, none: 0 }; for (const v of Object.values(V.votes)) n[v]++;
   const mine = V.votes[PID];
   const opt = (k, label) => '<button class="vsVote' + (mine === k ? ' on' : '') + '" data-vote="' + k + '">' + (k !== 'none' && bossPic(k) ? '<img src="' + bossPic(k) + '" alt="">' : '<i>🚫</i>') + '<div class="cap"><span>' + label + '</span><em>' + n[k] + ' vote' + (n[k] === 1 ? '' : 's') + '</em></div></button>';
-  const kinds = '<div class="vsKinds">' + [['derby', '💥 TEAM DERBY', 'Most points in 3:00'], ['bomb', '💣 BOMB RUN', 'Plant the bomb · bots fill seats'], ['hide', '👀 HIDE & RUN', 'Everyone hides once · 2–6']].map(([k, t, d]) => '<button class="vsKind' + ((V.kind || 'derby') === k ? ' on' : '') + '" data-kind="' + k + '"' + (NET.role === 'host' ? '' : ' disabled') + '><b>' + t + '</b><small>' + d + '</small></button>').join('') + '</div>';
+  const kinds = '<div class="vsKinds">' + [['derby', '💥 TEAM DERBY', 'Most points in 3:00'], ['bomb', '💣 BOMB RUN', 'Rounds · one life each · bots fill seats'], ['hide', '👀 HIDE & RUN', 'Everyone hides once · 2–6']].map(([k, t, d]) => '<button class="vsKind' + ((V.kind || 'derby') === k ? ' on' : '') + '" data-kind="' + k + '"' + (NET.role === 'host' ? '' : ' disabled') + '><b>' + t + '</b><small>' + d + '</small></button>').join('') + '</div>';
   if (V.kind === 'hide') { fdLoadArt(); return kinds + '<div class="hrLobby"><div class="hrLobbyPl">' + L2.players.map(p => '<div class="pl"><img src="' + tileUrl(p.car) + '"><span>' + esc(p.name) + (p.pid === PID ? ' (you)' : '') + '</span><small>' + (p.host ? 'HOST' : 'READY') + '</small></div>').join('') + '</div><div class="vsBossCol"><h4>👀 HIDE &amp; RUN <small>Foundry District</small></h4><ol><li>Each round one driver hides with an <b>8 s head start</b>; everyone else seeks.</li><li>One touch from a seeker ends the round. <b>90 s</b> = escaped.</li><li>Seekers get clues. Everyone hides once; the <b>longest survival</b> wins.</li></ol></div></div>'; }
-  if (V.kind === 'bomb') return kinds + '<div class="vsTeams">' + row(0) + row(1) + '</div><div class="vsBossCol bombCol"><h4>💣 BOMB RUN <small>3v3 · 3:00</small></h4><ol><li>A bomb drops in the first 10 s inside an <b style="color:#ffb020">amber ring</b>.</li><li>Grab it and drive it to one of their two sites (A or B). Pass it with F / PASS.</li><li>Sit still in their ring for <b>5 s</b>: base destroyed = <b>1 point</b>, then everyone respawns.</li><li>Wreck the carrier and the bomb drops.</li></ol><p>Empty seats are filled with bots 🤖</p></div>';
+  if (V.kind === 'bomb') return kinds + '<div class="vsTeams">' + row(0) + row(1) + '</div><div class="vsBossCol bombCol"><h4>💣 BOMB RUN <small>3v3 · first to 3 rounds</small></h4><ol><li><b>One life per round</b>: wrecked cars sit out until the next one.</li><li>Plant the bomb (<b style="color:#ffb020">amber ring</b>) in one of their sites for <b>5 s</b>, or wreck their whole team.</li><li>75 s clock: more cars left wins the round. Pass with F / PASS.</li><li>🔧 Repair kits turn up now and then.</li></ol><p>Empty seats are filled with bots 🤖</p></div>';
   return kinds + '<div class="vsTeams">' + row(0) + row(1) + '</div><div class="vsBossCol"><h4>BOSS VOTE <small>arrives at 1:00 · +' + VS_BOSS_PTS + '</small></h4><div class="vsVotes">' + opt('dozer', 'The Dozer') + opt('crane', 'The Crane') + opt('twin', 'The Twins') + opt('none', 'No boss') + '</div></div>';
 }
 document.addEventListener('click', e => { const t = e.target.closest('#mpPlayers [data-slot], #mpPlayers [data-vote], #mpPlayers [data-kind]'); if (!t) return; if (t.dataset.slot != null) vsAct({ slot: +t.dataset.slot }); else if (t.dataset.kind) vsAct({ kind: t.dataset.kind }); else vsAct({ vote: t.dataset.vote }); });
@@ -4581,7 +4670,7 @@ function renderMpLobby() {
   if (!inRoom) return;
   const L2 = NET.lobby, amHost = NET.role === 'host';
   $('mpRoom').textContent = NET.room;
-  $('mpModeTxt').innerHTML = L2.mode === 'versus' ? (NET.vs.kind === 'hide' ? '<b>👀 HIDE &amp; RUN</b> - everyone hides once, the rest seek. Longest survival wins.' : NET.vs.kind === 'bomb' ? '<b>💣 BOMB RUN</b> - 3v3, plant the bomb in their base. Bots fill empty seats. Tap a box to switch team.' : '<b>TEAM DERBY</b> - blue vs red, 3:00, kill +' + VS_KILL + ', boss +' + VS_BOSS_PTS + '. Tap an empty box to switch team.') : '<b>CO-OP WAVES</b> - team up against the waves and bosses';
+  $('mpModeTxt').innerHTML = L2.mode === 'versus' ? (NET.vs.kind === 'hide' ? '<b>👀 HIDE &amp; RUN</b> - everyone hides once, the rest seek. Longest survival wins.' : NET.vs.kind === 'bomb' ? '<b>💣 BOMB RUN</b> - 3v3 rounds, one life each: plant the bomb or wreck their team. First to 3. Bots fill empty seats. Tap a box to switch team.' : '<b>TEAM DERBY</b> - blue vs red, 3:00, kill +' + VS_KILL + ', boss +' + VS_BOSS_PTS + '. Tap an empty box to switch team.') : '<b>CO-OP WAVES</b> - team up against the waves and bosses';
   $('mpModeSw').style.display = amHost ? '' : 'none'; $('mpModeSw').textContent = L2.mode === 'versus' ? (L2.players.length > COOP_MAX ? 'Co-op is 2 players max' : 'Switch to Co-op') : 'Switch to Versus'; $('mpModeSw').disabled = L2.mode === 'versus' && L2.players.length > COOP_MAX;
   const ps = L2.players.slice().sort((a2, b2) => (b2.host ? 1 : 0) - (a2.host ? 1 : 0));
   $('mpPlayers').classList.toggle('vsMode', L2.mode === 'versus');
@@ -4601,7 +4690,7 @@ function mpOpen(code) {
 const randCode = () => Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ'[(Math.random() * 23) | 0]).join('');
 $('goOnline').addEventListener('click', () => mpOpen());
 $('mpClose').addEventListener('click', () => { $('mpPanel').classList.add('hidden'); });
-const MP_TAB = { coop: 'Team up with 1 friend (2 players) against the waves and bosses. No friendly fire; a wrecked partner comes back when the wave is cleared.', versus: 'Up to 6 players, blue vs red. Pick 💥 Team Derby (most points in 3:00) or 💣 Bomb Run (3v3, bots fill empty seats) in the lobby.' };
+const MP_TAB = { coop: 'Team up with 1 friend (2 players) against the waves and bosses. No friendly fire; a wrecked partner comes back when the wave is cleared.', versus: 'Up to 6 players, blue vs red. Pick 💥 Team Derby (most points in 3:00) or 💣 Bomb Run (3v3 rounds, one life each, bots fill empty seats) in the lobby.' };
 function mpTab(m) { document.querySelectorAll('#mpPanel .mpTabs button').forEach(b => b.classList.toggle('on', b.dataset.m === m)); $('mpTabSub').textContent = MP_TAB[m]; $('mpCreateCoop').classList.toggle('hidden', m !== 'coop'); $('mpCreateVs').classList.toggle('hidden', m !== 'versus'); }
 document.querySelectorAll('#mpPanel .mpTabs button').forEach(b => b.addEventListener('click', () => mpTab(b.dataset.m))); mpTab('coop');
 $('mpCreateCoop').addEventListener('click', () => netConnect(randCode(), true, 'coop'));
@@ -4777,7 +4866,7 @@ function setPause(on) {
   if (on) $('pmNote').textContent = gameMode === 'daily' && !dailyPractice ? 'Leaving now ends today\'s counted daily run with your current score.' : 'Leaving now ends this run. Your score is still saved.';
 }
 function goMenu() {
-  hrLeave(); drLeave(); showAgain('');
+  hrLeave(); drLeave(); showAgain(''); podClear();
   setPause(false); openSheet(null);
   if (NET.role) { netLeave(); if (state === 'play' || state === 'over') { state = 'menu'; } }
   if (!runActive() && devRun) { devRun = false; document.body.classList.remove('dev'); gameMode = 'waves'; daily = null; todayDaily(); } $('pauseMenu').classList.add('hidden');
@@ -4799,7 +4888,7 @@ function resultsFailSafe(e) {
   try { $('pauseMenu').classList.add('hidden'); $('card').classList.add('over'); $('overlay').classList.remove('hidden'); if (!$('final').textContent) $('final').textContent = 'Game over'; } catch (e2) {}
 }
 function begin(mode, fromWave) {
-  hrLeave(); drLeave();
+  hrLeave(); drLeave(); podClear();
   closePodium(); if (NET.role) netLeave(true); // a single-player game never runs while still sitting in an online room
   $('clubAwardBox').innerHTML = ''; LOCAL_TEAM = false; document.body.classList.remove('vs');
   if (devRun) { devRun = false; document.body.classList.remove('dev'); daily = null; }
@@ -4819,7 +4908,7 @@ $('goDaily').addEventListener('click', () => begin('daily'));
 $('goBomb').addEventListener('click', () => startBombSP());
 // one tap to replay whatever just finished, same car and settings
 function showAgain(kind, sub) {
-  const b = $('goAgain'); b.dataset.kind = kind || ''; b.title = sub || ''; b.classList.toggle('hidden', !kind); $('card').classList.toggle('again', !!kind);
+  const b = $('goAgain'); b.dataset.kind = kind || ''; b.title = sub || ''; b.textContent = kind === 'delivery' && DR.sel > 1 ? '↻ Retry level ' + DR.sel : '↻ Restart'; b.classList.toggle('hidden', !kind); $('card').classList.toggle('again', !!kind);
   const ck = kind === 'waves' ? getCheckpoint() : null, c = $('againCont'); c.classList.toggle('hidden', !ck); if (ck) c.textContent = '▶ Continue · wave ' + (ck.wave + 1);
 }
 $('againCont').addEventListener('click', () => { showAgain(''); continueRun(); if (state === 'select') confirmSel(); });
@@ -6083,6 +6172,7 @@ function showPodium(pod) {
     SFX.cheer && SFX.cheer(1);
   }).catch(closePodium);
 }
+function podClear() { try { lastPod = null; closePodium(); podBtn(); } catch (e) {} } // the replay button belongs to the match that just ended, nothing after it
 function closePodium() { if (POD) { try { POD.dispose(); } catch (e) {} POD = null; } const o = document.getElementById('podium'); if (o) o.remove(); }
 function podBtn() { let b = $('podReplay'); if (!b) { b = document.createElement('button'); b.id = 'podReplay'; b.textContent = '🏆 PODIUM'; b.addEventListener('click', () => showPodium(lastPod)); $('menuLinks').appendChild(b); } b.style.display = lastPod ? '' : 'none'; }
 /* ---------- cloud save + who's online ---------- */
@@ -6571,7 +6661,7 @@ document.addEventListener('click', e => {
 });
 const HR_BOTN = ['Rusty', 'Dash', 'Gauge', 'Piston', 'Torque', 'Sparky'];
 async function startHideSP() {
-  if (NET.role) netLeave(true);
+  podClear(); if (NET.role) netLeave(true);
   if (devRun) { devRun = false; document.body.classList.remove('dev'); }
   $('hideSheet').classList.add('hidden');
   await fdLoadArt();
@@ -6785,7 +6875,16 @@ const DR_ADDR = [
 const DR_DEPOT = { zone: [1250, 1205, 1500, 1365], spawn: [1375, 1300, -Math.PI / 2] };
 const DR_SYM = ['▲', '●', '■', '◆', '★', '✚', '⬟', '⬢', '▼', '✦', '♥', '♣'];
 const DR_COL = ['#ff5d5d', '#4da3ff', '#ffd166', '#7ae582', '#c77dff', '#ff9f43', '#5ee7df', '#f78fb3', '#e6e6e6', '#a3be8c', '#ff6b9a', '#9ad1ff'];
-const DR = { phase: 'idle', t: 0, wave: 0, pk: [], done: 0, earn: 0, kits: 0, stopT: 0, stopAt: null, latched: null, limit: 0, timeLeft: 0, kitT: 20, kitsOn: [], bank: lsGet('scrapArenaDeliveryBank', 0), best: lsGet('scrapArenaDeliveryBest', { w: 0, p: 0 }), car: lsGet('scrapArenaDeliveryCar', 'cruiser'), log: [] };
+// levels: [stops, max distance from the depot, target route seconds]. A slow ramp: two easy drops to start, one more stop every few levels.
+const DR_LV = [[2, 900, 18], [2, 1100, 22], [3, 1100, 28], [3, 1400, 32], [3, 1700, 36], [4, 1400, 40], [4, 1800, 46], [4, 1e9, 50], [5, 1800, 54], [5, 1e9, 60], [5, 1e9, 64], [6, 1e9, 68], [6, 1e9, 74], [7, 1e9, 80], [7, 1e9, 86]];
+function drLevel(L) { // everything that scales with the level
+  const r = DR_LV[L - 1] || [Math.min(9, 7 + Math.floor((L - 15) / 3)), 1e9, 86 + 5 * (L - 15)], n = r[0];
+  return { n, reach: r[1], route: r[2],
+    preview: Math.round((2.5 + 1.4 * n) * 2) / 2,                                // more stops, more time to look: 5.5 s for 2 up to 15 s for 9
+    slack: Math.max(1.2, 1.65 - .03 * (L - 1)),                                   // generous clock early, tighter later
+    traffic: Math.min(12, 5 + Math.ceil(L * .7)), retal: Math.min(.35, .1 + .025 * L) };
+}
+const DR = { phase: 'idle', t: 0, wave: 0, sel: lsGet('scrapArenaDeliveryRetry', 1), top: lsGet('scrapArenaDeliveryTop', 1), pk: [], done: 0, earn: 0, kits: 0, stopT: 0, stopAt: null, latched: null, limit: 0, timeLeft: 0, kitT: 20, kitsOn: [], bank: lsGet('scrapArenaDeliveryBank', 0), best: lsGet('scrapArenaDeliveryBest', { w: 0, p: 0 }), car: lsGet('scrapArenaDeliveryCar', 'cruiser'), log: [] };
 const drOn = () => gameMode === 'delivery';
 const zc = z => [(z[0] + z[2]) / 2, (z[1] + z[3]) / 2];
 // ---- route lengths over the nav graph (for fair timers) ----
@@ -6804,10 +6903,10 @@ function drRouteTime(stops) { // shortest order from the depot through every sto
   else { let at = dn, left = ns.slice(); best = 0; while (left.length) { left.sort((a, b) => drPathLen(at, a) - drPathLen(at, b)); best += drPathLen(at, left[0]); at = left.shift(); } }
   return best / DRC.speed + stops.length * DRC.stopCost;
 }
-function drBatch(w) { // n distinct addresses: near the depot early, spread out later, route length kept comparable within a wave
-  const n = w + 1, [dx, dy] = zc(DR_DEPOT.zone), reach = w === 1 ? 1050 : w === 2 ? 1650 : 1e9;
+function drBatch(w) { // n distinct addresses: near the depot early, spread out later, route length kept comparable within a level
+  const lv = drLevel(w), n = lv.n, [dx, dy] = zc(DR_DEPOT.zone), reach = lv.reach;
   const pool = DR_ADDR.filter(a => { const [x, y] = zc(a.zone); return Math.hypot(x - dx, y - dy) <= reach; });
-  const src = pool.length >= n ? pool : DR_ADDR, target = DRC.route0 + DRC.routeStep * (w - 1);
+  const src = pool.length >= n + 1 ? pool : DR_ADDR, target = lv.route;
   let best = null, bd = 1e9;
   for (let s = 0; s < 28; s++) {
     const pick = src.slice().sort(() => Math.random() - .5).slice(0, Math.min(n, src.length));
@@ -6821,11 +6920,21 @@ function openDelivery() { $('drSheet').classList.remove('hidden'); renderDrSheet
 function renderDrSheet() {
   const lim = Math.max(maxWave, 1); if (!CARS.some(d => d.id === DR.car && d.unlock <= lim)) DR.car = CARS[0].id;
   $('dsCars').innerHTML = CARS.map(d => { const lk = d.unlock > lim; return '<button class="bsCar' + (d.id === DR.car ? ' on' : '') + (lk ? ' lk' : '') + '" data-dcar="' + d.id + '"' + (lk ? ' disabled' : '') + '><img src="' + tileUrl(d.id) + '" alt=""><b>' + d.name + '</b><small>' + (lk ? '🔒 wave ' + d.unlock : d.tag || '') + '</small></button>'; }).join('');
-  $('dsStats').innerHTML = '<span>🏦 Bank <b>$' + DR.bank + '</b></span><span>🏁 Best <b>' + (DR.best.w ? 'wave ' + DR.best.w + ' · ' + DR.best.p + ' pkgs' : '-') + '</b></span>';
+  DR.top = Math.max(DR.top | 0, (DR.best.w | 0) + 1, 1); DR.sel = clamp(DR.sel | 0 || DR.top, 1, DR.top);
+  $('dsStats').innerHTML = '<span>🏦 Bank <b>$' + DR.bank + '</b></span><span>🏁 Best <b>' + (DR.best.w ? 'level ' + DR.best.w + ' · ' + DR.best.p + ' pkgs' : '-') + '</b></span>';
+  const lv = drLevel(DR.sel);
+  $('dsLv').innerHTML = Array.from({ length: DR.top }, (_, i) => '<button data-dlv="' + (i + 1) + '" class="' + (i + 1 === DR.sel ? 'on' : '') + '">' + (i + 1) + '</button>').join('');
+  $('dsLvInfo').textContent = lv.n + ' drop-offs · ' + lv.preview + ' s to memorise · ' + lv.traffic + ' cars in traffic';
+  $('dsGo').textContent = 'START LEVEL ' + DR.sel;
+  const on = $('dsLv').querySelector('.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
-document.addEventListener('click', e => { const b = e.target.closest('[data-dcar]'); if (b && !b.disabled) { DR.car = b.dataset.dcar; lsSet('scrapArenaDeliveryCar', DR.car); renderDrSheet(); } });
-async function startDelivery() {
-  if (NET.role) netLeave(true);
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-dcar]'); if (b && !b.disabled) { DR.car = b.dataset.dcar; lsSet('scrapArenaDeliveryCar', DR.car); renderDrSheet(); }
+  const l = e.target.closest('[data-dlv]'); if (l) { DR.sel = +l.dataset.dlv; lsSet('scrapArenaDeliveryRetry', DR.sel); renderDrSheet(); }
+});
+async function startDelivery(level) {
+  if (typeof level === 'number') DR.sel = level; DR.top = Math.max(DR.top | 0, (DR.best.w | 0) + 1, 1); DR.sel = clamp(DR.sel | 0 || 1, 1, DR.top);
+  podClear(); if (NET.role) netLeave(true);
   if (devRun) { devRun = false; document.body.classList.remove('dev'); }
   $('drSheet').classList.add('hidden'); hrLeave(); showAgain('');
   await fdLoadArt();
@@ -6839,17 +6948,18 @@ async function startDelivery() {
   const [sx, sy, sa] = DR_DEPOT.spawn;
   player = makeCar(sx, sy, sa, PLAYER_COL, true, 1); player.pid = PID; player.pname = pname; applyCar(player, CAR_BY_ID[DR.car] || CAR_BY_ID.cruiser); player.club = myClubId();
   Object.assign(player, DRC.tune, { mod: '', perk: '', lay: 'g' }); cars.push(player);
-  drSpawnTraffic();
-  Object.assign(DR, { phase: 'load', t: DRC.loadT, wave: 0, pk: [], done: 0, earn: 0, kits: 0, stopT: 0, latched: null, kitT: 14, kitsOn: [], fixed: 0, charged: 0, end: '' });
+  drSpawnTraffic(DR.sel);
+  Object.assign(DR, { phase: 'load', t: DRC.loadT, wave: DR.sel - 1, start: DR.sel, pk: [], done: 0, earn: 0, kits: 0, stopT: 0, latched: null, kitT: 14, kitsOn: [], fixed: 0, charged: 0, end: '' });
   state = 'play'; $('overlay').classList.add('hidden'); document.body.classList.add('dr'); $('drHud').classList.remove('hidden');
-  snapCamera(); clearSkids(); banner('DELIVERY RUN', 'Loading your first batch at the depot...', 1300); updateHud();
+  snapCamera(); clearSkids(); banner('DELIVERY RUN · LEVEL ' + DR.sel, 'Loading your batch at the depot...', 1300); updateHud();
 }
 function drLoad() { // the whole batch at once
   DR.wave++; wave = DR.wave;
   const b = drBatch(DR.wave), syms = DR_SYM.slice().sort(() => Math.random() - .5);
   DR.pk = b.pick.map((a, i) => ({ a, sym: syms[i], col: DR_COL[DR_SYM.indexOf(syms[i])], done: false }));
-  DR.limit = Math.round(b.rt * DRC.slack + 1); DR.timeLeft = DR.limit; DR.route = b.rt;
-  DR.phase = 'preview'; DR.t = DRC.preview; DR.latched = null;
+  const lv = drLevel(DR.wave); drSpawnTraffic(DR.wave);
+  DR.limit = Math.round(b.rt * lv.slack + 3); DR.timeLeft = DR.limit; DR.route = b.rt;
+  DR.phase = 'preview'; DR.t = DR.prevT = lv.preview; DR.latched = null;
   VIEW_K = drFitZoom(); resize(); camX = DR.cam[0]; camY = DR.cam[1]; beep(520, .08); SFX.pick && SFX.pick();
 }
 function drFitZoom() { // pull the camera back until the depot, every address and its label fit on screen
@@ -6892,7 +7002,8 @@ function drStops(dt, list, depot) {
   addText(c.x, c.y - 44, p.sym + '  +$' + DRC.pay, p.col); ring(c.x, c.y, 50, p.col, .4, 5); SFX.combo && SFX.combo(3); beep(990, .07);
   if (DR.pk.every(q => q.done)) { // last drop-off stops the clock
     DR.phase = 'return'; DR.latched = null;
-    banner('WAVE ' + DR.wave + ' CLEARED', Math.ceil(DR.timeLeft) + ' s to spare · head back to the depot for the next batch', 2400); SFX.win && SFX.win();
+    DR.top = Math.max(DR.top, DR.wave + 1); lsSet('scrapArenaDeliveryTop', DR.top);
+    banner('LEVEL ' + DR.wave + ' CLEARED', Math.ceil(DR.timeLeft) + ' s to spare · head back to the depot for the next batch', 2400); SFX.win && SFX.win();
   }
 }
 function drSpawnKit() {
@@ -6908,7 +7019,9 @@ function drSettle(why) { // pay for completed deliveries, charge for what's stil
   DR.res = { cleared, pk: DR.done, earn: DR.earn, missing, bill, charge, old, bank: DR.bank, kits: DR.kits, why };
   const nb = cleared > DR.best.w || (cleared === DR.best.w && DR.done > DR.best.p);
   if (nb) { DR.best = { w: cleared, p: DR.done }; lsSet('scrapArenaDeliveryBest', DR.best); }
-  DR.res.newBest = nb;
+  DR.res.newBest = nb; DR.res.start = DR.start; DR.res.level = DR.wave;
+  DR.top = Math.max(DR.top, cleared + 1); lsSet('scrapArenaDeliveryTop', DR.top);
+  DR.sel = Math.max(1, cleared + 1); lsSet('scrapArenaDeliveryRetry', DR.sel); // Restart picks up at the level that beat you
   setTimeout(drOver, why === 'wreck' ? 1400 : 700);
 }
 function drOver() {
@@ -6916,11 +7029,11 @@ function drOver() {
   const r = DR.res; if (!r) return;
   $('overlay').querySelector('#card h1').innerHTML = r.why === 'wreck' ? 'CAR <span>WRECKED</span>' : r.why === 'time' ? 'OUT OF <span>TIME</span>' : 'SHIFT <span>OVER</span>';
   const row = (k, v, cls) => '<div class="drRow' + (cls ? ' ' + cls : '') + '"><span>' + k + '</span><b>' + v + '</b></div>';
-  $('final').innerHTML = '<div class="drRes">' + row('Waves cleared', r.cleared + (r.newBest ? ' <em>NEW BEST</em>' : '')) + row('Packages delivered', r.pk) + row('Delivery earnings', '+$' + r.earn, 'plus') +
-    row('Repair kits picked up', r.kits) + row('Parts repaired at the depot', r.missing + (r.missing ? ' × $' + DRC.partCost : '')) + row('Charged for repairs', '−$' + r.charge + (r.charge < r.bill ? ' <small>(capped, you had $' + (r.old + r.earn) + ')</small>' : ''), 'minus') +
-    row('Bank', '$' + r.old + ' → <b>$' + r.bank + '</b>', 'bank') + '</div><p class="drBest">Best: wave ' + DR.best.w + ' · ' + DR.best.p + ' packages</p>';
+  $('final').innerHTML = '<div class="drRes">' + row(r.cleared >= r.level ? 'Levels cleared' : 'Stopped at', r.cleared >= r.level ? (r.cleared - r.start + 1) + ' (to level ' + r.cleared + ')' : 'level ' + r.level + (r.cleared >= r.start ? ' · cleared ' + (r.cleared - r.start + 1) : '')) + (r.newBest ? row('Best', 'level ' + r.cleared + ' <em>NEW BEST</em>') : '') + row('Packages delivered', r.pk + ' · +$' + r.earn, 'plus') + (r.kits ? row('Repair kits picked up', r.kits) : '') +
+    row('Repairs at the depot', r.missing + ' part' + (r.missing === 1 ? '' : 's') + ' · −$' + r.charge + (r.charge < r.bill ? ' <small>(capped at $' + (r.old + r.earn) + ')</small>' : ''), 'minus') +
+    row('Bank', '$' + r.old + ' → <b>$' + r.bank + '</b>', 'bank') + '</div><p class="drBest">Best: level ' + DR.best.w + ' · ' + DR.best.p + ' packages · Restart plays level ' + DR.sel + ' again</p>';
   $('card').classList.add('over'); $('card').classList.remove('teamRes', 'spBomb'); $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
-  showAgain('delivery', 'Delivery Run · same car');
+  showAgain('delivery', 'Delivery Run · level ' + DR.sel);
   $('overlay').classList.remove('hidden'); renderHub();
 }
 function drLeave() { document.body.classList.remove('dr'); $('drHud').classList.add('hidden'); if (DR.phase !== 'over') DR.phase = 'idle'; if (drOn()) { VIEW_K = 1; resize(); } }
@@ -6936,14 +7049,15 @@ function drRoadGraph() {
 }
 function drRoadPath(a, b) { const keep = FDNAV.adj; FDNAV.adj = DR_ROAD.adj; try { return fdPath(a, b); } finally { FDNAV.adj = keep; } }
 const DR_TRAFFIC = ['cruiser', 'hauler', 'dart', 'bruiser', 'drifter', 'hauler', 'cruiser'];
-function drSpawnTraffic() {
+function drSpawnTraffic(L) { // tops traffic up to the level's count (never removes cars mid-run)
   drRoadGraph();
-  const n = DRC.traffic, used = [];
-  for (let i = 0; i < n; i++) {
+  const lv = drLevel(L || 1), have = cars.filter(c => c.traffic), n = lv.traffic, used = cars.filter(c => !c.dead).map(c => [c.x, c.y]);
+  let nRet = have.filter(c => c.retal).length; const wantRet = Math.round(n * lv.retal);
+  for (let i = have.length; i < n; i++) {
     let node = -1;
     for (let k = 0; k < 40; k++) { const c = DR_ROAD.list[(Math.random() * DR_ROAD.list.length) | 0], p = FDM.nodes[c]; if (Math.hypot(p[0] - DR_DEPOT.spawn[0], p[1] - DR_DEPOT.spawn[1]) < 450 || used.some(u => Math.hypot(u[0] - p[0], u[1] - p[1]) < 220)) continue; node = c; break; }
     if (node < 0) continue; const p = FDM.nodes[node]; used.push(p);
-    const retal = i < Math.round(n * DRC.retal), police = retal && i % 2 === 0;
+    const retal = nRet < wantRet, police = retal && nRet % 2 === 0; if (retal) nRet++;
     const type = police ? 'dart' : retal ? (i % 3 ? 'fortress' : 'rocket') : DR_TRAFFIC[i % DR_TRAFFIC.length];
     const c = makeCar(p[0], p[1], Math.random() * 6.28, PLAYER_COL, true, 1); applyCar(c, CAR_BY_ID[type] || CAR_BY_ID.cruiser);
     Object.assign(c, { bot: true, traffic: true, retal, police, pid: 'tr' + i, pname: '', accel: 380, maxSpeed: 230, turnRate: 2.5, cruise: 150 + Math.random() * 50, lay: 'g', tb: { path: null, pi: 0, goal: -1, stuck: 0, rev: 0, rs: 1, wait: 0 }, mad: 0, honkT: 0 });
@@ -7027,19 +7141,19 @@ function drHud(dt) {
   if (!drOn() || state !== 'play') { if (!$('drHud').classList.contains('hidden')) $('drHud').classList.add('hidden'); return; }
   $('drHud').classList.remove('hidden');
   const ph = DR.phase, me = player;
-  $('drWave').textContent = 'WAVE ' + Math.max(1, DR.wave);
+  $('drWave').textContent = 'LEVEL ' + Math.max(1, DR.wave);
   $('drTime').textContent = ph === 'preview' ? 'REMEMBER ' + Math.ceil(DR.t) : ph === 'load' ? 'LOADING' : ph === 'return' ? 'BACK TO DEPOT' : DR.timeLeft.toFixed(1) + ' s';
   $('drTime').className = ph === 'drive' && DR.timeLeft < 10 ? 'low' : '';
   $('drCash').textContent = '$' + DR.earn;
   $('drPk').innerHTML = DR.pk.filter(p => !p.done).map((p, i) => '<span style="--c:' + p.col + '">' + p.sym + (DR.pk.indexOf(p) + 1) + '</span>').join('') || (ph === 'return' ? '<i>empty</i>' : '');
   if (me) { $('drParts').innerHTML = PARTS.map(q => '<i class="' + (me.parts[q] ? 'ok' : '') + '"></i>').join(''); $('drNos').firstChild.style.width = Math.round((me.nitro || 0) * 100) + '%'; }
-  const bar = $('drPrev'); bar.classList.toggle('hidden', ph !== 'preview'); if (ph === 'preview') bar.firstChild.style.width = (DR.t / DRC.preview * 100) + '%';
+  const bar = $('drPrev'); bar.classList.toggle('hidden', ph !== 'preview'); if (ph === 'preview') bar.firstChild.style.width = (DR.t / (DR.prevT || DRC.preview) * 100) + '%';
   // a depot arrow only on the way back (no pins for addresses)
   const ar = $('drArrow'); ar.classList.toggle('hidden', ph !== 'return' || !me);
   if (ph === 'return' && me) { const [dx, dy] = zc(DR_DEPOT.zone), a = Math.atan2((dy - me.y) * TK, dx - me.x); ar.style.transform = 'translate(-50%,-50%) rotate(' + a + 'rad)'; }
 }
 
-if (typeof DEV_BUILD !== 'undefined' && DEV_BUILD) window.__dr = { DR, DRC, DR_ADDR, DR_DEPOT, startDelivery, drRouteTime, drBatch, drSettle, get player() { return player; }, get cars() { return cars; }, get state() { return state; } };
+if (typeof DEV_BUILD !== 'undefined' && DEV_BUILD) window.__dr = { DR, DRC, DR_ADDR, DR_DEPOT, startDelivery, drLevel, renderDrSheet, drRouteTime, drBatch, drSettle, get player() { return player; }, get cars() { return cars; }, get state() { return state; } };
 
 if (typeof DEV_BUILD !== 'undefined' && DEV_BUILD) window.__hr = { HR, HRC, FDM, FDI, get cars() { return cars; }, get player() { return player; }, get state() { return state; }, fdSees, fdH, fdCover, fdLayer, startHideSP, hrEnd, hrStandings, get arena() { return arena.id; }, get W() { return W; }, setPos(c, x, y, a, lay) { Object.assign(c, { x, y, a, vx: 0, vy: 0, lay: lay || 'g', ramp: null }); }, near(x, y, l) { return fdNearest(x, y, l || 'g'); }, hrClue, hrTick, sat, collide, fdCollide, rampT, fdRampAt };
 /* ---------- main menu hub ---------- */
@@ -7095,8 +7209,8 @@ function renderHubClub() {
   }
 }
 function renderHubTiles() {
-  const ck = getCheckpoint(), t = $('tCont'); t.textContent = ck ? '▶ CONTINUE W' + (ck.wave + 1) : ''; t.style.cursor = 'pointer';
-  $('tWavesSub').textContent = maxWave > 1 ? 'Best wave ' + maxWave + ' · unlock cars + perks' : 'Endless waves · unlock cars';
+  const ck = getCheckpoint(), t = $('tCont'); t.textContent = ck ? '▶ W' + (ck.wave + 1) : ''; t.style.cursor = 'pointer';
+  $('tWavesSub').textContent = maxWave > 1 ? 'Best wave ' + maxWave + ' · unlock cars' : 'Endless waves · unlock cars';
   const D = todayDaily(), done = dailyDone(), sk = streakNow();
   $('tDailyIco').innerHTML = ico('daily', D.mod); $('tDailySub').textContent = done ? 'Done today: ' + done.score + ' · practice' : D.mod.name + ' · ' + CAR_BY_ID[D.car].name + ' · 5 waves';
   $('tStreak').textContent = sk ? '🔥 ' + sk : '';
@@ -7104,7 +7218,7 @@ function renderHubTiles() {
 }
 function renderHubTicker() {
   const ev = clubEvent(), D = todayDaily(), cl = myClubId(), yt = dailyMeta && dailyMeta.yesterday, i = '<i>◆</i>';
-  const bits = ['<b>NEW</b> 💣 Bomb Run on <b>The Depot</b>: two sites per team, three lanes, pass the bomb over the barriers', '🏁 Club event: <b>' + ev.icon + ' ' + ev.name + '</b> · ' + ev.desc.toLowerCase() + ' · ends in ' + fmtLeft(weekEndsIn()),
+  const bits = ['<b>NEW</b> 📦 Delivery Run: <b>levels</b> that ramp up slowly, and you can restart from the level you reached', '💣 Bomb Run is now played in <b>rounds</b>: one life each, plant or wreck their team, first to 3', '🏁 Club event: <b>' + ev.icon + ' ' + ev.name + '</b> · ' + ev.desc.toLowerCase() + ' · ends in ' + fmtLeft(weekEndsIn()),
     '📅 Today: <b>' + ico('daily', D.mod) + ' ' + D.mod.name + '</b> in the ' + CAR_BY_ID[D.car].name, '🚗 Unlocked cars now come with <b>signature perks</b>',
     cl ? CLUB_BY[cl].name + ': <b>' + weekPts().toLocaleString() + '</b> pts from you this week' : 'Join a <b>motor club</b>: tap the ＋ badge up top',
     yt && yt.name ? 'Yesterday\'s daily winner: <b>' + esc(yt.name) + '</b> (' + yt.score + ')' : '', best ? 'Your best: <b>' + best.toLocaleString() + '</b>' : ''].filter(Boolean);
@@ -7131,7 +7245,7 @@ $('tWaves').addEventListener('click', e => { if (e.target.closest('#tCont') && g
 $('tBomb').addEventListener('click', openBomb);
 $('tHide').addEventListener('click', openHide);
 $('tDeliver').addEventListener('click', openDelivery);
-$('dsGo').addEventListener('click', startDelivery);
+$('dsGo').addEventListener('click', () => startDelivery());
 $('hsGo').addEventListener('click', startHideSP);
 $('tDaily').addEventListener('click', () => begin('daily'));
 $('tOnline').addEventListener('click', () => mpOpen());
@@ -7160,7 +7274,7 @@ window.__sa = { get state() { return state; }, get wave() { return wave; }, get 
   spawnPickup() { spawnPickup(); }, get scrap() { return scrap; }, hitRegion(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; c.armor = 0; return hitCar(c, cp, a === undefined ? player : a, 300, Math.cos(c.a), Math.sin(c.a)); }, get introT() { return introT; }, get joy() { return joy; }, setScrap(n) { scrap = n; }, get UP() { return UP; }, get barrels() { return barrels; }, get crusher() { return crusher; },
   perkHit(c, r, a) { const hl = (c.cL || L) / 2, hw = (c.cW || WD) / 2, lp = { front: [hl, 0], rear: [-hl, 0], left: [0, -hw], right: [0, hw] }[r], cp = toWorld(c, lp[0], lp[1]); c.inv = 0; return hitCar(c, cp, a, 300, Math.cos(c.a), Math.sin(c.a)); }, hubSetCar,
   get world() { return [W, H, CB, arena.id, OBST_C.length]; }, cloudSync, fetchPlayers, get cloud() { return CLOUD; }, get gar() { return GAR; }, openGarage, buyMod, equipMod, modUse, wantMod, get spikes() { return SPIKES; }, achGive, CMODS,
-  get mode() { return gameMode; }, get bomb() { return BOMB; }, get VS() { return VS; }, get cars() { return cars; }, teamOn, bombOn, startBombSP, openBomb, openClub, joinClub, get club() { return CLUB; }, clubWeek, clubEvent, renderHub, get hubCar() { return HUB.car; }, get player() { return player; }, bombState, setWaveNow(n) { wave = n; }, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { c.dead = true; c.deadT = 0; } }, get checkpoint() { return getCheckpoint(); }, get wave() { return wave; }, get net() { return NET }, get netView() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, get skids() { const n = performance.now(); return SKID.slices.filter(x => x.used && n - x.t0 < SKID.LIFE).length; }, skidAlpha() { const n = performance.now(); return SKID.slices.filter(x => x.used).map(x => +clamp((SKID.LIFE - (n - x.t0)) / SKID.FADE, 0, 1).toFixed(2)); }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
+  get mode() { return gameMode; }, get bomb() { return BOMB; }, bombKit() { bombKit(); }, get pickups() { return pickups; }, spec() { const w = specTarget(); return w ? w.pname : null; }, get lastPod() { return lastPod; }, set lastPod(v) { lastPod = v; podBtn(); }, get VS() { return VS; }, get cars() { return cars; }, teamOn, bombOn, startBombSP, openBomb, openClub, joinClub, get club() { return CLUB; }, clubWeek, clubEvent, renderHub, get hubCar() { return HUB.car; }, get player() { return player; }, bombState, setWaveNow(n) { wave = n; }, killAll() { for (const c of cars) if (!c.isPlayer && !c.dead) { c.dead = true; c.deadT = 0; } }, get checkpoint() { return getCheckpoint(); }, get wave() { return wave; }, get net() { return NET }, get netView() { return { role: NET.role, started: NET.started, room: NET.room, lobby: NET.lobby, mode: NET.mode, ping: NET.ping }; }, get carsInfo() { return cars.map(c => ({ id: c.id, p: c.isPlayer, pid: c.pid, name: c.pname, x: Math.round(c.x), y: Math.round(c.y), dead: c.dead, lost: c.lost, score: c.score || 0 })); }, get me() { return player ? { pid: player.pid, x: player.x, y: player.y, dead: player.dead } : null; }, get emotes() { return emotes.map(e => [e.c.isPlayer ? 'P' : e.c.type, e.face, e.cuss || '']); }, emote() { playerEmote(); }, set lastHit(v) { lastPlayerHitT = v; }, get lay() { return LAY; }, get wetMarks() { return wetMarks.length; }, get skids() { const n = performance.now(); return SKID.slices.filter(x => x.used && n - x.t0 < SKID.LIFE).length; }, skidAlpha() { const n = performance.now(); return SKID.slices.filter(x => x.used).map(x => +clamp((SKID.LIFE - (n - x.t0)) / SKID.FADE, 0, 1).toFixed(2)); }, setArenaNow(i) { setArena(i); }, get dev() { return devRun; }, get DEV() { return DEV; }, bossUpdateCount() { return cars.filter(c => c.boss && !c.dead).map(c => ({ k: c.bossKind, slam: !!c.slam, arm: c.arm ? +c.arm.ang.toFixed(2) : null, rage: !!c.rage, lost: c.lost })); }, get daily() { return daily; }, get kills() { return kills; }, get vs() { return { matchT: VS.matchT, score: VS.score.slice(), boss: VS.boss, bossState: VS.bossState, slots: NET.vs.slots.slice(), votes: Object.assign({}, NET.vs.votes) }; }, setVsTime(t) { VS.matchT = t; }, get teams() { return cars.filter(c => c.isPlayer).map(c => ({ pid: c.pid, team: c.team, k: c.kos || 0, d: c.deaths || 0, dmg: c.dmg || 0, dead: c.dead })); }, setMode(m) { gameMode = m; if (m === 'daily') todayDaily(); }, forceDaily(id) { daily = makeDaily(daily ? daily.day : torontoDay()); daily.mod = MODS.find(m => m.id === id); }, get oil() { return oilCv; }, endGame(w) { endGame(w); }, set score(v) { score = v; }, kill(type) { const c = cars.find(o => o.type === type && !o.dead); if (!c) return false; c.lost = 4; c.inv = 0; c.armor = 0; hitCar(c, [c.x, c.y - 13], player, 300, 0, 1); return true; }, god(on) { if (player) player.inv = on ? 1e9 : 0; }, setNitro(v) { player.nitro = v; } };
 })();
 </script>
 </body>
