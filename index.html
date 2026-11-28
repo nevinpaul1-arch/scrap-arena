@@ -697,7 +697,9 @@
   #drArrow{position:absolute;left:50%;top:50%;font:900 30px system-ui;color:#7ae582;text-shadow:0 2px 6px #000;margin-left:0} #drArrow.hidden{display:none}
   body.dr #hud,body.dr .hpWrap{display:none!important}
   body.phone #drHud .drTop{top:6px;left:8px;padding:3px 10px} body.phone #drTime{font-size:17px;min-width:80px} body.phone #drPk{top:44px;left:8px}
-  .dsLv{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none} .dsLv::-webkit-scrollbar{display:none}
+  .dsLvHead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:12px} .dsLvHead .dsStats{margin:0;font-size:var(--fs-sm)}
+  .dsLv{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:6px;padding:2px 0 4px} .dsLv button{min-width:0!important}
+  .dsLv button.lk{opacity:.35;cursor:not-allowed;font-size:12px} .dsLv button.done{border-color:rgba(122,229,130,.45);color:#b8f0bc} .dsLv button.on{border-color:#f08c2e!important;background:rgba(240,140,46,.18)!important;color:#fff!important}
   .dsLv button{flex:none;min-width:36px;height:34px;border-radius:10px;border:1px solid #2d3340;background:#12151b;color:#cfd6e2;font:800 14px system-ui,sans-serif;cursor:pointer} .dsLv button.on{border-color:#f08c2e;background:rgba(240,140,46,.18);color:#fff}
   .dsLvInfo{margin:2px 0 8px;font:600 12px system-ui,sans-serif;color:#8d97a8}
   .drRes{display:flex;flex-direction:column;gap:3px;margin:8px auto;max-width:460px} .drRow{display:flex;justify-content:space-between;padding:5px 12px;border-radius:9px;background:rgba(255,255,255,.04);font:700 14px system-ui,sans-serif;color:#dfe5ee} .drRow b{color:#fff} .drRow.plus b{color:#7ae582} .drRow.minus b{color:#ff9f9f} .drRow.bank{background:rgba(240,140,46,.16);outline:1px solid rgba(240,140,46,.45)} .drRow em{font-style:normal;background:#ffd166;color:#1a1300;border-radius:6px;padding:0 6px;font-size:11px;margin-left:6px} .drRow small{color:#8d97a8;font-weight:600} .drBest{text-align:center;color:#ffc58a;font-weight:800}
@@ -850,7 +852,9 @@
   .drRow{font-size:var(--fs-body)!important;padding:4px 12px!important} .drBest{font-size:var(--fs-sm)!important;margin:6px 0!important}
   #respawnMsg{font-size:var(--fs-xl)!important} #respawnMsg small{font-size:var(--fs-sm)!important}
   #achToast small,body.phone #achToast small{font-size:var(--fs-cap)!important;letter-spacing:.12em!important} #achToast b,#achToast em,body.phone #achToast b,body.phone #achToast em{font-size:var(--fs-btn)!important}
-  #mpCars button,#mpCars2 button{font-size:var(--fs-sm)!important} .garBs small{font-size:var(--fs-sm)}
+  #mpCars button,#mpCars2 button{font-size:var(--fs-sm)!important}
+  .gNote.foot{margin:12px 2px 2px!important;font-size:var(--fs-cap)!important;color:#7f899a!important;line-height:1.45!important} .gNote.foot b{color:#aab3c2!important}
+  .gModC p,body .gModC p{font-size:var(--fs-cap)!important;line-height:1.4!important} .mBtn{font-size:var(--fs-cap)!important} .gA small{font-size:var(--fs-sm)!important} .gA small.pn{font-size:var(--fs-cap)!important} .garBs small{font-size:var(--fs-sm)}
 
   /* hub stage: car centred above a compact name plate, never over the top bar */
   .hubTop{position:relative;z-index:6}
@@ -1018,10 +1022,11 @@
   <div class="modeHead"><button class="backBtn" data-close="drSheet">&larr; MENU</button>
   <h2>📦 DELIVERY RUN <small style="font:700 13px system-ui;color:#8d97a8;letter-spacing:.08em">FOUNDRY DISTRICT · LEARN THE CITY</small></h2></div>
   <div class="bsGrid">
-    <div><h4 class="bsH4">YOUR CAR <small style="color:#8d97a8;font-weight:700;letter-spacing:0">(same tune for everyone)</small></h4><div id="dsCars"></div><div id="dsStats" class="dsStats"></div></div>
-    <div><h4 class="bsH4">LEVEL</h4><div id="dsLv" class="dsLv"></div><p id="dsLvInfo" class="dsLvInfo"></p><button id="dsGo">START LEVEL 1</button>
+    <div><h4 class="bsH4">YOUR CAR <small style="color:#8d97a8;font-weight:700;letter-spacing:0">(same tune for everyone)</small></h4><div id="dsCars"></div>
+      <div class="dsLvHead"><h4 class="bsH4">LEVEL</h4><div id="dsStats" class="dsStats"></div></div><div id="dsLv" class="dsLv"></div></div>
+    <div><button id="dsGo">START LEVEL 1</button>
       <h4 class="bsH4">HOW IT WORKS</h4>
-      <ol class="bsRules"><li>Load up at the <b>depot</b>. The addresses show <b>once</b>; bigger batches get longer to look.</li><li>Stop in the right curb or bay for a moment to drop each package, in any order. <b>$30</b> each.</li><li>Beat the clock, then head back to the depot for the next level. Lose and you can start again <b>from the level you reached</b>.</li><li>Traffic honks if you hit it. Some cars hit back. Damage carries over; missing parts cost <b>$15</b> each at the end.</li></ol>
+      <ol class="bsRules"><li>Load up at the <b>depot</b>. The addresses show <b>once</b>; bigger batches get longer to look.</li><li>Stop in the right curb or bay for a moment to drop each package, in any order. <b>5 GP</b> each the first time you play a level, <b>1 GP</b> on replays.</li><li>Beat the clock, then head back to the depot for the next level. Lose and you can start again <b>from the level you reached</b>.</li><li>Traffic honks if you hit it. Some cars hit back. Damage carries over; missing parts cost <b>2 GP</b> each at the end.</li></ol>
     </div>
   </div>
 </div></div>
@@ -5081,16 +5086,16 @@ function renderGarageSheet() {
       '<div class="gMod" data-gt="mods">' + (em ? '<span class="mi">' + ico('mod', em) + '</span><div><small>FITTED MOD</small><b>' + em.name + '</b></div>' : '<span class="mi">＋</span><div><small>FITTED MOD</small><b>None, pick one in Mods</b></div>') + '</div>' +
       '<div class="gList">' + CARS.map(c => '<button class="gCar' + (c.id === d.id ? ' on' : '') + (carLocked(c) ? ' lk' : '') + '" data-gcar="' + c.id + '"><span class="bsPic"><img src="' + tileUrl(c.id) + '" alt="">' + (carLocked(c) ? '<span class="tlock"></span>' : '') + '</span><b>' + c.name + '</b></button>').join('') + '</div></div></div>';
   } else if (garTab === 'mods') {
-    el.innerHTML = '<p class="gNote">Fit <b>one</b> mod at a time. Active mods go on the <b>MOD</b> button (key <b>C</b>) with a cooldown; passive ones are always on. Mods work in Waves, Bomb Run and online, but not in the Daily.</p><div class="gMods">' +
+    el.innerHTML = '<div class="gMods">' +
       CMODS.map(m => { const own = GAR.owned.includes(m.id), on = GAR.equip === m.id, can = GAR.gp >= m.price;
         return '<div class="gModC' + (on ? ' on' : '') + (own ? ' own' : '') + '"><div class="mTop"><span class="mi">' + ico('mod', m) + '</span><div><b>' + m.name + '</b><small><em class="' + m.type + '">' + m.type.toUpperCase() + '</em> · ' + m.where + (m.cd ? ' · ⏱ ' + m.cd + ' s' : '') + '</small></div></div><p>' + m.desc + '</p>' +
-          (own ? '<button class="mBtn ' + (on ? 'eq' : '') + '" data-equip="' + m.id + '">' + (on ? '✓ FITTED' : 'FIT THIS MOD') + '</button>' : '<button class="mBtn buy" data-buy="' + m.id + '"' + (can ? '' : ' disabled') + '>' + (can ? 'BUY · ' + m.price + ' GP' : '🔒 ' + m.price + ' GP · need ' + (m.price - GAR.gp) + ' more') + '</button>') + '</div>'; }).join('') + '</div>';
+          (own ? '<button class="mBtn ' + (on ? 'eq' : '') + '" data-equip="' + m.id + '">' + (on ? '✓ FITTED' : 'FIT THIS MOD') + '</button>' : '<button class="mBtn buy" data-buy="' + m.id + '"' + (can ? '' : ' disabled') + '>' + (can ? 'BUY · ' + m.price + ' GP' : '🔒 ' + m.price + ' GP · need ' + (m.price - GAR.gp) + ' more') + '</button>') + '</div>'; }).join('') + '</div><p class="gNote foot">Fit <b>one</b> mod at a time. Active mods go on the <b>MOD</b> button (key <b>C</b>) with a cooldown; passive ones are always on. Mods work in Waves, Bomb Run and online, but not in the Daily.</p>';
   } else {
     const groups = [...new Set(ACH.map(a => a.g))], n = ACH.filter(a => GAR.ach[a.id]).length;
-    el.innerHTML = '<p class="gNote">Achievements pay out <b>Garage Points</b> to spend on mods. <b>' + n + ' / ' + ACH.length + '</b> unlocked.</p>' +
+    el.innerHTML =
       groups.map(g => '<h4 class="gH">' + g.toUpperCase() + '</h4><div class="gAch">' + ACH.filter(a => a.g === g).map(a => { const done = !!GAR.ach[a.id], p = a.prog ? a.prog() : null;
         return '<div class="gA' + (done ? ' done' : '') + '"><span class="ai">' + (done ? a.icon : '🔒') + '</span><div class="at"><b>' + a.name + '</b><small>' + a.desc + '</small>' + (p && !done ? '<i class="ap"><b style="width:' + Math.min(100, p[0] / p[1] * 100).toFixed(0) + '%"></b></i><small class="pn">' + Math.min(p[0], p[1]) + ' / ' + p[1] + '</small>' : '') + '</div><em>' + (done ? '✓ ' : '') + a.gp + ' GP</em></div>'; }).join('') + '</div>').join('') +
-      '<h4 class="gH">EVERY TIME</h4><div class="gAch">' + ACH_REP.map(a => '<div class="gA rep"><span class="ai">' + a.icon + '</span><div class="at"><b>' + a.name + '</b><small>' + a.desc + '</small></div><em>+' + a.gp + ' GP</em></div>').join('') + '</div>';
+      '<h4 class="gH">EVERY TIME</h4><div class="gAch">' + ACH_REP.map(a => '<div class="gA rep"><span class="ai">' + a.icon + '</span><div class="at"><b>' + a.name + '</b><small>' + a.desc + '</small></div><em>+' + a.gp + ' GP</em></div>').join('') + '</div><p class="gNote foot"><b>' + n + ' / ' + ACH.length + '</b> unlocked. Achievements pay out <b>Garage Points</b> to spend on mods and driver gear.</p>';
   }
 }
 document.addEventListener('click', e => {
@@ -6866,7 +6871,7 @@ function hrNetResults(r) { // everyone: the final standings from the host
 function hrNev() {}
 /* ================= Delivery Run: learn the city, deliver from memory (Foundry District) ================= */
 // first-playtest values, all in one place
-const DRC = { preview: 4, stop: .8, pay: 30, partCost: 15, slack: 1.35, speed: 233, stopCost: 2.3, loadT: 1.1, traffic: 10, retal: .3,
+const DRC = { preview: 4, stop: .8, pay: 5, payRepeat: 1, partCost: 2, slack: 1.35, speed: 233, stopCost: 2.3, loadT: 1.1, traffic: 10, retal: .3,
   kitEvery: [18, 30], kitMax: 2, tune: { accel: 500, maxSpeed: 300, turnRate: 2.7, nitro: .5 }, route0: 20, routeStep: 12 };
 // fixed addresses: building, curb or bay to stop in (zone), road layer of that zone, rooftop sign
 const DR_ADDR = [
@@ -6904,7 +6909,7 @@ function drLevel(L) { // everything that scales with the level
     slack: Math.max(1.2, 1.65 - .03 * (L - 1)),                                   // generous clock early, tighter later
     traffic: Math.min(12, 5 + Math.ceil(L * .7)), retal: Math.min(.35, .1 + .025 * L) };
 }
-const DR = { phase: 'idle', t: 0, wave: 0, sel: lsGet('scrapArenaDeliveryRetry', 1), top: lsGet('scrapArenaDeliveryTop', 1), pk: [], done: 0, earn: 0, kits: 0, stopT: 0, stopAt: null, latched: null, limit: 0, timeLeft: 0, kitT: 20, kitsOn: [], bank: lsGet('scrapArenaDeliveryBank', 0), best: lsGet('scrapArenaDeliveryBest', { w: 0, p: 0 }), car: lsGet('scrapArenaDeliveryCar', 'cruiser'), log: [] };
+const DR = { paid: lsGet('scrapArenaDeliveryPaid', {}), runPaid: {}, phase: 'idle', t: 0, wave: 0, sel: lsGet('scrapArenaDeliveryRetry', 1), top: lsGet('scrapArenaDeliveryTop', 1), pk: [], done: 0, earn: 0, kits: 0, stopT: 0, stopAt: null, latched: null, limit: 0, timeLeft: 0, kitT: 20, kitsOn: [], bank: lsGet('scrapArenaDeliveryBank', 0), best: lsGet('scrapArenaDeliveryBest', { w: 0, p: 0 }), car: lsGet('scrapArenaDeliveryCar', 'cruiser'), log: [] };
 const drOn = () => gameMode === 'delivery';
 const zc = z => [(z[0] + z[2]) / 2, (z[1] + z[3]) / 2];
 // ---- route lengths over the nav graph (for fair timers) ----
@@ -6941,16 +6946,14 @@ function renderDrSheet() {
   const lim = Math.max(maxWave, 1); if (!CARS.some(d => d.id === DR.car && d.unlock <= lim)) DR.car = CARS[0].id;
   $('dsCars').innerHTML = CARS.map(d => { const lk = d.unlock > lim; return '<button class="bsCar' + (d.id === DR.car ? ' on' : '') + (lk ? ' lk' : '') + '" data-dcar="' + d.id + '"' + (lk ? ' disabled' : '') + '><img src="' + tileUrl(d.id) + '" alt=""><b>' + d.name + '</b><small>' + (lk ? '🔒 wave ' + d.unlock : d.tag || '') + '</small></button>'; }).join('');
   DR.top = Math.max(DR.top | 0, (DR.best.w | 0) + 1, 1); DR.sel = clamp(DR.sel | 0 || DR.top, 1, DR.top);
-  $('dsStats').innerHTML = '<span>🏦 Bank <b>$' + DR.bank + '</b></span><span>🏁 Best <b>' + (DR.best.w ? 'level ' + DR.best.w + ' · ' + DR.best.p + ' pkgs' : '-') + '</b></span>';
-  const lv = drLevel(DR.sel);
-  $('dsLv').innerHTML = Array.from({ length: DR.top }, (_, i) => '<button data-dlv="' + (i + 1) + '" class="' + (i + 1 === DR.sel ? 'on' : '') + '">' + (i + 1) + '</button>').join('');
-  $('dsLvInfo').textContent = lv.n + ' drop-offs · ' + lv.preview + ' s to memorise · ' + lv.traffic + ' cars in traffic';
+  $('dsStats').innerHTML = '<span>🔩 <b>' + GAR.gp.toLocaleString() + ' GP</b></span><span>🏁 Best <b>' + (DR.best.w ? 'level ' + DR.best.w : '-') + '</b></span>';
+  const N = Math.max(11, DR.top + 2);
+  $('dsLv').innerHTML = Array.from({ length: N }, (_, i) => { const L = i + 1, lk = L > DR.top; return '<button data-dlv="' + L + '" class="' + (L === DR.sel ? 'on' : '') + (lk ? ' lk' : L <= DR.best.w ? ' done' : '') + '"' + (lk ? ' disabled' : '') + '>' + (lk ? '🔒' : L) + '</button>'; }).join('');
   $('dsGo').textContent = 'START LEVEL ' + DR.sel;
-  const on = $('dsLv').querySelector('.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-dcar]'); if (b && !b.disabled) { DR.car = b.dataset.dcar; lsSet('scrapArenaDeliveryCar', DR.car); renderDrSheet(); }
-  const l = e.target.closest('[data-dlv]'); if (l) { DR.sel = +l.dataset.dlv; lsSet('scrapArenaDeliveryRetry', DR.sel); renderDrSheet(); }
+  const l = e.target.closest('[data-dlv]'); if (l && !l.disabled) { DR.sel = +l.dataset.dlv; lsSet('scrapArenaDeliveryRetry', DR.sel); renderDrSheet(); }
 });
 async function startDelivery(level) {
   if (typeof level === 'number') DR.sel = level; DR.top = Math.max(DR.top | 0, (DR.best.w | 0) + 1, 1); DR.sel = clamp(DR.sel | 0 || 1, 1, DR.top);
@@ -6969,7 +6972,7 @@ async function startDelivery(level) {
   player = makeCar(sx, sy, sa, PLAYER_COL, true, 1); player.pid = PID; player.pname = pname; applyCar(player, CAR_BY_ID[DR.car] || CAR_BY_ID.cruiser); player.club = myClubId();
   Object.assign(player, DRC.tune, { mod: '', perk: '', lay: 'g' }); cars.push(player);
   drSpawnTraffic(DR.sel);
-  Object.assign(DR, { phase: 'load', t: DRC.loadT, wave: DR.sel - 1, start: DR.sel, pk: [], done: 0, earn: 0, kits: 0, stopT: 0, latched: null, kitT: 14, kitsOn: [], fixed: 0, charged: 0, end: '' });
+  Object.assign(DR, { runPaid: {}, phase: 'load', t: DRC.loadT, wave: DR.sel - 1, start: DR.sel, pk: [], done: 0, earn: 0, kits: 0, stopT: 0, latched: null, kitT: 14, kitsOn: [], fixed: 0, charged: 0, end: '' });
   state = 'play'; $('overlay').classList.add('hidden'); document.body.classList.add('dr'); $('drHud').classList.remove('hidden');
   snapCamera(); clearSkids(); banner('DELIVERY RUN · LEVEL ' + DR.sel, 'Loading your batch at the depot...', 1300); updateHud();
 }
@@ -7018,8 +7021,10 @@ function drStops(dt, list, depot) {
   if (depot) { drLoad(); return; }
   const p = DR.pk.find(q => !q.done && q.a === z);
   if (!p) { addText(c.x, c.y - 40, '✗ No package for here', '#ff9f9f'); thud(.12, 120); return; }
-  p.done = true; DR.done++; DR.earn += DRC.pay; score = DR.earn;
-  addText(c.x, c.y - 44, p.sym + '  +$' + DRC.pay, p.col); ring(c.x, c.y, 50, p.col, .4, 5); SFX.combo && SFX.combo(3); beep(990, .07);
+  const L = DR.wave, full = (DR.paid[L] | 0) + (DR.runPaid[L] | 0) < DR.pk.length, gp = full ? DRC.pay : DRC.payRepeat; // full pay once per level, then 1 GP a drop
+  if (full) DR.runPaid[L] = (DR.runPaid[L] | 0) + 1;
+  p.done = true; DR.done++; DR.earn += gp; score = DR.earn;
+  addText(c.x, c.y - 44, p.sym + '  +' + gp + ' GP' + (full ? '' : ' · replay'), p.col); ring(c.x, c.y, 50, p.col, .4, 5); SFX.combo && SFX.combo(3); beep(990, .07);
   if (DR.pk.every(q => q.done)) { // last drop-off stops the clock
     DR.phase = 'return'; DR.latched = null;
     DR.top = Math.max(DR.top, DR.wave + 1); lsSet('scrapArenaDeliveryTop', DR.top);
@@ -7034,9 +7039,10 @@ function drSettle(why) { // pay for completed deliveries, charge for what's stil
   if (DR.phase === 'over') return;
   DR.phase = 'over'; DR.end = why;
   const cleared = DR.wave - (DR.pk.every(q => q.done) ? 0 : 1), missing = player ? player.lost : 0;
-  const bill = missing * DRC.partCost, avail = DR.bank + DR.earn, charge = Math.min(bill, avail), old = DR.bank;
-  DR.bank = avail - charge; lsSet('scrapArenaDeliveryBank', DR.bank);
-  DR.res = { cleared, pk: DR.done, earn: DR.earn, missing, bill, charge, old, bank: DR.bank, kits: DR.kits, why };
+  const bill = missing * DRC.partCost, avail = GAR.gp + DR.earn, charge = Math.min(bill, avail), old = GAR.gp;
+  GAR.gp = avail - charge; garSave(); try { renderHubGarage(); } catch (e) {}                      // one currency: delivery pays into Garage Points
+  for (const k in DR.runPaid) DR.paid[k] = (DR.paid[k] | 0) + DR.runPaid[k]; DR.runPaid = {}; lsSet('scrapArenaDeliveryPaid', DR.paid);
+  DR.res = { cleared, pk: DR.done, earn: DR.earn, missing, bill, charge, old, bank: GAR.gp, kits: DR.kits, why };
   const nb = cleared > DR.best.w || (cleared === DR.best.w && DR.done > DR.best.p);
   if (nb) { DR.best = { w: cleared, p: DR.done }; lsSet('scrapArenaDeliveryBest', DR.best); }
   DR.res.newBest = nb; DR.res.start = DR.start; DR.res.level = DR.wave;
@@ -7049,9 +7055,9 @@ function drOver() {
   const r = DR.res; if (!r) return;
   $('overlay').querySelector('#card h1').innerHTML = r.why === 'wreck' ? 'CAR <span>WRECKED</span>' : r.why === 'time' ? 'OUT OF <span>TIME</span>' : 'SHIFT <span>OVER</span>';
   const row = (k, v, cls) => '<div class="drRow' + (cls ? ' ' + cls : '') + '"><span>' + k + '</span><b>' + v + '</b></div>';
-  $('final').innerHTML = '<div class="drRes">' + row(r.cleared >= r.level ? 'Levels cleared' : 'Stopped at', r.cleared >= r.level ? (r.cleared - r.start + 1) + ' (to level ' + r.cleared + ')' : 'level ' + r.level + (r.cleared >= r.start ? ' · cleared ' + (r.cleared - r.start + 1) : '')) + (r.newBest ? row('Best', 'level ' + r.cleared + ' <em>NEW BEST</em>') : '') + row('Packages delivered', r.pk + ' · +$' + r.earn, 'plus') + (r.kits ? row('Repair kits picked up', r.kits) : '') +
-    row('Repairs at the depot', r.missing + ' part' + (r.missing === 1 ? '' : 's') + ' · −$' + r.charge + (r.charge < r.bill ? ' <small>(capped at $' + (r.old + r.earn) + ')</small>' : ''), 'minus') +
-    row('Bank', '$' + r.old + ' → <b>$' + r.bank + '</b>', 'bank') + '</div><p class="drBest">Best: level ' + DR.best.w + ' · ' + DR.best.p + ' packages · Restart plays level ' + DR.sel + ' again</p>';
+  $('final').innerHTML = '<div class="drRes">' + row(r.cleared >= r.level ? 'Levels cleared' : 'Stopped at', r.cleared >= r.level ? (r.cleared - r.start + 1) + ' (to level ' + r.cleared + ')' : 'level ' + r.level + (r.cleared >= r.start ? ' · cleared ' + (r.cleared - r.start + 1) : '')) + (r.newBest ? row('Best', 'level ' + r.cleared + ' <em>NEW BEST</em>') : '') + row('Packages delivered', r.pk + ' · +' + r.earn + ' GP', 'plus') + (r.kits ? row('Repair kits picked up', r.kits) : '') +
+    row('Repairs at the depot', r.missing + ' part' + (r.missing === 1 ? '' : 's') + ' · −' + r.charge + ' GP' + (r.charge < r.bill ? ' <small>(capped at ' + (r.old + r.earn) + ')</small>' : ''), 'minus') +
+    row('🔩 Garage Points', r.old + ' → <b>' + r.bank + '</b>', 'bank') + '</div><p class="drBest">Best: level ' + DR.best.w + ' · ' + DR.best.p + ' packages · Restart plays level ' + DR.sel + ' again</p>';
   $('card').classList.add('over'); $('card').classList.remove('teamRes', 'spBomb'); $('banner').classList.remove('show'); $('mpBack').style.display = 'none';
   showAgain('delivery', 'Delivery Run · level ' + DR.sel);
   $('overlay').classList.remove('hidden'); renderHub();
@@ -7164,7 +7170,7 @@ function drHud(dt) {
   $('drWave').textContent = 'LEVEL ' + Math.max(1, DR.wave);
   $('drTime').textContent = ph === 'preview' ? 'REMEMBER ' + Math.ceil(DR.t) : ph === 'load' ? 'LOADING' : ph === 'return' ? 'BACK TO DEPOT' : DR.timeLeft.toFixed(1) + ' s';
   $('drTime').className = ph === 'drive' && DR.timeLeft < 10 ? 'low' : '';
-  $('drCash').textContent = '$' + DR.earn;
+  $('drCash').textContent = '🔩 ' + DR.earn;
   $('drPk').innerHTML = DR.pk.filter(p => !p.done).map((p, i) => '<span style="--c:' + p.col + '">' + p.sym + (DR.pk.indexOf(p) + 1) + '</span>').join('') || (ph === 'return' ? '<i>empty</i>' : '');
   if (me) { $('drParts').innerHTML = PARTS.map(q => '<i class="' + (me.parts[q] ? 'ok' : '') + '"></i>').join(''); $('drNos').firstChild.style.width = Math.round((me.nitro || 0) * 100) + '%'; }
   const bar = $('drPrev'); bar.classList.toggle('hidden', ph !== 'preview'); if (ph === 'preview') bar.firstChild.style.width = (DR.t / (DR.prevT || DRC.preview) * 100) + '%';
