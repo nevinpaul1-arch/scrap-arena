@@ -852,7 +852,7 @@
 <body>
 <canvas id="c"></canvas>
 <div id="netInfo" style="display:none"></div><div id="netStatus" style="display:none"></div>
-<div id="vsBar"><span class="ap b"></span><b class="b">0</b><span class="t">3:00</span><b class="r">0</b><span class="ap r"></span></div>
+<div id="vsBar"><span class="ap pb"></span><b class="b">0</b><span class="t">3:00</span><b class="r">0</b><span class="ap pr"></span></div>
 <div id="respawnMsg"></div><div id="bombMsg"></div><div id="achToast"></div><div id="modHud"></div>
 <div id="hud">
   <div class="stats"><span>WAVE <b id="hw">1</b></span><span>SCORE <b id="hs">0</b></span><span>BEST <b id="hb">0</b></span><span>SCRAP <b id="hsc" style="color:#ffd166">0</b></span><span>CAR <b id="hc" style="font-size:14px">-</b></span></div>
@@ -3205,9 +3205,9 @@ function vsHud() {
   if (!teamOn() || state !== 'play') { if ($('respawnMsg').style.display !== 'none') $('respawnMsg').style.display = 'none'; return; }
   const t = Math.ceil(VS.matchT), txt = Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'), bar = $('vsBar');
   if (bar._t !== txt) { bar._t = txt; bar.querySelector('.t').textContent = txt; bar.querySelector('.t').classList.toggle('low', t <= 30); }
-  if (bar._s !== VS.score.join()) { bar._s = VS.score.join(); bar.querySelector('.b').textContent = VS.score[0]; bar.querySelector('.r').textContent = VS.score[1]; }
+  if (bar._s !== VS.score.join()) { bar._s = VS.score.join(); bar.querySelector('b.b').textContent = VS.score[0]; bar.querySelector('b.r').textContent = VS.score[1]; }
   if (bombOn()) { const pip = t => cars.filter(c => c.isPlayer && (c.team | 0) === t).map(c => '<i class="' + (c.dead ? 'x' : '') + '"></i>').join(''), pk = pip(0) + '|' + pip(1);
-    if (bar._p !== pk) { bar._p = pk; bar.querySelector('.ap.b').innerHTML = pip(0); bar.querySelector('.ap.r').innerHTML = pip(1); } }
+    if (bar._p !== pk) { bar._p = pk; bar.querySelector('.ap.pb').innerHTML = pip(0); bar.querySelector('.ap.pr').innerHTML = pip(1); } }
   else if (bar._p) { bar._p = ''; bar.querySelectorAll('.ap').forEach(e => e.innerHTML = ''); }
   const rm = $('respawnMsg'), dead = player && player.dead && (VS.matchT > 0 || bombOn()) && !(bombOn() && BOMB.st === 'end');
   if (dead && bombOn()) { const w = specTarget(); rm.innerHTML = 'WRECKED<small>out until the next round' + (w ? ' · watching ' + esc(w.pname || '') : '') + '</small>'; }
