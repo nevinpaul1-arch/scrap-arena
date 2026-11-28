@@ -466,7 +466,7 @@
   .modes{display:flex;flex-direction:column;gap:calc(var(--u)*1.4);min-height:0;justify-content:center}
   .tile{--a:#e63946;--b:#7a1018;position:relative;flex:1 1 0;max-height:calc(var(--u)*15);min-height:46px;display:flex;align-items:center;gap:calc(var(--u)*1.8);padding:0 calc(var(--u)*2.4) 0 calc(var(--u)*1.6);border:0;border-radius:14px;cursor:pointer;color:#fff;text-align:left;overflow:hidden;
     background:linear-gradient(105deg,var(--a) 0%,var(--b) 70%,rgba(0,0,0,.6) 100%);box-shadow:0 8px 22px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.25),inset 0 -2px 0 rgba(0,0,0,.25);clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%);transition:transform .18s cubic-bezier(.2,.9,.3,1.3),filter .18s;animation:tileIn .5s cubic-bezier(.2,.9,.3,1.2) both}
-  .tile:nth-child(2){animation-delay:.06s}.tile:nth-child(3){animation-delay:.12s}.tile:nth-child(4){animation-delay:.18s}
+  .tile:nth-child(2){animation-delay:.05s}.tile:nth-child(3){animation-delay:.1s}.tile:nth-child(4){animation-delay:.15s}.tile:nth-child(5){animation-delay:.2s}.tile:nth-child(6){animation-delay:.25s}
   @keyframes tileIn{from{transform:translateX(-40px);opacity:0}to{transform:none;opacity:1}}
   .tile::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-55deg,rgba(255,255,255,.06) 0 2px,transparent 2px 12px);pointer-events:none}
   .tile::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .5s}
@@ -851,6 +851,17 @@
   #respawnMsg{font-size:var(--fs-xl)!important} #respawnMsg small{font-size:var(--fs-sm)!important}
   #achToast small,body.phone #achToast small{font-size:var(--fs-cap)!important;letter-spacing:.12em!important} #achToast b,#achToast em,body.phone #achToast b,body.phone #achToast em{font-size:var(--fs-btn)!important}
   #mpCars button,#mpCars2 button{font-size:var(--fs-sm)!important} .garBs small{font-size:var(--fs-sm)}
+
+  /* hub stage: car centred above a compact name plate, never over the top bar */
+  .hubTop{position:relative;z-index:6}
+  .stage{justify-content:flex-end!important;overflow:visible}
+  #hubCar{width:118%!important;margin-left:-9%!important;margin-right:-9%!important;max-height:74%!important;margin-top:auto!important;margin-bottom:auto!important}
+  .stage .floor{bottom:17%!important;height:20%!important}
+  .stage .nav{top:42%!important}
+  #hubPerk,#hubMod{display:none!important}
+  .plate{max-width:290px!important;padding:6px 12px 8px!important;border-radius:12px!important}
+  .pl1{gap:8px!important} .pl1 b{font-size:var(--fs-btn)!important} .pl1 small{font-size:var(--fs-cap)!important}
+  #hubStats{margin-top:4px!important;gap:8px!important} #hubStats>div,.pstats div,.pstats em{font-size:10px!important;letter-spacing:.06em!important} #hubStats i{height:3px!important}
 </style>
 </head>
 <body>
@@ -1998,7 +2009,12 @@ let maxWave = 1, scores = [], pname = 'Player', bossKills = 0;
 try { best = parseInt(localStorage.getItem('scrapArenaBest') || '0', 10) || 0; } catch (e) {}
 try { maxWave = parseInt(localStorage.getItem('scrapArenaMaxWave') || '1', 10) || 1; } catch (e) {}
 try { scores = (JSON.parse(localStorage.getItem('scrapArenaScores') || '[]') || []).filter(r => r && typeof r.score === 'number'); } catch (e) { scores = []; }
-try { pname = localStorage.getItem('scrapArenaName') || 'Player'; } catch (e) {}
+function cleanName(v) { // undo the extra quotes Bomb Run / Hide & Run / Delivery used to add when saving the name
+  v = String(v == null ? '' : v); for (let i = 0; i < 8 && /^".*"$/.test(v); i++) { try { const u = JSON.parse(v); if (typeof u !== 'string') break; v = u; } catch (e) { v = v.slice(1, -1); } }
+  return v.replace(/\\"/g, '"').replace(/^"+|"+$/g, '').trim().slice(0, 14);
+}
+function saveName(n) { try { localStorage.setItem('scrapArenaName', n); } catch (e) {} }
+try { pname = cleanName(localStorage.getItem('scrapArenaName')) || 'Player'; if (pname !== localStorage.getItem('scrapArenaName') && localStorage.getItem('scrapArenaName') != null) saveName(pname); } catch (e) {}
 { const bestBy = {}; for (const r of scores) { const k = String(r.name || 'Player').toLowerCase(); if (!bestBy[k] || r.score > bestBy[k].score) bestBy[k] = r; } scores = Object.values(bestBy).sort((x, y) => y.score - x.score).slice(0, 10); }
 if (scores.length) best = Math.max(best, scores[0].score);
 
@@ -4025,7 +4041,7 @@ function startBombSP(dev) {
   if (devRun) { devRun = false; document.body.classList.remove('dev'); }
   $('bombSheet').classList.add('hidden');
   gameMode = 'bomb'; LOCAL_TEAM = true; daily = null; $('card').classList.remove('over'); $('clubAwardBox').innerHTML = '';
-  pname = ($('pname').value || '').trim().slice(0, 14) || 'Player'; lsSet('scrapArenaName', pname);
+  pname = cleanName($('pname').value) || 'Player'; saveName(pname);
   const a = audio(); if (a && a.resume) a.resume(); startEngine();
   if (isTouch && fsOK && !fsEl()) setFullscreen(true);
   Object.assign(VS, { kind: 'bomb', matchT: VS_LEN, score: [0, 0], boss: 'none', bossState: 0, warned: false });
@@ -6670,7 +6686,7 @@ async function startHideSP() {
   $('hideSheet').classList.add('hidden');
   await fdLoadArt();
   gameMode = 'hide'; LOCAL_TEAM = false; daily = null; $('card').classList.remove('over');
-  pname = ($('pname').value || '').trim().slice(0, 14) || 'Player'; lsSet('scrapArenaName', pname);
+  pname = cleanName($('pname').value) || 'Player'; saveName(pname);
   const a = audio(); if (a && a.resume) a.resume(); startEngine();
   if (isTouch && fsOK && !fsEl()) setFullscreen(true);
   cars = []; debris = []; parts = []; texts = []; rings = []; pickups = []; booms = []; emotes = []; SPIKES = []; GOO = []; SMOKES = [];
@@ -6943,7 +6959,7 @@ async function startDelivery(level) {
   $('drSheet').classList.add('hidden'); hrLeave(); showAgain('');
   await fdLoadArt();
   gameMode = 'delivery'; LOCAL_TEAM = false; daily = null; $('card').classList.remove('over', 'teamRes', 'spBomb');
-  pname = ($('pname').value || '').trim().slice(0, 14) || 'Player'; lsSet('scrapArenaName', pname);
+  pname = cleanName($('pname').value) || 'Player'; saveName(pname);
   const a = audio(); if (a && a.resume) a.resume(); startEngine();
   if (isTouch && fsOK && !fsEl()) setFullscreen(true);
   cars = []; debris = []; parts = []; texts = []; rings = []; pickups = []; booms = []; emotes = []; SPIKES = []; GOO = []; SMOKES = [];
@@ -7212,6 +7228,10 @@ function renderHubClub() {
       '<button class="ccGo" id="hubClubGo">CLUB HQ</button>';
   }
 }
+// slide the mode list in again whenever the menu comes back into view (mode sheets open on top of it, so nothing restarts on its own)
+function hubSlide() { document.querySelectorAll('.modes .tile').forEach(t => { t.style.animation = 'none'; void t.offsetWidth; t.style.animation = ''; }); }
+{ const mo = new MutationObserver(ms => { for (const m of ms) if (m.target.classList.contains('hidden') && !(m.oldValue || '').includes('hidden') && document.body.classList.contains('atHub')) { hubSlide(); break; } });
+  document.querySelectorAll('.bigSheet, #mpPanel, #garageSheet, #clubSheet').forEach(el => mo.observe(el, { attributes: true, attributeFilter: ['class'], attributeOldValue: true })); }
 function renderHubTiles() {
   const ck = getCheckpoint(), t = $('tCont'); t.textContent = ck ? '▶ W' + (ck.wave + 1) : ''; t.style.cursor = 'pointer';
   $('tWavesSub').textContent = maxWave > 1 ? 'Best wave ' + maxWave : 'Endless waves';
